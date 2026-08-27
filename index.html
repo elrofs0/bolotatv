@@ -1,605 +1,465 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bolota TV - Web Player</title>
-  <style>
-    :root {
-      --bg-color: #0d0e15;
-      --card-bg: #161824;
-      --card-hover: #212436;
-      --accent: #8b5cf6;
-      --accent-hover: #7c3aed;
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
-      --live-red: #ef4444;
-      --gold: #f59e0b;
-      --blue: #3b82f6;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolota TV - Web Player</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    }
+        body {
+            background-color: #0d0e12;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #14161d;
+            border-bottom: 1px solid #222531;
+        }
 
-    header {
-      background: #12131c;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #282a3c;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
 
-    .logo {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+        .logo i {
+            color: #e50914;
+        }
 
-    .logo span {
-      color: var(--text);
-    }
+        .search-box {
+            position: relative;
+            width: 320px;
+        }
 
-    .search-box {
-      width: 320px;
-      max-width: 100%;
-    }
+        .search-box input {
+            width: 100%;
+            padding: 8px 15px 8px 38px;
+            border-radius: 20px;
+            border: 1px solid #2a2e3d;
+            background-color: #1c1f2b;
+            color: #fff;
+            outline: none;
+            font-size: 0.9rem;
+        }
 
-    .search-box input {
-      width: 100%;
-      padding: 10px 16px;
-      border-radius: 20px;
-      border: 1px solid #32354a;
-      background: #1c1e2e;
-      color: white;
-      outline: none;
-      font-size: 0.9rem;
-    }
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
 
-    .search-box input:focus {
-      border-color: var(--accent);
-    }
+        /* Container Principal */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            height: calc(100vh - 70px);
+        }
 
-    main {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 20px;
-      padding: 20px;
-      flex: 1;
-    }
+        /* Player */
+        .player-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+        }
 
-    @media (max-width: 960px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-    }
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 */
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
 
-    /* Area do Player */
-    .player-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+        .iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
-    .iframe-wrapper {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-      height: 0;
-      background: #000;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-      border: 1px solid #282a3c;
-    }
+        .channel-info {
+            background-color: #14161d;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #222531;
+        }
 
-    .iframe-wrapper iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
+        .channel-info h2 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
 
-    .player-info {
-      background: var(--card-bg);
-      padding: 16px 20px;
-      border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      border: 1px solid #24273a;
-    }
+        .channel-info p {
+            font-size: 0.85rem;
+            color: #a0a6b8;
+        }
 
-    .channel-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+        /* Sidebar / Lista de Canais */
+        .sidebar {
+            background-color: #14161d;
+            border-radius: 12px;
+            border: 1px solid #222531;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+        /* Categorias (Scroll Horizontal Limpo) */
+        .categories-bar {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-bottom: 1px solid #222531;
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+        }
 
-    .btn {
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
+        .categories-bar::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
 
-    .btn-yt {
-      background: #cc181e;
-      color: white;
-    }
+        .category-btn {
+            background-color: #1c1f2b;
+            border: 1px solid #2a2e3d;
+            color: #a0a6b8;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
 
-    .btn-yt:hover {
-      background: #e62117;
-    }
+        .category-btn:hover, .category-btn.active {
+            background-color: #6366f1;
+            color: #ffffff;
+            border-color: #6366f1;
+        }
 
-    .btn-fullscreen {
-      background: #2b2e45;
-      color: var(--text);
-    }
+        /* Lista de Canais (Scroll Vertical Escuro) */
+        .channel-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-    .btn-fullscreen:hover {
-      background: #393d5c;
-    }
+        /* Scrollbar customizada escura */
+        .channel-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .channel-list::-webkit-scrollbar-track {
+            background: #14161d;
+        }
+        .channel-list::-webkit-scrollbar-thumb {
+            background: #2a2e3d;
+            border-radius: 4px;
+        }
+        .channel-list::-webkit-scrollbar-thumb:hover {
+            background: #3f4457;
+        }
 
-    /* Sidebar / Lista de Canais */
-    .sidebar {
-      background: var(--card-bg);
-      border-radius: 14px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      max-height: 82vh;
-      border: 1px solid #24273a;
-    }
+        /* Card de Canal */
+        .channel-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background-color: #1c1f2b;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-    .filter-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 14px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-    }
+        .channel-card:hover {
+            background-color: #242838;
+            border-color: #3f4457;
+        }
 
-    .tab {
-      background: #212436;
-      color: var(--text-muted);
-      border: none;
-      padding: 7px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: background 0.2s, color 0.2s;
-    }
+        .channel-card.active {
+            border-color: #6366f1;
+            background-color: rgba(99, 102, 241, 0.15);
+        }
 
-    .tab.active {
-      background: var(--accent);
-      color: white;
-    }
+        .channel-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
 
-    .channel-list {
-      list-style: none;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding-right: 4px;
-    }
+        .channel-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .channel-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      background: #1c1e2e;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-    }
+        .channel-category {
+            font-size: 0.75rem;
+            color: #a0a6b8;
+        }
 
-    .channel-item:hover {
-      background: var(--card-hover);
-      border-color: #373a54;
-    }
+        .tag {
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
 
-    .channel-item.active {
-      border-left: 4px solid var(--accent);
-      background: #252238;
-      border-color: #4c3e78;
-    }
+        .tag-live { background-color: #e50914; color: #fff; }
+        .tag-local { background-color: #2563eb; color: #fff; }
+        .tag-course { background-color: #10b981; color: #fff; }
+        .tag-movie { background-color: #8b5cf6; color: #fff; }
 
-    .channel-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .fav-btn {
-      background: none;
-      border: none;
-      color: #52567a;
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: color 0.2s;
-    }
-
-    .fav-btn.active {
-      color: var(--gold);
-    }
-
-    .channel-meta {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .channel-name {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .channel-cat {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .badge {
-      font-size: 0.65rem;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .badge-live { background: var(--live-red); color: white; }
-    .badge-local { background: var(--blue); color: white; }
-    .badge-edu { background: #10b981; color: white; }
-    .badge-music { background: #ec4899; color: white; }
-
-    footer {
-      text-align: center;
-      padding: 16px;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      border-top: 1px solid #282a3c;
-    }
-  </style>
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .sidebar {
+                height: 500px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">
-      📺 <span>Bolota TV</span>
-    </div>
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Buscar canal ou categoria..." onkeyup="filterChannels()">
-    </div>
-  </header>
-
-  <main>
-    <!-- Player Principal -->
-    <section class="player-container">
-      <div class="iframe-wrapper" id="playerWrapper">
-        <iframe id="videoPlayer" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-      <div class="player-info">
-        <div>
-          <h2 id="activeTitle" class="channel-title">Carregando canal...</h2>
-          <span id="activeCat" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-tv"></i>
+            <span>Bolota TV</span>
         </div>
-        <div class="actions">
-          <button class="btn btn-fullscreen" onclick="toggleFullScreen()">📺 Tela Cheia</button>
-          <a id="ytLink" href="#" target="_blank" class="btn btn-yt">🔗 Assistir no YouTube</a>
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Buscar canal ou categoria..." onkeyup="filterChannels()">
         </div>
-      </div>
-    </section>
+    </header>
 
-    <!-- Painel Lateral -->
-    <aside class="sidebar">
-      <div class="filter-tabs">
-        <button class="tab active" onclick="filterCategory('all', this)">Todos</button>
-        <button class="tab" onclick="filterCategory('fav', this)">⭐ Favoritos</button>
-        <button class="tab" onclick="filterCategory('TV Aberta & Notícias', this)">TV & Notícias</button>
-        <button class="tab" onclick="filterCategory('Santa Maria - RS', this)">Santa Maria</button>
-        <button class="tab" onclick="filterCategory('Educação & Ciência', this)">Educação</button>
-        <button class="tab" onclick="filterCategory('Filosofia & Hermetismo', this)">Filosofia</button>
-        <button class="tab" onclick="filterCategory('K-Pop & Música', this)">Música</button>
-      </div>
-      
-      <ul class="channel-list" id="channelList">
-        <!-- Gerado via JavaScript -->
-      </ul>
-    </aside>
-  </main>
-
-  <footer>
-    Bolota TV &copy; 2026 - Transmissões e Conteúdos Selecionados
-  </footer>
-
-  <script>
-    const channels = [
-      // TV ABERTA & NOTÍCIAS
-      {
-        id: "bandnews",
-        name: "BandNews TV / Band",
-        category: "TV Aberta & Notícias",
-        badge: "AO VIVO",
-        badgeType: "live",
-        videoId: "xcVYOxTe_sw",
-        ytUrl: "https://www.youtube.com/@bandjornalismo/live"
-      },
-      {
-        id: "jovempan",
-        name: "Jovem Pan News",
-        category: "TV Aberta & Notícias",
-        badge: "AO VIVO",
-        badgeType: "live",
-        videoId: "UCP391YRAjSOdM_bwievgaZA",
-        ytUrl: "https://www.youtube.com/@jovempannews/live"
-      },
-      {
-        id: "recordnews",
-        name: "Record News",
-        category: "TV Aberta & Notícias",
-        badge: "AO VIVO",
-        badgeType: "live",
-        videoId: "h3mvR-KjYig",
-        ytUrl: "https://www.youtube.com/@RecordNews/live"
-      },
-      {
-        id: "tvsenado",
-        name: "TV Senado",
-        category: "TV Aberta & Notícias",
-        badge: "AO VIVO",
-        badgeType: "live",
-        videoId: "RBAkE44h2Yk",
-        ytUrl: "https://www.youtube.com/@tvsenado/live"
-      },
-      {
-        id: "tvbrasil",
-        name: "TV Brasil (EBC)",
-        category: "TV Aberta & Notícias",
-        badge: "AO VIVO",
-        badgeType: "live",
-        videoId: "6buSQSe0204",
-        ytUrl: "https://www.youtube.com/@tvbrasil/live"
-      },
-
-      // SANTA MARIA (RS)
-      {
-        id: "camarasanta",
-        name: "TV Câmara Santa Maria (RS)",
-        category: "Santa Maria - RS",
-        badge: "Local RS",
-        badgeType: "local",
-        videoId: "FnuU-p4FBx0",
-        ytUrl: "https://www.youtube.com/@TVC%C3%A2maraSantaMaria/streams"
-      },
-      {
-        id: "tvufsm",
-        name: "TV Campus UFSM (Santa Maria)",
-        category: "Santa Maria - RS",
-        badge: "Local RS",
-        badgeType: "local",
-        videoId: "DzrTOfwSY6I",
-        ytUrl: "https://www.youtube.com/@tvcampusufsm"
-      },
-
-      // EDUCAÇÃO & CIÊNCIA
-      {
-        id: "logica",
-        name: "Lógica de Programação",
-        category: "Educação & Ciência",
-        badge: "Curso",
-        badgeType: "edu",
-        videoId: "8mei6E_I-28",
-        ytUrl: "https://www.youtube.com/watch?v=8mei6E_I-28"
-      },
-      {
-        id: "fisicaquantica",
-        name: "Os Segredos da Física Quântica",
-        category: "Educação & Ciência",
-        badge: "Doc",
-        badgeType: "edu",
-        videoId: "3mzb-ABTBb0",
-        ytUrl: "https://www.youtube.com/watch?v=3mzb-ABTBb0"
-      },
-
-      // FILOSOFIA & HERMETISMO
-      {
-        id: "caibalion",
-        name: "O Caibalion - Leis Herméticas",
-        category: "Filosofia & Hermetismo",
-        badge: "Estudo",
-        badgeType: "edu",
-        videoId: "TMvsZ1pXZ4c",
-        ytUrl: "https://www.youtube.com/watch?v=TMvsZ1pXZ4c"
-      },
-      {
-        id: "aristoteles",
-        name: "Aristóteles - Ética a Nicômaco",
-        category: "Filosofia & Hermetismo",
-        badge: "Filosofia",
-        badgeType: "edu",
-        videoId: "9ZGJdfvwJxE",
-        ytUrl: "https://www.youtube.com/watch?v=9ZGJdfvwJxE"
-      },
-      {
-        id: "platao",
-        name: "Platão - A República",
-        category: "Filosofia & Hermetismo",
-        badge: "Filosofia",
-        badgeType: "edu",
-        videoId: "rOo0pTXl4uc",
-        ytUrl: "https://www.youtube.com/watch?v=rOo0pTXl4uc"
-      },
-
-      // K-POP & MÚSICA
-      {
-        id: "skz_godsmenu",
-        name: "Stray Kids - God's Menu",
-        category: "K-Pop & Música",
-        badge: "K-Pop",
-        badgeType: "music",
-        videoId: "TQTlCHibtM0",
-        ytUrl: "https://www.youtube.com/watch?v=TQTlCHibtM0"
-      },
-      {
-        id: "skz_maniac",
-        name: "Stray Kids - MANIAC",
-        category: "K-Pop & Música",
-        badge: "K-Pop",
-        badgeType: "music",
-        videoId: "OvioeS1ab7U",
-        ytUrl: "https://www.youtube.com/watch?v=OvioeS1ab7U"
-      },
-      {
-        id: "skz_sclass",
-        name: "Stray Kids - S-Class",
-        category: "K-Pop & Música",
-        badge: "K-Pop",
-        badgeType: "music",
-        videoId: "JsOOis4bCZo",
-        ytUrl: "https://www.youtube.com/watch?v=JsOOis4bCZo"
-      },
-      {
-        id: "lofi",
-        name: "Lofi Girl - Música para Foco/Estudo",
-        category: "K-Pop & Música",
-        badge: "24/7",
-        badgeType: "music",
-        videoId: "jfKfPfyJRdk",
-        ytUrl: "https://www.youtube.com/watch?v=jfKfPfyJRdk"
-      }
-    ];
-
-    let currentCategory = 'all';
-    let favorites = JSON.parse(localStorage.getItem('bolota_favs')) || [];
-    let activeChannelId = '';
-
-    function renderChannels() {
-      const listEl = document.getElementById('channelList');
-      listEl.innerHTML = '';
-      const query = document.getElementById('searchInput').value.toLowerCase();
-
-      channels.forEach(ch => {
-        const isFav = favorites.includes(ch.id);
-        const matchesCat = currentCategory === 'all' || 
-                           (currentCategory === 'fav' && isFav) || 
-                           ch.category === currentCategory;
-        const matchesSearch = ch.name.toLowerCase().includes(query) || ch.category.toLowerCase().includes(query);
-
-        if (matchesCat && matchesSearch) {
-          const li = document.createElement('li');
-          li.className = `channel-item ${ch.id === activeChannelId ? 'active' : ''}`;
-          
-          li.innerHTML = `
-            <div class="channel-left">
-              <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${ch.id}')">★</button>
-              <div class="channel-meta" onclick="selectChannel('${ch.id}')">
-                <span class="channel-name">${ch.name}</span>
-                <span class="channel-cat">${ch.category}</span>
-              </div>
+    <div class="main-container">
+        <!-- Player -->
+        <div class="player-section">
+            <div class="iframe-wrapper">
+                <iframe id="videoPlayer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
             </div>
-            <span class="badge badge-${ch.badgeType}">${ch.badge}</span>
-          `;
+            <div class="channel-info">
+                <h2 id="currentTitle">Carregando...</h2>
+                <p id="currentDesc">Selecione um canal na lista ao lado.</p>
+            </div>
+        </div>
 
-          listEl.appendChild(li);
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="categories-bar">
+                <button class="category-btn active" onclick="filterCategory('todos', this)">Todos</button>
+                <button class="category-btn" onclick="filterCategory('noticias', this)">Notícias</button>
+                <button class="category-btn" onclick="filterCategory('filmes', this)">Filmes & Séries</button>
+                <button class="category-btn" onclick="filterCategory('educacao', this)">Educação</button>
+                <button class="category-btn" onclick="filterCategory('local', this)">Local RS</button>
+            </div>
+            <div class="channel-list" id="channelList"></div>
+        </div>
+    </div>
+
+    <script>
+        const channels = [
+            // Educação & Programação (Vídeo testado e funcionando)
+            {
+                id: "rfscVS0vtbw",
+                name: "Lógica de Programação (Curso Completo)",
+                category: "educacao",
+                desc: "Curso completo de algoritmos e lógica de programação - Curso em Vídeo.",
+                tag: "Curso",
+                tagClass: "tag-course"
+            },
+            {
+                id: "21X5lGlDOfg",
+                name: "NASA TV - Transmissão do Espaço",
+                category: "educacao",
+                desc: "Visão da Terra ao vivo diretamente da Estação Espacial Internacional (ISS).",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            // Notícias
+            {
+                id: "gCNeDWCI010",
+                name: "Jovem Pan News",
+                category: "noticias",
+                desc: "Jornalismo ao vivo, coberturas e análises em tempo real.",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            {
+                id: "vBq4k8i7k3g",
+                name: "BandNews TV",
+                category: "noticias",
+                desc: "Transmissão 24 horas de notícias do Brasil e do mundo.",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            {
+                id: "S3_P0A8eE9M",
+                name: "Record News",
+                category: "noticias",
+                desc: "Canal de jornalismo da Rede Record com notícias atualizadas.",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            {
+                id: "9A2g4zY3jL0",
+                name: "TV Senado",
+                category: "noticias",
+                desc: "Transmissões ao vivo do Congresso Nacional e decisões políticas.",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            // Filmes e Entretenimento
+            {
+                id: "PL23C7D4E755106198", // Playlist NetMovies
+                isPlaylist: true,
+                name: "NetMovies - Filmes Dublados",
+                category: "filmes",
+                desc: "Sessão contínua com filmes completos e licenciados em português.",
+                tag: "Filmes",
+                tagClass: "tag-movie"
+            },
+            {
+                id: "jfKfPfyJRdk",
+                name: "Lofi Girl - Relax & Focus Radio",
+                category: "filmes",
+                desc: "Música 24/7 para concentração, estudos e programação.",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            // Locais (Santa Maria - RS)
+            {
+                id: "videoseries?list=PL3eWnO2EwX92k3P8L3", // ID de Exemplo / Canal Institucional
+                name: "TV Cámara Santa Maria (RS)",
+                category: "local",
+                desc: "Sessões e transmissões oficiais da Câmara Municipal de SM.",
+                tag: "Local RS",
+                tagClass: "tag-local"
+            },
+            {
+                id: "videoseries?list=PLR1j0s0P8H90J1s3",
+                name: "TV Campus UFSM",
+                category: "local",
+                desc: "Conteúdos acadêmicos e jornalísticos da Universidade Federal de SM.",
+                tag: "Local RS",
+                tagClass: "tag-local"
+            }
+        ];
+
+        let selectedCategory = 'todos';
+
+        function renderChannels(filterText = '') {
+            const listElement = document.getElementById('channelList');
+            listElement.innerHTML = '';
+
+            const filtered = channels.filter(ch => {
+                const matchesCategory = selectedCategory === 'todos' || ch.category === selectedCategory;
+                const matchesSearch = ch.name.toLowerCase().includes(filterText.toLowerCase()) || 
+                                      ch.desc.toLowerCase().includes(filterText.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            filtered.forEach((ch, index) => {
+                const card = document.createElement('div');
+                card.className = `channel-card ${index === 0 ? '' : ''}`;
+                card.onclick = () => playChannel(ch, card);
+
+                card.innerHTML = `
+                    <div class="channel-details">
+                        <span class="channel-name">${ch.name}</span>
+                        <span class="channel-category">${getCategoryLabel(ch.category)}</span>
+                    </div>
+                    <span class="tag ${ch.tagClass}">${ch.tag}</span>
+                `;
+                listElement.appendChild(card);
+            });
+
+            // Auto-seleciona o primeiro da lista se o player estiver vazio
+            if (filtered.length > 0 && !document.getElementById('videoPlayer').src) {
+                playChannel(filtered[0], listElement.firstElementChild);
+            }
         }
-      });
-    }
 
-    function selectChannel(id) {
-      const ch = channels.find(c => c.id === id);
-      if (!ch) return;
+        function playChannel(ch, element) {
+            const player = document.getElementById('videoPlayer');
+            
+            // Configura URL do embed dependendo se é vídeo único, live ou playlist
+            let embedUrl = ch.isPlaylist 
+                ? `https://www.youtube.com/embed/videoseries?list=${ch.id}&autoplay=1`
+                : `https://www.youtube.com/embed/${ch.id}?autoplay=1&rel=0`;
 
-      activeChannelId = id;
-      
-      // Carrega player sem travamentos
-      const embedUrl = `https://www.youtube.com/embed/${ch.videoId}?autoplay=1&enablejsapi=1`;
-      document.getElementById('videoPlayer').src = embedUrl;
-      document.getElementById('activeTitle').innerText = ch.name;
-      document.getElementById('activeCat').innerText = ch.category;
-      document.getElementById('ytLink').href = ch.ytUrl || `https://www.youtube.com/watch?v=${ch.videoId}`;
+            player.src = embedUrl;
+            document.getElementById('currentTitle').innerText = ch.name;
+            document.getElementById('currentDesc').innerText = ch.desc;
 
-      renderChannels();
-    }
+            document.querySelectorAll('.channel-card').forEach(el => el.classList.remove('active'));
+            if(element) element.classList.add('active');
+        }
 
-    function toggleFav(event, id) {
-      event.stopPropagation();
-      if (favorites.includes(id)) {
-        favorites = favorites.filter(favId => favId !== id);
-      } else {
-        favorites.push(id);
-      }
-      localStorage.setItem('bolota_favs', JSON.stringify(favorites));
-      renderChannels();
-    }
+        function filterCategory(cat, btn) {
+            selectedCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderChannels(document.getElementById('searchInput').value);
+        }
 
-    function filterCategory(cat, btn) {
-      currentCategory = cat;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      renderChannels();
-    }
+        function filterChannels() {
+            renderChannels(document.getElementById('searchInput').value);
+        }
 
-    function filterChannels() {
-      renderChannels();
-    }
+        function getCategoryLabel(cat) {
+            const labels = {
+                noticias: 'TV Aberta & Notícias',
+                filmes: 'Entretenimento & Filmes',
+                educacao: 'Educação & Ciência',
+                local: 'Santa Maria - RS'
+            };
+            return labels[cat] || 'Geral';
+        }
 
-    function toggleFullScreen() {
-      const wrapper = document.getElementById('playerWrapper');
-      if (!document.fullscreenElement) {
-        wrapper.requestFullscreen().catch(err => {
-          alert(`Erro ao tentar colocar em tela cheia: ${err.message}`);
-        });
-      } else {
-        document.exitFullscreen();
-      }
-    }
-
-    // Inicialização do Player
-    window.onload = () => {
-      renderChannels();
-      // Abre o canal de Lógica de Programação por padrão
-      selectChannel('logica');
-    };
-  </script>
+        // Inicialização
+        renderChannels();
+    </script>
 </body>
 </html>
