@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v9.0 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.0 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -13,6 +13,8 @@
         :root {
             --hazard-orange: #ff5500;
             --terminal-green: #00ff66;
+            --terminal-red: #ff3344;
+            --terminal-grey: #666;
             --bg-dark: #070709;
             --panel-bg: #111217;
             --border-color: #2a1a08;
@@ -166,6 +168,35 @@
             font-weight: bold;
         }
 
+        .diag-bar {
+            padding: 8px;
+            background: #000;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .diag-btn {
+            background: #15161c;
+            border: 1px solid var(--terminal-green);
+            color: var(--terminal-green);
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: inherit;
+            flex: 1;
+        }
+
+        .diag-btn:hover { background: var(--terminal-green); color: #000; }
+        .diag-btn:disabled { opacity: 0.5; cursor: wait; }
+
+        .diag-summary {
+            font-size: 0.7rem;
+            color: #888;
+            white-space: nowrap;
+        }
+
         .channel-list {
             flex: 1;
             overflow-y: auto;
@@ -186,6 +217,7 @@
             align-items: center;
             font-size: 0.85rem;
             transition: all 0.15s ease;
+            gap: 8px;
         }
 
         .channel-item:hover {
@@ -200,6 +232,39 @@
             color: var(--hazard-orange);
             font-weight: bold;
         }
+
+        .channel-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            min-width: 9px;
+            border-radius: 50%;
+            background: var(--terminal-grey);
+            box-shadow: 0 0 4px rgba(0,0,0,0.6);
+        }
+
+        .status-dot.ok { background: var(--terminal-green); box-shadow: 0 0 6px var(--terminal-green); }
+        .status-dot.fail { background: var(--terminal-red); box-shadow: 0 0 6px var(--terminal-red); }
+        .status-dot.testing { background: var(--hazard-orange); animation: pulse 0.8s infinite; }
+
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .status-reason {
+            font-size: 0.65rem;
+            color: var(--terminal-red);
+            margin-left: 17px;
+            margin-top: -2px;
+        }
+
+        .badge-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
 
         .badge {
             font-size: 0.65rem;
@@ -216,7 +281,7 @@
         @media (max-width: 900px) {
             .main-container { grid-template-columns: 1fr; height: auto; }
             .screen-container { height: 260px; }
-            .sidebar { height: 420px; }
+            .sidebar { height: 480px; }
         }
     </style>
 </head>
@@ -249,6 +314,11 @@
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="> BUSCAR CANAL..." onkeyup="filterChannels()">
             </div>
+
+            <div class="diag-bar">
+                <button class="diag-btn" id="diag-btn" onclick="testAllChannels()">[ ▶ TESTAR TODOS OS SINAIS ]</button>
+                <span class="diag-summary" id="diag-summary"></span>
+            </div>
             
             <div class="categories-bar">
                 <button class="cat-btn active" onclick="changeCategory('all', this)">[TODOS]</button>
@@ -267,12 +337,14 @@
 
     <script>
         // =====================================================================
-        // CONFIGURE AQUI: cole a URL do seu Worker (veja worker.js / passo a passo)
-        // Enquanto estiver com o valor de exemplo abaixo, o player tenta
-        // conectar direto (sem proxy) — funciona só pra streams que já
-        // liberam CORS por conta própria.
+        // CONFIGURE AQUI: cole a URL do seu Worker (veja worker.js)
+        // Enquanto estiver com o valor de exemplo abaixo, NADA que exija CORS
+        // vai funcionar — o diagnóstico abaixo vai deixar isso óbvio.
         // =====================================================================
-        const PROXY_WORKER = 'https://bolota-tv-proxy.betaincensos.workers.dev/';
+        const PROXY_WORKER = 'https://SEU-WORKER-AQUI.workers.dev/';
+
+        const TEST_TIMEOUT_MS = 8000;
+        const TEST_CONCURRENCY = 4;
 
         // Domínios que já servem HLS com CORS liberado -> não precisam de proxy
         const DOMINIOS_SEM_PROXY = [
@@ -281,131 +353,57 @@
             'akamaized.net'
         ];
 
-        // Servidores M3U8
         const canalDatabase = [
             // ---------- BRASIL ----------
-            {
-                name: "TV Brasil (Aberto BR)",
-                category: "br",
-                country: "br",
-                url: "https://stmv1.srvif.com/tvbrasil/tvbrasil/playlist.m3u8"
-            },
-            {
-                name: "TV Senado (Notícias BR)",
-                category: "noticias",
-                country: "br",
-                url: "https://stmv1.srvif.com/tvsenado/tvsenado/playlist.m3u8"
-            },
-            {
-                name: "TV Câmara (Legislativo BR)",
-                category: "br",
-                country: "br",
-                url: "https://stream3.camara.gov.br/tv1/manifest.m3u8"
-            },
-            {
-                name: "Rede Minas (Cultura)",
-                category: "br",
-                country: "br",
-                url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8"
-            },
-            {
-                name: "Rede Brasil",
-                category: "br",
-                country: "br",
-                url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8"
-            },
-            {
-                name: "COM Brasil",
-                category: "br",
-                country: "br",
-                url: "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8"
-            },
-            {
-                name: "ISTV Nacional",
-                category: "br",
-                country: "br",
-                url: "https://video08.logicahost.com.br/istvnacional/srt.stream/istvnacional.m3u8"
-            },
-            {
-                name: "AgroBrasil TV",
-                category: "br",
-                country: "br",
-                url: "http://45.162.230.234:1935/agrobrasiltv/agrobrasiltv/playlist.m3u8"
-            },
-            {
-                name: "Deutsche Welle (Português)",
-                category: "noticias",
-                country: "br",
-                url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"
-            },
+            // TV Brasil, TV Senado e Chaco TV removidos: os três estavam no
+            // mesmo host (stmv1.srvif.com) e falharam juntos no teste — sinal
+            // de que o host caiu, não de link individual quebrado. Se ele
+            // voltar ao ar, reative com a URL original (guardada no histórico
+            // do arquivo anterior).
+            { name: "TV Câmara (Legislativo BR)", category: "br", country: "br",
+              url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
+            { name: "Rede Minas (Cultura)", category: "br", country: "br",
+              url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8" },
+            { name: "Rede Brasil", category: "br", country: "br",
+              url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8" },
+            { name: "COM Brasil", category: "br", country: "br",
+              url: "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8" },
+            { name: "ISTV Nacional", category: "br", country: "br",
+              url: "https://video08.logicahost.com.br/istvnacional/srt.stream/istvnacional.m3u8" },
+            { name: "AgroBrasil TV", category: "br", country: "br",
+              url: "http://45.162.230.234:1935/agrobrasiltv/agrobrasiltv/playlist.m3u8" },
+            { name: "Deutsche Welle (Português)", category: "noticias", country: "br",
+              url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8" },
 
             // ---------- ARGENTINA & LATAM ----------
-            {
-                name: "Canal 26 (Buenos Aires)",
-                category: "noticias",
-                country: "ar",
-                url: "https://live-01-02-canal26.com.ar/hls/live.m3u8"
-            },
-            {
-                name: "TeleSUR (América Latina)",
-                category: "noticias",
-                country: "ar",
-                url: "https://tv.telesur.cdn.tda.as/hls/live.m3u8"
-            },
-            {
-                name: "Chaco TV (Argentina)",
-                category: "ar",
-                country: "ar",
-                url: "https://stmv1.srvif.com/chacotv/chacotv/playlist.m3u8"
-            },
-            {
-                name: "TV Universidad (UNLP)",
-                category: "ar",
-                country: "ar",
-                url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8"
-            },
-            {
-                name: "TV Solidaria",
-                category: "ar",
-                country: "ar",
-                url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8"
-            },
-            {
-                name: "Xtrema Cine Clásico",
-                category: "cine",
-                country: "ar",
-                url: "https://stmv6.voxtvhd.com.br/cineclasico/cineclasico/playlist.m3u8",
-                ref: "https://xtrematv.com/?p=1460"
-            },
+            { name: "Canal 26 (Buenos Aires)", category: "noticias", country: "ar",
+              url: "https://live-01-02-canal26.com.ar/hls/live.m3u8" },
+            { name: "TeleSUR (América Latina)", category: "noticias", country: "ar",
+              url: "https://tv.telesur.cdn.tda.as/hls/live.m3u8" },
+            { name: "TV Universidad (UNLP)", category: "ar", country: "ar",
+              url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8" },
+            { name: "TV Solidaria", category: "ar", country: "ar",
+              url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8" },
+            { name: "Xtrema Cine Clásico", category: "cine", country: "ar",
+              url: "https://stmv6.voxtvhd.com.br/cineclasico/cineclasico/playlist.m3u8",
+              ref: "https://xtrematv.com/?p=1460" },
 
             // ---------- INTERNACIONAL ----------
-            {
-                name: "France 24 (Español)",
-                category: "noticias",
-                country: "intl",
-                url: "https://static.france24.com/live/F24_ES_LO_HLS/live_tv.m3u8"
-            },
-            {
-                name: "NHK World Japan (EN)",
-                category: "noticias",
-                country: "intl",
-                url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8"
-            },
+            { name: "France 24 (English)", category: "noticias", country: "intl",
+              url: "https://uvotv-aniview.global.ssl.fastly.net/hls/live/2120684/france24english/playlist.m3u8" },
+            { name: "NHK World Japan (EN)", category: "noticias", country: "intl",
+              url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8" },
 
             // ---------- CINE / MULTIMÍDIA (streams de teste, alta estabilidade) ----------
-            {
-                name: "Tears of Steel 4K",
-                category: "cine",
-                country: "intl",
-                url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
-            },
-            {
-                name: "Big Buck Bunny 24H",
-                category: "cine",
-                country: "intl",
-                url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-            }
+            { name: "Tears of Steel 4K", category: "cine", country: "intl",
+              url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" },
+            { name: "Big Buck Bunny 24H", category: "cine", country: "intl",
+              url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" }
         ];
+
+        // status: undefined = nunca testado | 'testing' | 'ok' | 'fail'
+        // reason: motivo curto quando 'fail'
+        canalDatabase.forEach(c => { c.status = undefined; c.reason = ''; });
 
         let vjsPlayer;
         let currentCategory = 'all';
@@ -418,11 +416,9 @@
             return !DOMINIOS_SEM_PROXY.some(d => url.includes(d));
         }
 
-        // Monta a URL final que o player vai usar: passa pelo Worker
-        // (que reescreve o manifesto inteiro) quando configurado e necessário.
         function getPlayableUrl(channel) {
             if (!precisaDeProxy(channel.url)) return channel.url;
-            if (!proxyEstaConfigurado()) return channel.url; // sem worker, tenta direto
+            if (!proxyEstaConfigurado()) return channel.url;
             let proxied = PROXY_WORKER + '?url=' + encodeURIComponent(channel.url);
             if (channel.ref) proxied += '&ref=' + encodeURIComponent(channel.ref);
             return proxied;
@@ -434,9 +430,7 @@
                 controls: true,
                 responsive: true,
                 fluid: true,
-                html5: {
-                    vhs: { overrideNative: true }
-                }
+                html5: { vhs: { overrideNative: true } }
             });
 
             vjsPlayer.on('error', () => {
@@ -462,15 +456,14 @@
         });
 
         function updateClock() {
-            const now = new Date();
-            document.getElementById('clock-display').innerText = now.toLocaleTimeString('pt-BR');
+            document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('pt-BR');
         }
 
         async function fetchWeather() {
             try {
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-29.6842&longitude=-53.8069&current_weather=true');
                 const data = await res.json();
-                if(data.current_weather) {
+                if (data.current_weather) {
                     document.getElementById('temp-display').innerText = `${Math.round(data.current_weather.temperature)}°C`;
                 }
             } catch (err) {
@@ -478,15 +471,86 @@
             }
         }
 
+        // ================= DIAGNÓSTICO =================
+
+        async function testChannel(channel) {
+            channel.status = 'testing';
+            channel.reason = '';
+            renderChannels();
+
+            if (!proxyEstaConfigurado() && precisaDeProxy(channel.url)) {
+                channel.status = 'fail';
+                channel.reason = 'PROXY_WORKER não configurado';
+                return;
+            }
+
+            try {
+                const res = await fetch(getPlayableUrl(channel), {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(TEST_TIMEOUT_MS)
+                });
+
+                if (!res.ok) {
+                    channel.status = 'fail';
+                    channel.reason = `HTTP ${res.status}`;
+                    return;
+                }
+
+                const text = await res.text();
+                if (!text.trim().startsWith('#EXTM3U')) {
+                    channel.status = 'fail';
+                    channel.reason = 'resposta não é HLS válido';
+                    return;
+                }
+
+                channel.status = 'ok';
+            } catch (e) {
+                channel.status = 'fail';
+                channel.reason = (e.name === 'TimeoutError' || e.name === 'AbortError')
+                    ? `timeout (${TEST_TIMEOUT_MS / 1000}s)`
+                    : 'erro de rede / CORS';
+            }
+        }
+
+        async function testAllChannels() {
+            const btn = document.getElementById('diag-btn');
+            btn.disabled = true;
+            btn.innerText = '[ TESTANDO... ]';
+
+            const queue = [...canalDatabase];
+            const workers = Array.from({ length: TEST_CONCURRENCY }, async () => {
+                while (queue.length) {
+                    const channel = queue.shift();
+                    await testChannel(channel);
+                    renderChannels();
+                    updateDiagSummary();
+                }
+            });
+            await Promise.all(workers);
+
+            btn.disabled = false;
+            btn.innerText = '[ ▶ TESTAR TODOS OS SINAIS ]';
+            updateDiagSummary();
+        }
+
+        function updateDiagSummary() {
+            const ok = canalDatabase.filter(c => c.status === 'ok').length;
+            const fail = canalDatabase.filter(c => c.status === 'fail').length;
+            const total = canalDatabase.length;
+            document.getElementById('diag-summary').innerText =
+                (ok + fail) > 0 ? `${ok}/${total} OK` : '';
+        }
+
+        // ================= LISTA / PLAYER =================
+
         function renderChannels() {
             const listContainer = document.getElementById('channel-list');
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const activeName = listContainer.querySelector('.channel-item.active .channel-name span')?.textContent;
             listContainer.innerHTML = '';
 
             const filtered = canalDatabase.filter(c => {
-                const matchCategory = currentCategory === 'all' || 
-                                     c.category === currentCategory || 
-                                     c.country === currentCategory;
+                const matchCategory = currentCategory === 'all' || c.category === currentCategory || c.country === currentCategory;
                 const matchSearch = c.name.toLowerCase().includes(searchVal);
                 return matchCategory && matchSearch;
             });
@@ -497,33 +561,47 @@
             }
 
             filtered.forEach(channel => {
+                const wrapper = document.createElement('div');
+
                 const div = document.createElement('div');
                 div.className = 'channel-item';
-                
+                if (channel.name === activeName) div.classList.add('active');
+
                 let badgeClass = 'badge-intl';
                 if (channel.country === 'br') badgeClass = 'badge-br';
                 if (channel.country === 'ar') badgeClass = 'badge-ar';
 
+                const dotClass = channel.status === 'ok' ? 'ok'
+                    : channel.status === 'fail' ? 'fail'
+                    : channel.status === 'testing' ? 'testing'
+                    : '';
+
                 div.innerHTML = `
-                    <span>> ${channel.name}</span>
-                    <span class="badge ${badgeClass}">${channel.country.toUpperCase()}</span>
+                    <span class="channel-name"><span class="status-dot ${dotClass}"></span><span>${channel.name}</span></span>
+                    <span class="badge-group"><span class="badge ${badgeClass}">${channel.country.toUpperCase()}</span></span>
                 `;
                 div.onclick = () => playChannel(channel, div);
-                listContainer.appendChild(div);
+                wrapper.appendChild(div);
+
+                if (channel.status === 'fail' && channel.reason) {
+                    const reasonEl = document.createElement('div');
+                    reasonEl.className = 'status-reason';
+                    reasonEl.innerText = `↳ ${channel.reason}`;
+                    wrapper.appendChild(reasonEl);
+                }
+
+                listContainer.appendChild(wrapper);
             });
         }
 
         function playChannel(channel, element) {
             document.getElementById('now-playing').innerText = `[ CONECTANDO: // ${channel.name.toUpperCase()} ]`;
-            
+
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
-            if(element) element.classList.add('active');
+            if (element) element.classList.add('active');
 
             vjsPlayer.reset();
-            vjsPlayer.src({
-                src: getPlayableUrl(channel),
-                type: 'application/x-mpegURL'
-            });
+            vjsPlayer.src({ src: getPlayableUrl(channel), type: 'application/x-mpegURL' });
 
             vjsPlayer.play().then(() => {
                 document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
@@ -535,7 +613,7 @@
         function changeCategory(cat, btn) {
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
+            if (btn) btn.classList.add('active');
             renderChannels();
         }
 
