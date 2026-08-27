@@ -336,8 +336,8 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // Substitua pelo seu Worker do Cloudflare quando criar. Se mantido em branco, usará o proxy público automático.
-        const PROXY_WORKER = '';
+        // Proxy Cloudflare configurado e ativo
+        const PROXY_WORKER = 'https://bolota-tv-proxy.betaincensos.workers.dev/';
         const FALLBACK_PUBLIC_PROXY = 'https://corsproxy.io/?';
 
         const TEST_TIMEOUT_MS = 8000;
@@ -394,8 +394,10 @@
 
         function getPlayableUrl(channel) {
             if (!precisaDeProxy(channel.url)) return channel.url;
+            
             if (PROXY_WORKER && PROXY_WORKER.trim() !== '') {
-                let proxied = PROXY_WORKER + '?url=' + encodeURIComponent(channel.url);
+                const baseUrl = PROXY_WORKER.endsWith('/') ? PROXY_WORKER : PROXY_WORKER + '/';
+                let proxied = baseUrl + '?url=' + encodeURIComponent(channel.url);
                 if (channel.ref) proxied += '&ref=' + encodeURIComponent(channel.ref);
                 return proxied;
             }
