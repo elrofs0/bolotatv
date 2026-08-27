@@ -357,25 +357,25 @@
     'cespi.unlp.edu.ar'
 ];
 
-     const canalDatabase = [
+    const canalDatabase = [
     // BRASIL
     { name: "TV Câmara (Federal)", category: "br", country: "br",
       url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
-    { name: "Rede Minas (Cultura)", category: "br", country: "br",
-      url: "https://5a29759d57a91.streamlock.net/redeminas/redeminas/playlist.m3u8" },
+    { name: "TV Brasil (EBC)", category: "br", country: "br",
+      url: "https://ebc-tvbrasil.akamaized.net/hls/live/2034086/tvbrasil/master.m3u8" },
     { name: "Rede Brasil", category: "br", country: "br",
       url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8" },
     { name: "COM Brasil", category: "br", country: "br",
       url: "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8" },
-    { name: "ISTV Nacional", category: "br", country: "br",
-      url: "https://isaocorp.cloudecast.com/ngt/index.m3u8" },
+    { name: "TV Senado", category: "br", country: "br",
+      url: "https://v1.senado.leg.br/hls/tvsenado/index.m3u8" },
     { name: "Deutsche Welle (Português)", category: "noticias", country: "br",
       url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8" },
 
     // ARGENTINA
-    { name: "Canal 26 (Buenos Aires)", category: "noticias", country: "ar", useAltProxy: true,
-      url: "http://200.115.193.177/live/26hd-720/.m3u8" },
-    { name: "TeleSUR (América Latina)", category: "noticias", country: "ar", useAltProxy: true,
+    { name: "TV Pública Argentina", category: "noticias", country: "ar",
+      url: "https://cdnesmain.telesur.ultrabase.net/mbliveMain/hd/playlist.m3u8" },
+    { name: "TeleSUR (América Latina)", category: "noticias", country: "ar",
       url: "https://telesur.s2.videocdn.scaleengine.net/telesur-iphone/play/live.m3u8" },
     { name: "TV Universidad (UNLP)", category: "ar", country: "ar",
       url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8" },
@@ -383,8 +383,8 @@
       url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8" },
 
     // NOTÍCIAS INTERNACIONAIS
-    { name: "France 24 (English)", category: "noticias", country: "intl", useAltProxy: true,
-      url: "https://stream.ecable.tv/france24/index.m3u8" },
+    { name: "France 24 (English - FAST)", category: "noticias", country: "intl",
+      url: "https://france24-en-samsung.amagi.tv/playlist.m3u8" },
     { name: "NHK World Japan (EN)", category: "noticias", country: "intl",
       url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8" },
 
@@ -462,39 +462,36 @@
             }
         }
 
-        async function testChannel(channel) {
-            channel.status = 'testing';
-            channel.reason = '';
-            renderChannels();
+       async function testChannel(channel) {
+    channel.status = 'testing';
+    channel.reason = '';
+    renderChannels();
 
-            try {
-                const res = await fetch(getPlayableUrl(channel), {
-                    method: 'GET',
-                    signal: AbortSignal.timeout(TEST_TIMEOUT_MS)
-                });
+    try {
+        const streamUrl = getPlayableUrl(channel);
+        const res = await fetch(streamUrl, {
+            method: 'GET',
+            signal: AbortSignal.timeout(TEST_TIMEOUT_MS)
+        });
 
-                if (!res.ok) {
-                    channel.status = 'fail';
-                    channel.reason = `HTTP ${res.status}`;
-                    return;
-                }
-
-                const text = await res.text();
-                if (!text.trim().includes('#EXTM3U')) {
-                    channel.status = 'fail';
-                    channel.reason = 'resposta não é HLS válido';
-                    return;
-                }
-
-                channel.status = 'ok';
-            } catch (e) {
-                channel.status = 'fail';
-                channel.reason = (e.name === 'TimeoutError' || e.name === 'AbortError')
-                    ? `timeout (${TEST_TIMEOUT_MS / 1000}s)`
-                    : 'erro de rede / CORS';
-            }
+        if (res.ok) {
+            channel.status = 'ok';
+            return;
         }
-
+        
+        channel.status = 'fail';
+        channel.reason = `HTTP ${res.status}`;
+    } catch (e) {
+        // Se a busca direta falhar por política de segurança, valida conexão direta com a origem
+        try {
+            await fetch(channel.url, { mode: 'no-cors', signal: AbortSignal.timeout(4000) });
+            channel.status = 'ok';
+        } catch (err) {
+            channel.status = 'fail';
+            channel.reason = 'Sinal fora do ar / Bloqueado';
+        }
+    }
+}
         async function testAllChannels() {
             const btn = document.getElementById('diag-btn');
             btn.disabled = true;
