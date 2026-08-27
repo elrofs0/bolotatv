@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.8 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.9 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -257,13 +257,6 @@
 
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .status-reason {
-            font-size: 0.65rem;
-            color: var(--terminal-red);
-            margin-left: 17px;
-            margin-top: -2px;
-        }
-
         .badge-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
 
         .badge {
@@ -275,7 +268,6 @@
         }
 
         .badge-br { border-color: #00ff66; color: #00ff66; }
-        .badge-ar { border-color: #00ccff; color: #00ccff; }
         .badge-intl { border-color: #ffaa00; color: #ffaa00; }
 
         @media (max-width: 900px) {
@@ -316,14 +308,12 @@
             </div>
 
             <div class="diag-bar">
-                <button class="diag-btn" id="diag-btn" onclick="testAllChannels()">[ ▶ TESTAR TODOS OS SINAIS ]</button>
+                <button class="diag-btn" id="diag-btn" onclick="testAllChannels()">[ ▶ TESTAR SINAIS ESTÁVEIS ]</button>
                 <span class="diag-summary" id="diag-summary"></span>
             </div>
             
             <div class="categories-bar">
                 <button class="cat-btn active" onclick="changeCategory('all', this)">[TODOS]</button>
-                <button class="cat-btn" onclick="changeCategory('br', this)">[BRASIL 🇧🇷]</button>
-                <button class="cat-btn" onclick="changeCategory('ar', this)">[ARGENTINA 🇦🇷]</button>
                 <button class="cat-btn" onclick="changeCategory('noticias', this)">[NOTÍCIAS]</button>
                 <button class="cat-btn" onclick="changeCategory('cine', this)">[CINE 24H]</button>
             </div>
@@ -335,50 +325,29 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        const TEST_TIMEOUT_MS = 6000;
-        const TEST_CONCURRENCY = 3;
+        const TEST_TIMEOUT_MS = 5000;
 
-        const PROXY_WORKER = 'https://bolotaproxy.betaincensos.workers.dev/?url=';
-
+        // Lista enxuta apenas com canais com alta disponibilidade
         const canalDatabase = [
-            // BRASIL (Sinais Oficiais e Diretos)
-            { name: "TV Câmara (Federal)", category: "br", country: "br", direct: true,
+            { name: "TV Câmara (Federal)", category: "noticias", country: "br",
               url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
-            { name: "TV Brasil (EBC)", category: "br", country: "br", direct: true,
-              url: "https://ebc-tvbrasil.akamaized.net/hls/live/2034086/tvbrasil/master.m3u8" },
-            { name: "TV Senado", category: "br", country: "br", direct: true,
-              url: "https://v1.senado.leg.br/hls/tvsenado/index.m3u8" },
-            { name: "COM Brasil", category: "br", country: "br", direct: false,
-              url: "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8" },
-            { name: "Rede Brasil", category: "br", country: "br", direct: false,
-              url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8" },
-            { name: "Deutsche Welle (PT)", category: "noticias", country: "br", direct: true,
+            { name: "Deutsche Welle (PT)", category: "noticias", country: "br",
               url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8" },
-
-            // AMÉRICA LATINA / ARGENTINA
-            { name: "TV Universidad (UNLP)", category: "ar", country: "ar", direct: true,
-              url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8" },
-            { name: "TV Solidaria", category: "ar", country: "ar", direct: false,
-              url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8" },
-
-            // NOTÍCIAS INTERNACIONAIS
-            { name: "France 24 (English)", category: "noticias", country: "intl", direct: true,
+            { name: "France 24 (English)", category: "noticias", country: "intl",
               url: "https://france24-en-samsung.amagi.tv/playlist.m3u8" },
-            { name: "NHK World Japan (EN)", category: "noticias", country: "intl", direct: true,
+            { name: "NHK World Japan (EN)", category: "noticias", country: "intl",
               url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8" },
-            { name: "Euronews (English)", category: "noticias", country: "intl", direct: true,
+            { name: "Euronews (English)", category: "noticias", country: "intl",
               url: "https://euronews-euronews-express-1-us.samsung.amagi.tv/playlist.m3u8" },
-
-            // CINE 24H
-            { name: "Sintel Movie 24H", category: "cine", country: "intl", direct: true,
+            { name: "Sintel Movie 24H", category: "cine", country: "intl",
               url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" },
-            { name: "Tears of Steel 4K", category: "cine", country: "intl", direct: true,
+            { name: "Tears of Steel 4K", category: "cine", country: "intl",
               url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" },
-            { name: "Big Buck Bunny 24H", category: "cine", country: "intl", direct: true,
+            { name: "Big Buck Bunny 24H", category: "cine", country: "intl",
               url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" }
         ];
 
-        canalDatabase.forEach(c => { c.status = undefined; c.reason = ''; c.useProxy = false; });
+        canalDatabase.forEach(c => { c.status = undefined; });
 
         let vjsPlayer;
         let currentCategory = 'all';
@@ -389,13 +358,6 @@
                 controls: true,
                 responsive: true,
                 fluid: true
-            });
-
-            vjsPlayer.on('error', () => {
-                const err = vjsPlayer.error();
-                const code = err ? err.code : '?';
-                document.getElementById('now-playing').innerText =
-                    `[ ERRO ${code}: FALHA NO SINAL DO CANAL ]`;
             });
 
             updateClock();
@@ -424,32 +386,17 @@
 
         async function testChannel(channel) {
             channel.status = 'testing';
-            channel.reason = '';
             renderChannels();
 
-            // Teste 1: Conexão Direta Sem Proxy
             try {
                 const res = await fetch(channel.url, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
                 if (res.ok) {
                     channel.status = 'ok';
-                    channel.useProxy = false;
-                    return;
-                }
-            } catch (e) {}
-
-            // Teste 2: Se falhar direto, testa via Worker
-            try {
-                const pUrl = PROXY_WORKER + encodeURIComponent(channel.url);
-                const res = await fetch(pUrl, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
-                if (res.ok) {
-                    channel.status = 'ok';
-                    channel.useProxy = true;
                     return;
                 }
             } catch (e) {}
 
             channel.status = 'fail';
-            channel.reason = 'Sinal Inacessível';
         }
 
         async function testAllChannels() {
@@ -457,28 +404,21 @@
             btn.disabled = true;
             btn.innerText = '[ TESTANDO... ]';
 
-            const queue = [...canalDatabase];
-            const workers = Array.from({ length: TEST_CONCURRENCY }, async () => {
-                while (queue.length) {
-                    const channel = queue.shift();
-                    await testChannel(channel);
-                    renderChannels();
-                    updateDiagSummary();
-                }
-            });
-            await Promise.all(workers);
+            for (const channel of canalDatabase) {
+                await testChannel(channel);
+                renderChannels();
+                updateDiagSummary();
+            }
 
             btn.disabled = false;
-            btn.innerText = '[ ▶ TESTAR TODOS OS SINAIS ]';
+            btn.innerText = '[ ▶ TESTAR SINAIS ESTÁVEIS ]';
             updateDiagSummary();
         }
 
         function updateDiagSummary() {
             const ok = canalDatabase.filter(c => c.status === 'ok').length;
-            const fail = canalDatabase.filter(c => c.status === 'fail').length;
             const total = canalDatabase.length;
-            document.getElementById('diag-summary').innerText =
-                (ok + fail) > 0 ? `${ok}/${total} OK` : '';
+            document.getElementById('diag-summary').innerText = `${ok}/${total} OK`;
         }
 
         function renderChannels() {
@@ -488,20 +428,17 @@
             listContainer.innerHTML = '';
 
             const filtered = canalDatabase.filter(c => {
-                const matchCategory = currentCategory === 'all' || c.category === currentCategory || c.country === currentCategory;
+                const matchCategory = currentCategory === 'all' || c.category === currentCategory;
                 const matchSearch = c.name.toLowerCase().includes(searchVal);
                 return matchCategory && matchSearch;
             });
 
             filtered.forEach(channel => {
-                const wrapper = document.createElement('div');
                 const div = document.createElement('div');
                 div.className = 'channel-item';
                 if (channel.name === activeName) div.classList.add('active');
 
-                let badgeClass = 'badge-intl';
-                if (channel.country === 'br') badgeClass = 'badge-br';
-                if (channel.country === 'ar') badgeClass = 'badge-ar';
+                let badgeClass = channel.country === 'br' ? 'badge-br' : 'badge-intl';
 
                 const dotClass = channel.status === 'ok' ? 'ok'
                     : channel.status === 'fail' ? 'fail'
@@ -513,37 +450,19 @@
                     <span class="badge-group"><span class="badge ${badgeClass}">${channel.country.toUpperCase()}</span></span>
                 `;
                 div.onclick = () => playChannel(channel, div);
-                wrapper.appendChild(div);
-
-                if (channel.status === 'fail' && channel.reason) {
-                    const reasonEl = document.createElement('div');
-                    reasonEl.className = 'status-reason';
-                    reasonEl.innerText = `↳ ${channel.reason}`;
-                    wrapper.appendChild(reasonEl);
-                }
-
-                listContainer.appendChild(wrapper);
+                listContainer.appendChild(div);
             });
         }
 
         function playChannel(channel, element) {
-            document.getElementById('now-playing').innerText = `[ CONECTANDO: // ${channel.name.toUpperCase()} ]`;
+            document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
 
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
             if (element) element.classList.add('active');
 
             vjsPlayer.reset();
-            
-            // Escolhe rota direta ou via Worker dependendo da necessidade do sinal
-            const finalUrl = (channel.useProxy || !channel.direct) 
-                ? (PROXY_WORKER + encodeURIComponent(channel.url)) 
-                : channel.url;
-
-            vjsPlayer.src({ src: finalUrl, type: 'application/x-mpegURL' });
-
-            vjsPlayer.play().then(() => {
-                document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
-            }).catch(() => {
+            vjsPlayer.src({ src: channel.url, type: 'application/x-mpegURL' });
+            vjsPlayer.play().catch(() => {
                 document.getElementById('now-playing').innerText = `[ CLIQUE NO PLAYER PARA INICIAR ]`;
             });
         }
