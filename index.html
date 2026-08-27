@@ -65,9 +65,9 @@
         .channel-info p { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
         .channel-info h2 { font-size: 1.3rem; font-weight: 500; }
         
-        .controls { display: flex; gap: 15px; align-items: center; }
-        .pip-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
-        .pip-btn:hover { background: rgba(255,255,255,0.2); }
+        .controls { display: flex; gap: 10px; align-items: center; }
+        .pip-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+        .pip-btn:hover { background: rgba(255,255,255,0.25); border-color: rgba(0, 168, 255, 0.5); }
 
         @media (max-width: 900px) {
             .menu-toggle { display: block; }
@@ -102,7 +102,7 @@
         <div class="player-wrapper" id="playerWrapper">
             <iframe id="yt-player" 
                     src="https://www.youtube-nocookie.com/embed/gCNeDWCI0vo?autoplay=1&mute=1" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
                     allowfullscreen>
             </iframe>
         </div>
@@ -112,7 +112,8 @@
                 <h2 id="current-channel">Record News Ao Vivo</h2>
             </div>
             <div class="controls">
-                <button class="pip-btn" onclick="toggleMiniPlayer()">🔳 Modo Mini-Player (PIP)</button>
+                <button class="pip-btn" onclick="toggleFullScreen()">📺 Tela Inteira</button>
+                <button class="pip-btn" onclick="toggleMiniPlayer()">🔳 Mini-Player (PIP)</button>
             </div>
         </div>
     </div>
@@ -121,9 +122,10 @@
         const channelsData = [
             // TV Aberta & Notícias
             { id: 'gCNeDWCI0vo', name: 'Record News Ao Vivo', category: 'TV Aberta & Notícias' },
-            { id: '21X5lGlDOfg', name: 'NASA TV Ao Vivo', category: 'TV Aberta & Notícias' },
+            { id: '21X5lGlDOfg', name: 'NASA TV Ao Vivo (Espaço)', category: 'TV Aberta & Notícias' },
             
             // Música & Entretenimento
+            { id: 'lP1rXrJQhvQ', name: 'Stray Kids - God\'s Menu (Ao Vivo)', category: 'Música & Entretenimento' },
             { id: 'w4cTYnOPdNk', name: 'Stray Kids - MANIAC (Ao Vivo)', category: 'Música & Entretenimento' },
             { id: 'dBD90g1sU3M', name: 'Stray Kids - S-Class (Ao Vivo)', category: 'Música & Entretenimento' },
             { id: 'jfKfPfyJRdk', name: 'Lofi Girl (Música para Estudar)', category: 'Música & Entretenimento' },
@@ -138,7 +140,7 @@
             { id: 'rfscVS0vtbw', name: 'Lógica de Programação', category: 'Ciência & Tecnologia' }
         ];
 
-        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v5')) || [];
+        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v6')) || [];
         let currentActiveId = 'gCNeDWCI0vo';
 
         function renderChannels() {
@@ -179,7 +181,7 @@
         function toggleFavorite(id, event) {
             event.stopPropagation();
             favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
-            localStorage.setItem('bolota_tv_favs_v5', JSON.stringify(favorites));
+            localStorage.setItem('bolota_tv_favs_v6', JSON.stringify(favorites));
             renderChannels();
         }
 
@@ -189,13 +191,28 @@
             
             currentActiveId = ch.id;
             const player = document.getElementById('yt-player');
-            const originHost = window.location.origin;
-            
-            player.src = `https://www.youtube-nocookie.com/embed/${ch.id}?autoplay=1&origin=${encodeURIComponent(originHost)}`;
+            player.src = `https://www.youtube-nocookie.com/embed/${ch.id}?autoplay=1`;
             document.getElementById('current-channel').innerText = ch.name;
             renderChannels(); 
 
             if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+        }
+
+        function toggleFullScreen() {
+            const elem = document.getElementById('playerWrapper');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
         }
 
         function toggleMiniPlayer() { document.getElementById('playerWrapper').classList.toggle('mini-mode'); }
