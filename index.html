@@ -96,18 +96,16 @@
             <span id="local-weather">Buscando Clima...</span>
         </div>
 
-        <div class="channel-list" id="channelList">
-            <!-- Gerado pelo Javascript -->
-        </div>
+        <div class="channel-list" id="channelList"></div>
     </div>
 
     <div class="main-content" onclick="closeMenuOnVideoClick()">
         <div class="player-wrapper" id="playerWrapper">
-           <iframe id="yt-player" 
-        src="https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1" 
-        allow="autoplay; encrypted-media; picture-in-picture" 
-        allowfullscreen>
-</iframe>
+            <iframe id="yt-player" 
+                    src="https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1" 
+                    allow="autoplay; encrypted-media; picture-in-picture" 
+                    allowfullscreen>
+            </iframe>
         </div>
         <div class="player-footer">
             <div class="channel-info">
@@ -123,27 +121,26 @@
     <script>
         const channelsData = [
             // TV Aberta & Notícias
-            { id: 'gCNeDWCI0vo', type: 'video', name: 'Record News Ao Vivo', category: 'TV Aberta & Notícias' },
-            { id: 'u0k-rU0WpEU', type: 'video', name: 'Band News Ao Vivo', category: 'TV Aberta & Notícias' },
-            { id: '21X5lGlDOfg', type: 'video', name: 'NASA TV Ao Vivo (Espaço)', category: 'TV Aberta & Notícias' },
+            { id: 'gCNeDWCI0vo', name: 'Record News Ao Vivo', category: 'TV Aberta & Notícias' },
+            { id: 'u0k-rU0WpEU', name: 'Band News Ao Vivo', category: 'TV Aberta & Notícias' },
+            { id: '21X5lGlDOfg', name: 'NASA TV Ao Vivo', category: 'TV Aberta & Notícias' },
             
             // Música & Entretenimento (Evelyn)
-            { id: 'tDukIfEwY10', type: 'video', name: 'Stray Kids - God\'s Menu', category: 'Música & Entretenimento' },
-            { id: 'JsOOis4bC4w', type: 'video', name: 'Stray Kids - S-Class', category: 'Música & Entretenimento' },
-            { id: 'jfKfPfyJRdk', type: 'video', name: 'Lofi Girl (Música para Estudar)', category: 'Música & Entretenimento' },
+            { id: 'w4cTYnOPdNk', name: 'Stray Kids - MANIAC (Ao Vivo)', category: 'Música & Entretenimento' },
+            { id: 'dBD90g1sU3M', name: 'Stray Kids - S-Class (Ao Vivo)', category: 'Música & Entretenimento' },
+            { id: 'jfKfPfyJRdk', name: 'Lofi Girl (Música para Estudar)', category: 'Música & Entretenimento' },
 
-            // Filosofia & Ocultismo (Everton)
-            { id: '7n_ZfM-XW9M', type: 'video', name: 'O Caibalion (Audiolivro Completo)', category: 'Filosofia & Oculto' },
-            { id: 'R31Q4Vyl2D0', type: 'video', name: 'Aristóteles: Ética a Nicômaco', category: 'Filosofia & Oculto' },
-            { id: 'hV_1d-9Q8d8', type: 'video', name: 'Platão: A República e a Caverna', category: 'Filosofia & Oculto' },
-            { id: 'T6xV2Yy0M34', type: 'video', name: 'Introdução à Astrologia Hermética', category: 'Filosofia & Oculto' },
+            // Filosofia & Oculto
+            { id: '7n_ZfM-XW9M', name: 'O Caibalion (Audiolivro)', category: 'Filosofia & Oculto' },
+            { id: 'R31Q4Vyl2D0', name: 'Aristóteles: Ética a Nicômaco', category: 'Filosofia & Oculto' },
+            { id: 'hV_1d-9Q8d8', name: 'Platão: A República', category: 'Filosofia & Oculto' },
 
             // Ciência & Tecnologia
-            { id: 'W9S_V9XW0z0', type: 'video', name: 'Física Quântica Documentário', category: 'Ciência & Tecnologia' },
-            { id: 'rfscVS0vtbw', type: 'video', name: 'Lógica de Programação Completa', category: 'Ciência & Tecnologia' }
+            { id: 'W9S_V9XW0z0', name: 'Física Quântica Documentário', category: 'Ciência & Tecnologia' },
+            { id: 'rfscVS0vtbw', name: 'Lógica de Programação', category: 'Ciência & Tecnologia' }
         ];
 
-        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v3')) || [];
+        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v4')) || [];
         let currentActiveId = 'gCNeDWCI0vo';
 
         function renderChannels() {
@@ -152,24 +149,30 @@
             
             if (favorites.length > 0) {
                 listElement.innerHTML += `<div class="category-title">⭐ Favoritos</div>`;
-                channelsData.filter(ch => favorites.includes(ch.id)).forEach(ch => listElement.innerHTML += createChannelHTML(ch, true));
+                channelsData.forEach((ch, idx) => {
+                    if (favorites.includes(ch.id)) {
+                        listElement.innerHTML += createChannelHTML(ch, idx, true);
+                    }
+                });
             }
 
             const categories = [...new Set(channelsData.map(ch => ch.category))];
             categories.forEach(category => {
                 listElement.innerHTML += `<div class="category-title">📺 ${category}</div>`;
-                channelsData.filter(ch => ch.category === category).forEach(ch => {
-                    listElement.innerHTML += createChannelHTML(ch, favorites.includes(ch.id));
+                channelsData.forEach((ch, idx) => {
+                    if (ch.category === category) {
+                        listElement.innerHTML += createChannelHTML(ch, idx, favorites.includes(ch.id));
+                    }
                 });
             });
         }
 
-        function createChannelHTML(channel, isFav) {
+        function createChannelHTML(channel, index, isFav) {
             const activeClass = (channel.id === currentActiveId) ? 'active' : '';
             const favClass = isFav ? 'favorited' : '';
             return `
-                <div class="channel-item ${activeClass}" id="btn-${channel.id}">
-                    <div class="channel-name" onclick="playChannel('${channel.id}', '${channel.type}', '${channel.name}')">${channel.name}</div>
+                <div class="channel-item ${activeClass}">
+                    <div class="channel-name" onclick="playChannelByIndex(${index})">${channel.name}</div>
                     <button class="fav-btn ${favClass}" onclick="toggleFavorite('${channel.id}', event)">★</button>
                 </div>
             `;
@@ -178,24 +181,21 @@
         function toggleFavorite(id, event) {
             event.stopPropagation();
             favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
-            localStorage.setItem('bolota_tv_favs_v3', JSON.stringify(favorites));
+            localStorage.setItem('bolota_tv_favs_v4', JSON.stringify(favorites));
             renderChannels();
         }
-        renderChannels();
 
-        function playChannel(id, type, channelName) {
-    currentActiveId = id;
-    const player = document.getElementById('yt-player');
-    
-    // Ao clicar em um canal, o som entra automaticamente sem mudo
-    let url = `https://www.youtube.com/embed/${id}?autoplay=1`;
-    
-    player.src = url;
-    document.getElementById('current-channel').innerText = channelName;
-    renderChannels(); 
+        function playChannelByIndex(index) {
+            const ch = channelsData[index];
+            if (!ch) return;
+            
+            currentActiveId = ch.id;
+            const player = document.getElementById('yt-player');
+            player.src = `https://www.youtube.com/embed/${ch.id}?autoplay=1`;
+            document.getElementById('current-channel').innerText = ch.name;
+            renderChannels(); 
 
-    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-}
+            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
         }
 
         function toggleMiniPlayer() { document.getElementById('playerWrapper').classList.toggle('mini-mode'); }
@@ -233,6 +233,8 @@
             } else fetchWeather(-29.6842, -53.8069);
         }
         getLocationAndWeather(); setInterval(getLocationAndWeather, 1800000);
+
+        renderChannels();
     </script>
 </body>
 </html>
