@@ -406,18 +406,20 @@
         }
 
         function getPlayableUrl(channel) {
-            if (!precisaDeProxy(channel)) return channel.url;
-            
-            if (PROXY_WORKER && PROXY_WORKER.trim() !== '') {
-                const base = PROXY_WORKER.trim().endsWith('/') ? PROXY_WORKER.trim() : PROXY_WORKER.trim() + '/';
-                let proxied = base + '?url=' + encodeURIComponent(channel.url);
-                if (channel.ref) {
-                    proxied += '&ref=' + encodeURIComponent(channel.ref);
-                }
-                return proxied;
-            }
-            return FALLBACK_PUBLIC_PROXY + encodeURIComponent(channel.url);
-        }
+    // Se o canal requer bypass do IP Cloudflare, usa corsproxy.io
+    if (channel.useAltProxy) {
+        return 'https://corsproxy.io/?' + encodeURIComponent(channel.url);
+    }
+
+    if (!precisaDeProxy(channel)) return channel.url;
+
+    if (PROXY_WORKER && PROXY_WORKER.trim() !== '') {
+        const base = PROXY_WORKER.trim().endsWith('/') ? PROXY_WORKER.trim() : PROXY_WORKER.trim() + '/';
+        return base + '?url=' + encodeURIComponent(channel.url);
+    }
+
+    return 'https://corsproxy.io/?' + encodeURIComponent(channel.url);
+}
 
         document.addEventListener('DOMContentLoaded', () => {
             vjsPlayer = videojs('vjs-player', {
