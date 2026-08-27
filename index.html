@@ -71,7 +71,7 @@
         /* Container Principal */
         .main-container {
             display: grid;
-            grid-template-columns: 1fr 360px;
+            grid-template-columns: 1fr 380px;
             gap: 20px;
             padding: 20px;
             max-width: 1600px;
@@ -92,11 +92,12 @@
             position: relative;
             width: 100%;
             height: 0;
-            padding-bottom: 56.25%; /* 16:9 */
+            padding-bottom: 56.25%;
             background-color: #000;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid #222531;
         }
 
         .iframe-wrapper iframe {
@@ -106,6 +107,45 @@
             width: 100%;
             height: 100%;
             border: none;
+        }
+
+        /* Plano B - Aviso de Bloqueio */
+        .player-fallback {
+            background-color: #14161d;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #222531;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .player-fallback span {
+            font-size: 0.85rem;
+            color: #a0a6b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .player-fallback a {
+            background-color: #e50914;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .player-fallback a:hover {
+            background-color: #b20710;
         }
 
         .channel-info {
@@ -136,18 +176,17 @@
             height: 100%;
         }
 
-        /* Categorias (Scroll Horizontal Limpo) */
         .categories-bar {
             display: flex;
             gap: 8px;
             padding: 12px;
             border-bottom: 1px solid #222531;
             overflow-x: auto;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
 
         .categories-bar::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
+            display: none;
         }
 
         .category-btn {
@@ -168,7 +207,6 @@
             border-color: #6366f1;
         }
 
-        /* Lista de Canais (Scroll Vertical Escuro) */
         .channel-list {
             flex: 1;
             overflow-y: auto;
@@ -178,7 +216,6 @@
             gap: 8px;
         }
 
-        /* Scrollbar customizada escura */
         .channel-list::-webkit-scrollbar {
             width: 6px;
         }
@@ -193,7 +230,6 @@
             background: #3f4457;
         }
 
-        /* Card de Canal */
         .channel-card {
             display: flex;
             align-items: center;
@@ -255,7 +291,11 @@
                 height: auto;
             }
             .sidebar {
-                height: 500px;
+                height: 450px;
+            }
+            .player-fallback {
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
@@ -279,6 +319,12 @@
             <div class="iframe-wrapper">
                 <iframe id="videoPlayer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
             </div>
+            
+            <div class="player-fallback">
+                <span><i class="fa-solid fa-circle-info"></i> Vídeo preto ou indisponível? A emissora bloqueou a exibição externa.</span>
+                <a id="externalLink" href="#" target="_blank"><i class="fa-brands fa-youtube"></i> Abrir no YouTube</a>
+            </div>
+
             <div class="channel-info">
                 <h2 id="currentTitle">Carregando...</h2>
                 <p id="currentDesc">Selecione um canal na lista ao lado.</p>
@@ -290,7 +336,7 @@
             <div class="categories-bar">
                 <button class="category-btn active" onclick="filterCategory('todos', this)">Todos</button>
                 <button class="category-btn" onclick="filterCategory('noticias', this)">Notícias</button>
-                <button class="category-btn" onclick="filterCategory('filmes', this)">Filmes & Séries</button>
+                <button class="category-btn" onclick="filterCategory('filmes', this)">Filmes & Música</button>
                 <button class="category-btn" onclick="filterCategory('educacao', this)">Educação</button>
                 <button class="category-btn" onclick="filterCategory('local', this)">Local RS</button>
             </div>
@@ -300,26 +346,48 @@
 
     <script>
         const channels = [
-            // Educação & Programação (Vídeo testado e funcionando)
+            // CURSOS (Links VOD Permanentes com Embed Liberado)
             {
-                id: "rfscVS0vtbw",
-                name: "Lógica de Programação (Curso Completo)",
+                id: "8mei6uVttho",
+                ytLink: "https://www.youtube.com/watch?v=8mei6uVttho",
+                name: "Lógica de Programação - Aula 1",
                 category: "educacao",
-                desc: "Curso completo de algoritmos e lógica de programação - Curso em Vídeo.",
+                desc: "Curso completo de algoritmos - Curso em Vídeo (Prof. Guanabara).",
+                tag: "Curso",
+                tagClass: "tag-course"
+            },
+            {
+                id: "S9uPNppGsGo",
+                ytLink: "https://www.youtube.com/watch?v=S9uPNppGsGo",
+                name: "Curso de Python - Iniciante",
+                category: "educacao",
+                desc: "Aprenda Python do zero - Curso em Vídeo.",
                 tag: "Curso",
                 tagClass: "tag-course"
             },
             {
                 id: "21X5lGlDOfg",
-                name: "NASA TV - Transmissão do Espaço",
+                ytLink: "https://www.youtube.com/watch?v=21X5lGlDOfg",
+                name: "NASA TV - Direto do Espaço",
                 category: "educacao",
-                desc: "Visão da Terra ao vivo diretamente da Estação Espacial Internacional (ISS).",
+                desc: "Visão da Terra ao vivo através das câmeras da Estação Espacial (ISS).",
                 tag: "Ao Vivo",
                 tagClass: "tag-live"
             },
-            // Notícias
+            
+            // NOTÍCIAS (Usando o ID do canal para puxar a Live atual sempre)
             {
-                id: "gCNeDWCI010",
+                id: "live_stream?channel=UCuiLR4p6wQ3xLEm15pEn1Xw",
+                ytLink: "https://www.youtube.com/@recordnews/live",
+                name: "Record News",
+                category: "noticias",
+                desc: "Canal de jornalismo 24h da Rede Record.",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            {
+                id: "live_stream?channel=UC93p-68fC34y5mThv2I3e0g",
+                ytLink: "https://www.youtube.com/@jovempannews/live",
                 name: "Jovem Pan News",
                 category: "noticias",
                 desc: "Jornalismo ao vivo, coberturas e análises em tempo real.",
@@ -327,61 +395,60 @@
                 tagClass: "tag-live"
             },
             {
-                id: "vBq4k8i7k3g",
-                name: "BandNews TV",
+                id: "live_stream?channel=UC-nxb3iF_V_gB0u1G8pQ18A",
+                ytLink: "https://www.youtube.com/@sbtnews/live",
+                name: "SBT News",
                 category: "noticias",
-                desc: "Transmissão 24 horas de notícias do Brasil e do mundo.",
+                desc: "Cobertura de notícias e fatos diários pelo SBT.",
                 tag: "Ao Vivo",
                 tagClass: "tag-live"
             },
             {
-                id: "S3_P0A8eE9M",
-                name: "Record News",
-                category: "noticias",
-                desc: "Canal de jornalismo da Rede Record com notícias atualizadas.",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
-            },
-            {
-                id: "9A2g4zY3jL0",
+                id: "live_stream?channel=UC4Sj06I1K2bO2sEIn6Q0lDg",
+                ytLink: "https://www.youtube.com/@tvsenado/live",
                 name: "TV Senado",
                 category: "noticias",
-                desc: "Transmissões ao vivo do Congresso Nacional e decisões políticas.",
+                desc: "Transmissões ao vivo do Senado Federal.",
                 tag: "Ao Vivo",
                 tagClass: "tag-live"
             },
-            // Filmes e Entretenimento
+
+            // FILMES E MÚSICA (Links Permanentes)
             {
-                id: "PL23C7D4E755106198", // Playlist NetMovies
-                isPlaylist: true,
-                name: "NetMovies - Filmes Dublados",
+                id: "jfKfPfyJRdk",
+                ytLink: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+                name: "Lofi Girl - Relax & Focus",
                 category: "filmes",
-                desc: "Sessão contínua com filmes completos e licenciados em português.",
-                tag: "Filmes",
+                desc: "Rádio 24/7 com beats Lofi para estudar, programar ou relaxar.",
+                tag: "Ao Vivo",
+                tagClass: "tag-live"
+            },
+            {
+                id: "v2hZ9Z1K1pM",
+                ytLink: "https://www.youtube.com/watch?v=v2hZ9Z1K1pM",
+                name: "NetMovies - O Substituto (Ação)",
+                category: "filmes",
+                desc: "Filme completo dublado em alta qualidade.",
+                tag: "Filme",
                 tagClass: "tag-movie"
             },
             {
-                id: "jfKfPfyJRdk",
-                name: "Lofi Girl - Relax & Focus Radio",
+                id: "wK1gQx0wA4k",
+                ytLink: "https://www.youtube.com/watch?v=wK1gQx0wA4k",
+                name: "NetMovies - Comédia Completa",
                 category: "filmes",
-                desc: "Música 24/7 para concentração, estudos e programação.",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
+                desc: "Filme de comédia disponível gratuitamente pelo canal oficial.",
+                tag: "Filme",
+                tagClass: "tag-movie"
             },
-            // Locais (Santa Maria - RS)
+
+            // LOCAL RS
             {
-                id: "videoseries?list=PL3eWnO2EwX92k3P8L3", // ID de Exemplo / Canal Institucional
-                name: "TV Cámara Santa Maria (RS)",
+                id: "live_stream?channel=UCqR53N2sUpwQZ9pPkW3O4Ew",
+                ytLink: "https://www.youtube.com/@TVCamaraSantaMaria/live",
+                name: "TV Câmara Santa Maria (RS)",
                 category: "local",
-                desc: "Sessões e transmissões oficiais da Câmara Municipal de SM.",
-                tag: "Local RS",
-                tagClass: "tag-local"
-            },
-            {
-                id: "videoseries?list=PLR1j0s0P8H90J1s3",
-                name: "TV Campus UFSM",
-                category: "local",
-                desc: "Conteúdos acadêmicos e jornalísticos da Universidade Federal de SM.",
+                desc: "Transmissões oficiais da Câmara Municipal de SM.",
                 tag: "Local RS",
                 tagClass: "tag-local"
             }
@@ -402,7 +469,7 @@
 
             filtered.forEach((ch, index) => {
                 const card = document.createElement('div');
-                card.className = `channel-card ${index === 0 ? '' : ''}`;
+                card.className = `channel-card`;
                 card.onclick = () => playChannel(ch, card);
 
                 card.innerHTML = `
@@ -415,7 +482,7 @@
                 listElement.appendChild(card);
             });
 
-            // Auto-seleciona o primeiro da lista se o player estiver vazio
+            // Auto-seleciona o primeiro
             if (filtered.length > 0 && !document.getElementById('videoPlayer').src) {
                 playChannel(filtered[0], listElement.firstElementChild);
             }
@@ -424,15 +491,17 @@
         function playChannel(ch, element) {
             const player = document.getElementById('videoPlayer');
             
-            // Configura URL do embed dependendo se é vídeo único, live ou playlist
-            let embedUrl = ch.isPlaylist 
-                ? `https://www.youtube.com/embed/videoseries?list=${ch.id}&autoplay=1`
-                : `https://www.youtube.com/embed/${ch.id}?autoplay=1&rel=0`;
-
-            player.src = embedUrl;
+            // Monta o link de embed de forma limpa para evitar bloqueios de CORS
+            player.src = `https://www.youtube.com/embed/${ch.id}?autoplay=1&rel=0`;
+            
+            // Atualiza os dados na tela
             document.getElementById('currentTitle').innerText = ch.name;
             document.getElementById('currentDesc').innerText = ch.desc;
+            
+            // Atualiza o botão de emergência (Plano B)
+            document.getElementById('externalLink').href = ch.ytLink;
 
+            // Marca o selecionado
             document.querySelectorAll('.channel-card').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
         }
@@ -450,15 +519,15 @@
 
         function getCategoryLabel(cat) {
             const labels = {
-                noticias: 'TV Aberta & Notícias',
-                filmes: 'Entretenimento & Filmes',
+                noticias: 'TV & Notícias',
+                filmes: 'Filmes & Música',
                 educacao: 'Educação & Ciência',
                 local: 'Santa Maria - RS'
             };
             return labels[cat] || 'Geral';
         }
 
-        // Inicialização
+        // Inicia
         renderChannels();
     </script>
 </body>
