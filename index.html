@@ -4,531 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolota TV - Web Player</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Adicionando o CSS do Video.js para garantir a reprodução estável de .m3u8 (HLS) -->
+    <link href="https://zencdn.net" rel="stylesheet" />
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #0d0e12;
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: #14161d;
-            border-bottom: 1px solid #222531;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .logo i {
-            color: #e50914;
-        }
-
-        .search-box {
-            position: relative;
-            width: 320px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 8px 15px 8px 38px;
-            border-radius: 20px;
-            border: 1px solid #2a2e3d;
-            background-color: #1c1f2b;
-            color: #fff;
-            outline: none;
-            font-size: 0.9rem;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6c757d;
-        }
-
-        /* Container Principal */
-        .main-container {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 20px;
-            padding: 20px;
-            max-width: 1600px;
-            margin: 0 auto;
-            width: 100%;
-            height: calc(100vh - 70px);
-        }
-
-        /* Player */
-        .player-section {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            height: 100%;
-        }
-
-        .iframe-wrapper {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 56.25%;
-            background-color: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            border: 1px solid #222531;
-        }
-
-        .iframe-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Plano B - Aviso de Bloqueio */
-        .player-fallback {
-            background-color: #14161d;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid #222531;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .player-fallback span {
-            font-size: 0.85rem;
-            color: #a0a6b8;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .player-fallback a {
-            background-color: #e50914;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: background 0.2s;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .player-fallback a:hover {
-            background-color: #b20710;
-        }
-
-        .channel-info {
-            background-color: #14161d;
-            padding: 16px;
-            border-radius: 10px;
-            border: 1px solid #222531;
-        }
-
-        .channel-info h2 {
-            font-size: 1.2rem;
-            margin-bottom: 4px;
-        }
-
-        .channel-info p {
-            font-size: 0.85rem;
-            color: #a0a6b8;
-        }
-
-        /* Sidebar / Lista de Canais */
-        .sidebar {
-            background-color: #14161d;
-            border-radius: 12px;
-            border: 1px solid #222531;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            height: 100%;
-        }
-
-        .categories-bar {
-            display: flex;
-            gap: 8px;
-            padding: 12px;
-            border-bottom: 1px solid #222531;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .categories-bar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .category-btn {
-            background-color: #1c1f2b;
-            border: 1px solid #2a2e3d;
-            color: #a0a6b8;
-            padding: 6px 14px;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .category-btn:hover, .category-btn.active {
-            background-color: #6366f1;
-            color: #ffffff;
-            border-color: #6366f1;
-        }
-
-        .channel-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .channel-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .channel-list::-webkit-scrollbar-track {
-            background: #14161d;
-        }
-        .channel-list::-webkit-scrollbar-thumb {
-            background: #2a2e3d;
-            border-radius: 4px;
-        }
-        .channel-list::-webkit-scrollbar-thumb:hover {
-            background: #3f4457;
-        }
-
-        .channel-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 12px;
-            background-color: #1c1f2b;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .channel-card:hover {
-            background-color: #242838;
-            border-color: #3f4457;
-        }
-
-        .channel-card.active {
-            border-color: #6366f1;
-            background-color: rgba(99, 102, 241, 0.15);
-        }
-
-        .channel-details {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            overflow: hidden;
-        }
-
-        .channel-name {
-            font-size: 0.9rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .channel-category {
-            font-size: 0.75rem;
-            color: #a0a6b8;
-        }
-
-        .tag {
-            font-size: 0.65rem;
-            font-weight: bold;
-            padding: 3px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .tag-live { background-color: #e50914; color: #fff; }
-        .tag-local { background-color: #2563eb; color: #fff; }
-        .tag-course { background-color: #10b981; color: #fff; }
-        .tag-movie { background-color: #8b5cf6; color: #fff; }
-
-        @media (max-width: 900px) {
-            .main-container {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-            .sidebar {
-                height: 450px;
-            }
-            .player-fallback {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
+        body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin: 0; display: flex; height: 100vh; }
+        #sidebar { width: 250px; background: #1e1e1e; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        #main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        h1 { margin-top: 0; color: #00ff88; }
+        .category-btn { display: block; width: 100%; padding: 10px; margin: 5px 0; background: #333; color: #fff; border: none; text-align: left; cursor: pointer; border-radius: 4px; }
+        .category-btn:hover { background: #00ff88; color: #000; }
+        #player-container { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: #000; }
+        .video-js { width: 100% !important; height: 100% !important; }
+        #channel-list { margin-top: 15px; max-height: 300px; overflow-y: auto; }
+        .channel-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #333; }
+        .channel-item:hover { background: #444; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-            <i class="fa-solid fa-tv"></i>
-            <span>Bolota TV</span>
-        </div>
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Buscar canal ou categoria..." onkeyup="filterChannels()">
-        </div>
-    </header>
+    <!-- Menu Lateral -->
+    <div id="sidebar">
+        <h1>Bolota TV</h1>
+        <p>Selecione uma categoria:</p>
+        <button class="category-btn" onclick="loadCategory('news')">Todos Notícias</button>
+        <button class="category-btn" onclick="loadCategory('movies')">Filmes & Música</button>
+        <button class="category-btn" onclick="loadCategory('education')">Educação</button>
+        <button class="category-btn" onclick="loadCategory('local-rs')">Local RS</button>
+        
+        <!-- Lista de canais carregados da categoria -->
+        <div id="channel-list"></div>
+    </div>
 
-    <div class="main-container">
-        <!-- Player -->
-        <div class="player-section">
-            <div class="iframe-wrapper">
-                <iframe id="videoPlayer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-            </div>
-            
-            <div class="player-fallback">
-                <span><i class="fa-solid fa-circle-info"></i> Vídeo preto ou indisponível? A emissora bloqueou a exibição externa.</span>
-                <a id="externalLink" href="#" target="_blank"><i class="fa-brands fa-youtube"></i> Abrir no YouTube</a>
-            </div>
-
-            <div class="channel-info">
-                <h2 id="currentTitle">Carregando...</h2>
-                <p id="currentDesc">Selecione um canal na lista ao lado.</p>
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="categories-bar">
-                <button class="category-btn active" onclick="filterCategory('todos', this)">Todos</button>
-                <button class="category-btn" onclick="filterCategory('noticias', this)">Notícias</button>
-                <button class="category-btn" onclick="filterCategory('filmes', this)">Filmes & Música</button>
-                <button class="category-btn" onclick="filterCategory('educacao', this)">Educação</button>
-                <button class="category-btn" onclick="filterCategory('local', this)">Local RS</button>
-            </div>
-            <div class="channel-list" id="channelList"></div>
+    <!-- Área do Player -->
+    <div id="main-content">
+        <div id="player-container">
+            <video id="bolota-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" data-setup='{}'>
+                <p class="vjs-no-js">Para ver este vídeo, ative o JavaScript ou atualize o navegador.</p>
+            </video>
         </div>
     </div>
 
+    <!-- Scripts do Video.js para rodar os formatos de streaming de IPTV (.m3u8) -->
+    <script src="https://zencdn.net"></script>
     <script>
-        const channels = [
-            // CURSOS (Links VOD Permanentes com Embed Liberado)
-            {
-                id: "8mei6uVttho",
-                ytLink: "https://www.youtube.com/watch?v=8mei6uVttho",
-                name: "Lógica de Programação - Aula 1",
-                category: "educacao",
-                desc: "Curso completo de algoritmos - Curso em Vídeo (Prof. Guanabara).",
-                tag: "Curso",
-                tagClass: "tag-course"
-            },
-            {
-                id: "S9uPNppGsGo",
-                ytLink: "https://www.youtube.com/watch?v=S9uPNppGsGo",
-                name: "Curso de Python - Iniciante",
-                category: "educacao",
-                desc: "Aprenda Python do zero - Curso em Vídeo.",
-                tag: "Curso",
-                tagClass: "tag-course"
-            },
-            {
-                id: "21X5lGlDOfg",
-                ytLink: "https://www.youtube.com/watch?v=21X5lGlDOfg",
-                name: "NASA TV - Direto do Espaço",
-                category: "educacao",
-                desc: "Visão da Terra ao vivo através das câmeras da Estação Espacial (ISS).",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
-            },
+        const player = videojs('bolota-player');
+
+        // Mapeamento dos links brutos (RAW) das fontes oficiais que não bloqueiam exibição externa
+        const playlists = {
+            'news': 'https://iptv-org.github.io/iptv/categories/news.m3u',
+            'movies': 'https://github.io',
+            'education': 'https://github.io',
+            // Usando o repositório focado em canais abertos do Brasil para a categoria local
+            'local-rs': 'https://githubusercontent.com'
+        };
+
+        // Função para buscar o arquivo M3U e processar os canais
+        async function loadCategory(categoryKey) {
+            const listContainer = document.getElementById('channel-list');
+            listContainer.innerHTML = 'Carregando canais...';
             
-            // NOTÍCIAS (Usando o ID do canal para puxar a Live atual sempre)
-            {
-                id: "live_stream?channel=UCuiLR4p6wQ3xLEm15pEn1Xw",
-                ytLink: "https://www.youtube.com/@recordnews/live",
-                name: "Record News",
-                category: "noticias",
-                desc: "Canal de jornalismo 24h da Rede Record.",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
-            },
-            {
-                id: "live_stream?channel=UC93p-68fC34y5mThv2I3e0g",
-                ytLink: "https://www.youtube.com/@jovempannews/live",
-                name: "Jovem Pan News",
-                category: "noticias",
-                desc: "Jornalismo ao vivo, coberturas e análises em tempo real.",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
-            },
-            {
-                id: "live_stream?channel=UC-nxb3iF_V_gB0u1G8pQ18A",
-                ytLink: "https://www.youtube.com/@sbtnews/live",
-                name: "SBT News",
-                category: "noticias",
-                desc: "Cobertura de notícias e fatos diários pelo SBT.",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
-            },
-            {
-                id: "live_stream?channel=UC4Sj06I1K2bO2sEIn6Q0lDg",
-                ytLink: "https://www.youtube.com/@tvsenado/live",
-                name: "TV Senado",
-                category: "noticias",
-                desc: "Transmissões ao vivo do Senado Federal.",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
-            },
+            try {
+                const response = await fetch(playlists[categoryKey]);
+                const data = await response.text();
+                const channels = parseM3U(data);
+                
+                listContainer.innerHTML = '';
+                
+                if(channels.length === 0) {
+                    listContainer.innerHTML = 'Nenhum canal encontrado.';
+                    return;
+                }
 
-            // FILMES E MÚSICA (Links Permanentes)
-            {
-                id: "jfKfPfyJRdk",
-                ytLink: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-                name: "Lofi Girl - Relax & Focus",
-                category: "filmes",
-                desc: "Rádio 24/7 com beats Lofi para estudar, programar ou relaxar.",
-                tag: "Ao Vivo",
-                tagClass: "tag-live"
-            },
-            {
-                id: "v2hZ9Z1K1pM",
-                ytLink: "https://www.youtube.com/watch?v=v2hZ9Z1K1pM",
-                name: "NetMovies - O Substituto (Ação)",
-                category: "filmes",
-                desc: "Filme completo dublado em alta qualidade.",
-                tag: "Filme",
-                tagClass: "tag-movie"
-            },
-            {
-                id: "wK1gQx0wA4k",
-                ytLink: "https://www.youtube.com/watch?v=wK1gQx0wA4k",
-                name: "NetMovies - Comédia Completa",
-                category: "filmes",
-                desc: "Filme de comédia disponível gratuitamente pelo canal oficial.",
-                tag: "Filme",
-                tagClass: "tag-movie"
-            },
-
-            // LOCAL RS
-            {
-                id: "live_stream?channel=UCqR53N2sUpwQZ9pPkW3O4Ew",
-                ytLink: "https://www.youtube.com/@TVCamaraSantaMaria/live",
-                name: "TV Câmara Santa Maria (RS)",
-                category: "local",
-                desc: "Transmissões oficiais da Câmara Municipal de SM.",
-                tag: "Local RS",
-                tagClass: "tag-local"
-            }
-        ];
-
-        let selectedCategory = 'todos';
-
-        function renderChannels(filterText = '') {
-            const listElement = document.getElementById('channelList');
-            listElement.innerHTML = '';
-
-            const filtered = channels.filter(ch => {
-                const matchesCategory = selectedCategory === 'todos' || ch.category === selectedCategory;
-                const matchesSearch = ch.name.toLowerCase().includes(filterText.toLowerCase()) || 
-                                      ch.desc.toLowerCase().includes(filterText.toLowerCase());
-                return matchesCategory && matchesSearch;
-            });
-
-            filtered.forEach((ch, index) => {
-                const card = document.createElement('div');
-                card.className = `channel-card`;
-                card.onclick = () => playChannel(ch, card);
-
-                card.innerHTML = `
-                    <div class="channel-details">
-                        <span class="channel-name">${ch.name}</span>
-                        <span class="channel-category">${getCategoryLabel(ch.category)}</span>
-                    </div>
-                    <span class="tag ${ch.tagClass}">${ch.tag}</span>
-                `;
-                listElement.appendChild(card);
-            });
-
-            // Auto-seleciona o primeiro
-            if (filtered.length > 0 && !document.getElementById('videoPlayer').src) {
-                playChannel(filtered[0], listElement.firstElementChild);
+                // Renderiza os primeiros 30 canais para evitar lentidão no navegador
+                channels.slice(0, 30).forEach(channel => {
+                    const div = document.createElement('div');
+                    div.className = 'channel-item';
+                    div.innerText = channel.name;
+                    div.onclick = () => playStream(channel.url);
+                    listContainer.appendChild(div);
+                });
+            } catch (error) {
+                listContainer.innerHTML = 'Erro ao carregar os canais desta categoria.';
+                console.error(error);
             }
         }
 
-        function playChannel(ch, element) {
-            const player = document.getElementById('videoPlayer');
-            
-            // Monta o link de embed de forma limpa para evitar bloqueios de CORS
-            player.src = `https://www.youtube.com/embed/${ch.id}?autoplay=1&rel=0`;
-            
-            // Atualiza os dados na tela
-            document.getElementById('currentTitle').innerText = ch.name;
-            document.getElementById('currentDesc').innerText = ch.desc;
-            
-            // Atualiza o botão de emergência (Plano B)
-            document.getElementById('externalLink').href = ch.ytLink;
+        // Parser simples de arquivos de playlist M3U
+        function parseM3U(m3uText) {
+            const lines = m3uText.split('\n');
+            const channels = [];
+            let currentName = '';
 
-            // Marca o selecionado
-            document.querySelectorAll('.channel-card').forEach(el => el.classList.remove('active'));
-            if(element) element.classList.add('active');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith('#EXTINF:')) {
+                    // Extrai o nome do canal após a última vírgula
+                    const parts = line.split(',');
+                    currentName = parts[parts.length - 1] || 'Canal Sem Nome';
+                } else if (line.startsWith('http')) {
+                    channels.push({ name: currentName, url: line });
+                }
+            }
+            return channels;
         }
 
-        function filterCategory(cat, btn) {
-            selectedCategory = cat;
-            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderChannels(document.getElementById('searchInput').value);
+        // Altera a fonte do player e inicia a transmissão do canal selecionado
+        function playStream(url) {
+            player.src({
+                src: url,
+                type: 'application/x-mpegURL' // Define o tipo correto para arquivos .m3u8
+            });
+            player.play();
         }
-
-        function filterChannels() {
-            renderChannels(document.getElementById('searchInput').value);
-        }
-
-        function getCategoryLabel(cat) {
-            const labels = {
-                noticias: 'TV & Notícias',
-                filmes: 'Filmes & Música',
-                educacao: 'Educação & Ciência',
-                local: 'Santa Maria - RS'
-            };
-            return labels[cat] || 'Geral';
-        }
-
-        // Inicia
-        renderChannels();
     </script>
 </body>
 </html>
