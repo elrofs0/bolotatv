@@ -29,7 +29,6 @@
             overflow: hidden; 
         }
         
-        /* Layout Lateral */
         .sidebar { width: 320px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: transform 0.3s ease; z-index: 1000; }
         .sidebar-header { padding: 25px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.2)); border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
         .sidebar-header h1 { font-size: 1.8rem; color: var(--text-color); margin-bottom: 15px; font-weight: 800; text-shadow: 2px 2px 4px #000; letter-spacing: 1.5px;}
@@ -55,14 +54,12 @@
         .fav-btn.favorited { color: var(--fav-color); text-shadow: 0 0 10px rgba(241, 196, 15, 0.4); }
         .fav-btn:hover { transform: scale(1.1); }
 
-        /* Área do Player */
         .main-content { flex: 1; display: flex; flex-direction: column; background-color: #000; position: relative; }
         .menu-toggle { display: none; position: absolute; top: 15px; left: 15px; background: rgba(0, 168, 255, 0.8); border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; z-index: 2000; font-size: 1rem; backdrop-filter: blur(5px); }
 
         .player-wrapper { flex: 1; position: relative; width: 100%; background: #000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
-        /* Modo Mini-Player PIP */
         .player-wrapper.mini-mode { position: fixed; bottom: 25px; right: 25px; width: 400px; height: 225px; z-index: 9999; box-shadow: 0 15px 40px rgba(0,0,0,0.8); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); flex: none; }
 
         .player-footer { padding: 15px 25px; background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.8)); display: flex; justify-content: space-between; align-items: center; z-index: 10; border-top: 1px solid rgba(255,255,255,0.05);}
@@ -106,9 +103,8 @@
 
     <div class="main-content" onclick="closeMenuOnVideoClick()">
         <div class="player-wrapper" id="playerWrapper">
-            <!-- Player inicia com a ISS/NASA - Estabilidade Absoluta -->
             <iframe id="yt-player" 
-                    src="https://www.youtube-nocookie.com/embed/21X5lGlDOfg?autoplay=1&mute=1" 
+                    src="https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1" 
                     allow="autoplay; encrypted-media; picture-in-picture" 
                     allowfullscreen>
             </iframe>
@@ -116,7 +112,7 @@
         <div class="player-footer">
             <div class="channel-info">
                 <p>Sintonizado Agora</p>
-                <h2 id="current-channel">NASA Live (Estação Espacial)</h2>
+                <h2 id="current-channel">Record News Ao Vivo</h2>
             </div>
             <div class="controls">
                 <button class="pip-btn" onclick="toggleMiniPlayer()">🔳 Modo Mini-Player (PIP)</button>
@@ -125,35 +121,30 @@
     </div>
 
     <script>
-        // -----------------------------------------
-        // GRADE DE CANAIS PERSONALIZADA
-        // -----------------------------------------
         const channelsData = [
             // TV Aberta & Notícias
-            { id: 'UCuiLR4p6wQ3xLEm15pEn1Xw', type: 'live_channel', name: 'Record News 24h', category: 'TV Aberta & Notícias' },
-            { id: 'UC4wawQE7QvR08B01aV-G-qQ', type: 'live_channel', name: 'CNN Brasil', category: 'TV Aberta & Notícias' },
-            { id: '21X5lGlDOfg', type: 'video', name: 'NASA Live (Estação Espacial)', category: 'TV Aberta & Notícias' },
+            { id: 'gCNeDWCI0vo', type: 'video', name: 'Record News Ao Vivo', category: 'TV Aberta & Notícias' },
+            { id: 'u0k-rU0WpEU', type: 'video', name: 'Band News Ao Vivo', category: 'TV Aberta & Notícias' },
+            { id: '21X5lGlDOfg', type: 'video', name: 'NASA TV Ao Vivo (Espaço)', category: 'TV Aberta & Notícias' },
             
-            // Música & Entretenimento (Focado na Evelyn e foco nos estudos)
-            { id: 'PLwLz7E8-G3aQnQ0L1iSj4bMv0nC_4i7E7', type: 'playlist', name: 'Stray Kids & K-Pop Mix', category: 'Música & Entretenimento' },
-            { id: 'PL3-sRm8xAzY-epJEQO3-pQmgN0qS8Kk1N', type: 'playlist', name: 'K-Pop Girl Groups', category: 'Música & Entretenimento' },
-            { id: 'jfKfPfyJRdk', type: 'video', name: 'Lofi Girl (Rádio de Estudos)', category: 'Música & Entretenimento' },
+            // Música & Entretenimento (Evelyn)
+            { id: 'tDukIfEwY10', type: 'video', name: 'Stray Kids - God\'s Menu', category: 'Música & Entretenimento' },
+            { id: 'JsOOis4bC4w', type: 'video', name: 'Stray Kids - S-Class', category: 'Música & Entretenimento' },
+            { id: 'jfKfPfyJRdk', type: 'video', name: 'Lofi Girl (Música para Estudar)', category: 'Música & Entretenimento' },
 
-            // Filosofia & Hermetismo
-            { id: 'PLxI8SqClvdYVQ8y6L-1D8Q7K8x9_nL4L7', type: 'playlist', name: 'Aristóteles & Platão', category: 'Filosofia & Oculto' },
-            { id: 'PL-3f_mFwXq7z7-b2wY5_rXQ-3L_C7X5G_', type: 'playlist', name: 'O Caibalion Clássico', category: 'Filosofia & Oculto' },
-            { id: 'PL9_Z2z9u_c9-h7r3w5M_3Xz-9z_X9_9_z', type: 'playlist', name: 'Fundamentos da Astrologia', category: 'Filosofia & Oculto' },
+            // Filosofia & Ocultismo (Everton)
+            { id: '7n_ZfM-XW9M', type: 'video', name: 'O Caibalion (Audiolivro Completo)', category: 'Filosofia & Oculto' },
+            { id: 'R31Q4Vyl2D0', type: 'video', name: 'Aristóteles: Ética a Nicômaco', category: 'Filosofia & Oculto' },
+            { id: 'hV_1d-9Q8d8', type: 'video', name: 'Platão: A República e a Caverna', category: 'Filosofia & Oculto' },
+            { id: 'T6xV2Yy0M34', type: 'video', name: 'Introdução à Astrologia Hermética', category: 'Filosofia & Oculto' },
 
             // Ciência & Tecnologia
-            { id: 'PLX5u2X4vN8h7W6vX4w8Y8m_v7_C8A3XWw', type: 'playlist', name: 'Mecânica Quântica (Docs)', category: 'Ciência & Tecnologia' },
-            { id: 'PLHz_AreHm4dkzED6fP4w68wE_w72gM4wY', type: 'playlist', name: 'Lógica e Sistemas', category: 'Ciência & Tecnologia' },
-
-            // Séries e Filmes
-            { id: 'PLX5m8v4u3wN9W8vX_4m8vW3_xM8wV4mW', type: 'playlist', name: 'Sessão Cinema Retrô', category: 'Filmes & Documentários' }
+            { id: 'W9S_V9XW0z0', type: 'video', name: 'Física Quântica Documentário', category: 'Ciência & Tecnologia' },
+            { id: 'rfscVS0vtbw', type: 'video', name: 'Lógica de Programação Completa', category: 'Ciência & Tecnologia' }
         ];
 
-        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v2')) || [];
-        let currentActiveId = '21X5lGlDOfg'; // Inicia com NASA (Video fixo, 100% à prova de falhas locais)
+        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v3')) || [];
+        let currentActiveId = 'gCNeDWCI0vo';
 
         function renderChannels() {
             const listElement = document.getElementById('channelList');
@@ -187,30 +178,16 @@
         function toggleFavorite(id, event) {
             event.stopPropagation();
             favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
-            localStorage.setItem('bolota_tv_favs_v2', JSON.stringify(favorites));
+            localStorage.setItem('bolota_tv_favs_v3', JSON.stringify(favorites));
             renderChannels();
         }
         renderChannels();
 
-        // -----------------------------------------
-        // MOTOR DE REPRODUÇÃO (OTIMIZADO PARA GITHUB)
-        // -----------------------------------------
         function playChannel(id, type, channelName) {
             currentActiveId = id;
             const player = document.getElementById('yt-player');
             
-            // Pega o domínio atual (No GitHub vai ser o seu repositório, no VS Code é o localhost)
-            // Isso avisa ao YouTube que a requisição é válida.
-            const siteOrigin = window.location.origin; 
-            
-            let url = '';
-            if (type === 'live_channel') {
-                url = `https://www.youtube-nocookie.com/embed/live_stream?channel=${id}&autoplay=1&mute=1&origin=${siteOrigin}`;
-            } else if (type === 'playlist') {
-                url = `https://www.youtube-nocookie.com/embed/videoseries?list=${id}&autoplay=1&mute=1&origin=${siteOrigin}`;
-            } else {
-                url = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&origin=${siteOrigin}`;
-            }
+            let url = `https://www.youtube.com/embed/${id}?autoplay=1`;
             
             player.src = url;
             document.getElementById('current-channel').innerText = channelName;
@@ -230,9 +207,6 @@
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
         function closeMenuOnVideoClick() { if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open'); }
 
-        // -----------------------------------------
-        // RELÓGIO & CLIMA GPS
-        // -----------------------------------------
         function updateClock() {
             document.getElementById('local-time').innerText = new Date().toLocaleTimeString('pt-BR');
         }
