@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.4 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.5 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -335,10 +335,12 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        const TEST_TIMEOUT_MS = 6000;
-        const TEST_CONCURRENCY = 4;
+        const TEST_TIMEOUT_MS = 7000;
+        const TEST_CONCURRENCY = 3;
 
-        // Lista de canais 100% nativos HTTPS com CORS liberado sem depender de proxies
+        const PROXY_PRIMARY = 'https://corsproxy.io/?';
+        const PROXY_SECONDARY = 'https://api.allorigins.win/raw?url=';
+
         const canalDatabase = [
             // BRASIL
             { name: "TV Câmara (Federal)", category: "br", country: "br",
@@ -361,7 +363,7 @@
               url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8" },
 
             // NOTÍCIAS INTERNACIONAIS
-            { name: "France 24 (English FAST)", category: "noticias", country: "intl",
+            { name: "France 24 (English)", category: "noticias", country: "intl",
               url: "https://france24-en-samsung.amagi.tv/playlist.m3u8" },
             { name: "NHK World Japan (EN)", category: "noticias", country: "intl",
               url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8" },
@@ -390,6 +392,16 @@
                 fluid: true,
                 html5: { vhs: { overrideNative: true } }
             });
+
+            // Interceptor VHS do Video.js para contornar CORS nos segmentos de vídeo
+            if (videojs.Vhs && videojs.Vhs.xhr) {
+                videojs.Vhs.xhr.beforeRequest = function(options) {
+                    if (options.uri && !options.uri.includes('corsproxy.io') && !options.uri.includes('allorigins')) {
+                        options.uri = PROXY_PRIMARY + encodeURIComponent(options.uri);
+                    }
+                    return options;
+                };
+            }
 
             vjsPlayer.on('error', () => {
                 const err = vjsPlayer.error();
@@ -428,32 +440,46 @@
             channel.reason = '';
             renderChannels();
 
+            // Rota 1: Fetch Direto
             try {
-                const res = await fetch(channel.url, {
-                    method: 'GET',
-                    signal: AbortSignal.timeout(TEST_TIMEOUT_MS)
-                });
-
-                if (!res.ok) {
-                    channel.status = 'fail';
-                    channel.reason = `HTTP ${res.status}`;
-                    return;
+                const res = await fetch(channel.url, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
+                if (res.ok) {
+                    const text = await res.text();
+                    if (text.includes('#EXTM3U')) {
+                        channel.status = 'ok';
+                        return;
+                    }
                 }
+            } catch (e) {}
 
-                const text = await res.text();
-                if (!text.trim().includes('#EXTM3U')) {
-                    channel.status = 'fail';
-                    channel.reason = 'Sinal inválido';
-                    return;
+            // Rota 2: Via Proxy Primário (corsproxy.io)
+            try {
+                const pUrl = PROXY_PRIMARY + encodeURIComponent(channel.url);
+                const res = await fetch(pUrl, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
+                if (res.ok) {
+                    const text = await res.text();
+                    if (text.includes('#EXTM3U')) {
+                        channel.status = 'ok';
+                        return;
+                    }
                 }
+            } catch (e) {}
 
-                channel.status = 'ok';
-            } catch (e) {
-                channel.status = 'fail';
-                channel.reason = (e.name === 'TimeoutError' || e.name === 'AbortError')
-                    ? `timeout (${TEST_TIMEOUT_MS / 1000}s)`
-                    : 'erro de rede / CORS';
-            }
+            // Rota 3: Via Proxy Secundário (allorigins)
+            try {
+                const pUrl2 = PROXY_SECONDARY + encodeURIComponent(channel.url);
+                const res = await fetch(pUrl2, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
+                if (res.ok) {
+                    const text = await res.text();
+                    if (text.includes('#EXTM3U')) {
+                        channel.status = 'ok';
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            channel.status = 'fail';
+            channel.reason = 'Erro de CORS / Bloqueio no Navegador';
         }
 
         async function testAllChannels() {
