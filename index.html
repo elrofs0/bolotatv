@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v7.0 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v8.0 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -70,7 +70,7 @@
 
         .sys-info span { display: flex; align-items: center; gap: 6px; }
 
-        /* Main Grid */
+        /* Main Layout */
         .main-container {
             display: grid;
             grid-template-columns: 1fr 390px;
@@ -88,7 +88,6 @@
             gap: 10px;
         }
 
-        /* Screen Wrapper */
         .screen-container {
             position: relative;
             width: 100%;
@@ -239,18 +238,16 @@
     </header>
 
     <div class="main-container">
-        <!-- Area do Player HLS -->
         <div class="player-section">
             <div class="screen-container">
                 <video id="vjs-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"></video>
             </div>
 
             <div class="terminal-status">
-                <div id="now-playing">[ SINAL PRONTO // SELECIONE UMA EMISSORA NA LISTA ]</div>
+                <div id="now-playing">[ SINAL PRONTO // SELECIONE UMA EMISSORA ]</div>
             </div>
         </div>
 
-        <!-- Lista de Canais e Filtros -->
         <div class="sidebar">
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="> BUSCAR CANAL..." onkeyup="filterChannels()">
@@ -272,41 +269,35 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // Transmissões M3U8 verificadas com permissão de CORS ativas
+        // Servidores M3U8 estáveis
         const canalDatabase = [
-            // BRASIL (BR)
+            // BRASIL
             {
-                name: "Deutsche Welle (Português)",
-                category: "br",
-                country: "br",
-                url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"
-            },
-            {
-                name: "TV Senado (Aberto BR)",
-                category: "noticias",
-                country: "br",
-                url: "https://stmv1.srvif.com/tvsenado/tvsenado/playlist.m3u8"
-            },
-            {
-                name: "TV Brasil (Nacional)",
+                name: "TV Brasil (Aberto BR)",
                 category: "br",
                 country: "br",
                 url: "https://stmv1.srvif.com/tvbrasil/tvbrasil/playlist.m3u8"
             },
             {
-                name: "Rede Minas (Cultura BR)",
+                name: "TV Senado (Notícias BR)",
+                category: "noticias",
+                country: "br",
+                url: "https://stmv1.srvif.com/tvsenado/tvsenado/playlist.m3u8"
+            },
+            {
+                name: "Rede Minas (Cultura)",
                 category: "br",
                 country: "br",
                 url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8"
             },
-
-            // ARGENTINA (AR) & AMÉRICA LATINA
             {
-                name: "France 24 (Español Latam)",
+                name: "Deutsche Welle (Português)",
                 category: "noticias",
-                country: "ar",
-                url: "https://static.france24.com/live/F24_ES_LO_HLS/live_tv.m3u8"
+                country: "br",
+                url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"
             },
+
+            // ARGENTINA & LATAM
             {
                 name: "Canal 26 (Buenos Aires)",
                 category: "noticias",
@@ -314,7 +305,13 @@
                 url: "https://live-01-02-canal26.com.ar/hls/live.m3u8"
             },
             {
-                name: "TeleSUR (Ao Vivo Latam)",
+                name: "France 24 (Español)",
+                category: "noticias",
+                country: "ar",
+                url: "https://static.france24.com/live/F24_ES_LO_HLS/live_tv.m3u8"
+            },
+            {
+                name: "TeleSUR (América Latina)",
                 category: "noticias",
                 country: "ar",
                 url: "https://tv.telesur.cdn.tda.as/hls/live.m3u8"
@@ -326,63 +323,53 @@
                 url: "https://stmv1.srvif.com/chacotv/chacotv/playlist.m3u8"
             },
 
-            // CINE / MULTIMÍDIA / TRANSMISSÕES CONTINUAS
+            // CINE / MULTIMÍDIA
             {
-                name: "Tears of Steel (Sci-Fi 4K)",
+                name: "Tears of Steel 4K",
                 category: "cine",
                 country: "intl",
                 url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
             },
             {
-                name: "Big Buck Bunny (Animation 24h)",
+                name: "Big Buck Bunny 24H",
                 category: "cine",
                 country: "intl",
                 url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
             },
             {
-                name: "Sintel (Movie HLS)",
+                name: "Sintel Open Movie",
                 category: "cine",
                 country: "intl",
                 url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-            },
-            {
-                name: "Apple BipBop (Test Signal 1)",
-                category: "cine",
-                country: "intl",
-                url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
-            },
-            {
-                name: "JW Player Test Signal 2",
-                category: "cine",
-                country: "intl",
-                url: "https://playertest.longtailvideo.com/adaptive/oceans/oceans.m3u8"
             }
         ];
 
         let vjsPlayer;
         let currentCategory = 'all';
 
+        // Função de Proxy CORS Automático
+        function getProxiedUrl(originalUrl) {
+            // Se for link de teste direto da CDN que permite CORS, roda direto, caso contrário passa pelo proxy
+            if (originalUrl.includes('unified-streaming.com') || originalUrl.includes('mux.dev') || originalUrl.includes('akamaihd.net')) {
+                return originalUrl;
+            }
+            return 'https://corsproxy.io/?' + encodeURIComponent(originalUrl);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Inicialização forçando o manipulador VHS do Video.js
             vjsPlayer = videojs('vjs-player', {
                 autoplay: false,
                 controls: true,
                 responsive: true,
                 fluid: true,
                 html5: {
-                    vhs: {
-                        overrideNative: true
-                    },
-                    nativeAudioTracks: false,
-                    nativeVideoTracks: false
+                    vhs: { overrideNative: true }
                 }
             });
 
-            // Tratamento de erro detalhado na interface
+            // Oculta a janela de erro nativa do Video.js para tratar no painel terminal
             vjsPlayer.on('error', () => {
-                const err = vjsPlayer.error();
-                console.error("Erro Video.js:", err);
-                document.getElementById('now-playing').innerText = '[ FALHA NO SINAL // BLOQUEIO DE CORS OU LINK OFF-LINE ]';
+                document.getElementById('now-playing').innerText = '[ AVISO: SINAL OSCILANDO OU INDISPONÍVEL NO MOMENTO ]';
             });
 
             updateClock();
@@ -400,7 +387,6 @@
 
         async function fetchWeather() {
             try {
-                // Coordenadas geográficas de Santa Maria - RS (-29.6842, -53.8069)
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-29.6842&longitude=-53.8069&current_weather=true');
                 const data = await res.json();
                 if(data.current_weather) {
@@ -447,22 +433,23 @@
         }
 
         function playChannel(channel, element) {
-            document.getElementById('now-playing').innerText = `[ Sintonizando: ${channel.name.toUpperCase()} ]`;
+            document.getElementById('now-playing').innerText = `[ CONECTANDO: // ${channel.name.toUpperCase()} ]`;
             
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
 
-            // Reseta e atribui nova fonte HLS
+            const proxiedStreamUrl = getProxiedUrl(channel.url);
+
             vjsPlayer.reset();
             vjsPlayer.src({
-                src: channel.url,
+                src: proxiedStreamUrl,
                 type: 'application/x-mpegURL'
             });
 
             vjsPlayer.play().then(() => {
                 document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
-            }).catch(err => {
-                console.log('Interação do usuário necessária para áudio/vídeo.', err);
+            }).catch(() => {
+                console.log('Interação do usuário necessária para áudio/vídeo.');
             });
         }
 
