@@ -1,257 +1,464 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bolota Tv</title>
-    <meta name="referrer" content="no-referrer-when-downgrade">
-    <style>
-        :root {
-            --bg-color: #050505;
-            --sidebar-bg: rgba(15, 15, 20, 0.95);
-            --text-color: #ffffff;
-            --card-hover: rgba(255, 255, 255, 0.08);
-            --fav-color: #f1c40f;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        body { 
-            background-color: var(--bg-color);
-            background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920&auto=format&fit=crop'); 
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: var(--text-color); 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden; 
-        }
-        
-        .sidebar { width: 320px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: transform 0.3s ease; z-index: 1000; }
-        .sidebar-header { padding: 25px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.2)); border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        .sidebar-header h1 { font-size: 1.8rem; color: var(--text-color); margin-bottom: 15px; font-weight: 800; text-shadow: 2px 2px 4px #000; letter-spacing: 1.5px;}
-        .sidebar-header h1 span { color: #00a8ff; }
-        
-        .search-box { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: border 0.2s;}
-        .search-box:focus { border-color: #00a8ff; box-shadow: 0 0 8px rgba(0, 168, 255, 0.3); }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bolota TV - Web Player</title>
+  <style>
+    :root {
+      --bg-color: #0f0f13;
+      --card-bg: #1a1a24;
+      --accent: #8b5cf6;
+      --accent-hover: #7c3aed;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --live-red: #ef4444;
+    }
 
-        .info-widget { padding: 12px 20px; background: rgba(0,0,0,0.7); display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05);}
-        
-        .channel-list { flex: 1; overflow-y: auto; padding: 15px 10px; }
-        .channel-list::-webkit-scrollbar { width: 6px; }
-        .channel-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        .category-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.2px; color: #00a8ff; margin: 20px 0 10px 10px; font-weight: bold;}
-        
-        .channel-item { width: 100%; padding: 12px 15px; background: transparent; border: 1px solid transparent; color: #eaeaea; font-size: 0.95rem; cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; margin-bottom: 4px; }
-        .channel-item:hover { background-color: var(--card-hover); transform: translateX(4px); }
-        .channel-item.active { background-color: rgba(0, 168, 255, 0.15); color: #fff; border: 1px solid rgba(0, 168, 255, 0.3); font-weight: bold; }
-        .channel-name { flex: 1; text-align: left; }
-        
-        .fav-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #444; transition: color 0.2s, transform 0.2s; padding-left: 10px; }
-        .fav-btn.favorited { color: var(--fav-color); text-shadow: 0 0 10px rgba(241, 196, 15, 0.4); }
-        .fav-btn:hover { transform: scale(1.1); }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; background-color: #000; position: relative; }
-        .menu-toggle { display: none; position: absolute; top: 15px; left: 15px; background: rgba(0, 168, 255, 0.8); border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; z-index: 2000; font-size: 1rem; backdrop-filter: blur(5px); }
+    header {
+      background: #14141c;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2d2d3d;
+    }
 
-        .player-wrapper { flex: 1; position: relative; width: 100%; background: #000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        
-        .player-wrapper.mini-mode { position: fixed; bottom: 25px; right: 25px; width: 400px; height: 225px; z-index: 9999; box-shadow: 0 15px 40px rgba(0,0,0,0.8); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); flex: none; }
+    .logo {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .player-footer { padding: 15px 25px; background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.8)); display: flex; justify-content: space-between; align-items: center; z-index: 10; border-top: 1px solid rgba(255,255,255,0.05);}
-        .channel-info p { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-        .channel-info h2 { font-size: 1.3rem; font-weight: 500; }
-        
-        .controls { display: flex; gap: 10px; align-items: center; }
-        .pip-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
-        .pip-btn:hover { background: rgba(255,255,255,0.25); border-color: rgba(0, 168, 255, 0.5); }
+    .logo span {
+      color: var(--text);
+    }
 
-        @media (max-width: 900px) {
-            .menu-toggle { display: block; }
-            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); box-shadow: 10px 0 20px rgba(0,0,0,0.7); }
-            .sidebar.open { transform: translateX(0); }
-            .player-wrapper { height: 35vh; flex: none; margin-top: 55px;}
-            .main-content { justify-content: flex-start; }
-            .player-footer { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .player-wrapper.mini-mode { width: 280px; height: 157px; bottom: 15px; right: 15px; }
-        }
-    </style>
+    .search-box {
+      width: 300px;
+      max-width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1px solid #374151;
+      background: #1e1e2d;
+      color: white;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      padding: 20px;
+      flex: 1;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Player Area */
+    .player-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .iframe-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .iframe-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .player-info {
+      background: var(--card-bg);
+      padding: 15px 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .channel-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-yt {
+      background: #cc181e;
+      color: white;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn-yt:hover {
+      background: #e62117;
+    }
+
+    /* Sidebar / Playlist */
+    .sidebar {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      max-height: 80vh;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .tab {
+      background: #272738;
+      color: var(--text-muted);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .channel-list {
+      list-style: none;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #232332;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .channel-item:hover {
+      background: #2e2e42;
+    }
+
+    .channel-item.active {
+      border-left: 4px solid var(--accent);
+      background: #2c2940;
+    }
+
+    .channel-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .channel-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .channel-cat {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .badge-live {
+      background: var(--live-red);
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .badge-edu {
+      background: #059669;
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid #2d2d3d;
+    }
+  </style>
 </head>
 <body>
 
-    <button class="menu-toggle" onclick="toggleMenu()">☰ Canais</button>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h1>Bolota <span>Tv</span></h1>
-            <input type="text" id="search" class="search-box" placeholder="Buscar canal ou assunto..." onkeyup="filterChannels()">
-        </div>
-        
-        <div class="info-widget">
-            <span id="local-time">--:--:--</span>
-            <span id="local-weather">Buscando Clima...</span>
-        </div>
-
-        <div class="channel-list" id="channelList"></div>
+  <header>
+    <div class="logo">
+      📺 <span>Bolota TV</span>
     </div>
-
-    <div class="main-content" onclick="closeMenuOnVideoClick()">
-        <div class="player-wrapper" id="playerWrapper">
-            <iframe id="yt-player" 
-                    src="https://www.youtube-nocookie.com/embed/gCNeDWCI0vo?autoplay=1&mute=1" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
-                    allowfullscreen>
-            </iframe>
-        </div>
-        <div class="player-footer">
-            <div class="channel-info">
-                <p>Sintonizado Agora</p>
-                <h2 id="current-channel">Record News Ao Vivo</h2>
-            </div>
-            <div class="controls">
-                <button class="pip-btn" onclick="toggleFullScreen()">📺 Tela Inteira</button>
-                <button class="pip-btn" onclick="toggleMiniPlayer()">🔳 Mini-Player (PIP)</button>
-            </div>
-        </div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Pesquisar canal..." onkeyup="filterChannels()">
     </div>
+  </header>
 
-    <script>
-        const channelsData = [
-            // TV Aberta & Notícias
-            { id: 'gCNeDWCI0vo', name: 'Record News Ao Vivo', category: 'TV Aberta & Notícias' },
-            { id: '21X5lGlDOfg', name: 'NASA TV Ao Vivo (Espaço)', category: 'TV Aberta & Notícias' },
-            
-            // Música & Entretenimento
-            { id: 'lP1rXrJQhvQ', name: 'Stray Kids - God\'s Menu (Ao Vivo)', category: 'Música & Entretenimento' },
-            { id: 'w4cTYnOPdNk', name: 'Stray Kids - MANIAC (Ao Vivo)', category: 'Música & Entretenimento' },
-            { id: 'dBD90g1sU3M', name: 'Stray Kids - S-Class (Ao Vivo)', category: 'Música & Entretenimento' },
-            { id: 'jfKfPfyJRdk', name: 'Lofi Girl (Música para Estudar)', category: 'Música & Entretenimento' },
+  <main>
+    <!-- Player Principal -->
+    <section class="player-container">
+      <div class="iframe-wrapper">
+        <iframe id="videoPlayer" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+      <div class="player-info">
+        <div>
+          <h2 id="activeTitle" class="channel-title">Carregando...</h2>
+          <span id="activeCat" style="color: var(--text-muted); font-size: 0.85rem;"></span>
+        </div>
+        <div class="actions">
+          <a id="ytLink" href="#" target="_blank" class="btn-yt">🔗 Abrir no YouTube</a>
+        </div>
+      </div>
+    </section>
 
-            // Filosofia & Oculto
-            { id: '7n_ZfM-XW9M', name: 'O Caibalion (Audiolivro)', category: 'Filosofia & Oculto' },
-            { id: 'R31Q4Vyl2D0', name: 'Aristóteles: Ética a Nicômaco', category: 'Filosofia & Oculto' },
-            { id: 'hV_1d-9Q8d8', name: 'Platão: A República', category: 'Filosofia & Oculto' },
+    <!-- Sidebar de Canais -->
+    <aside class="sidebar">
+      <div class="filter-tabs">
+        <button class="tab active" onclick="filterCategory('all', this)">Todos</button>
+        <button class="tab" onclick="filterCategory('Ao Vivo', this)">Ao Vivo</button>
+        <button class="tab" onclick="filterCategory('Santa Maria', this)">Santa Maria</button>
+        <button class="tab" onclick="filterCategory('Educação', this)">Educação</button>
+      </div>
+      
+      <ul class="channel-list" id="channelList">
+        <!-- Gerado via JavaScript -->
+      </ul>
+    </aside>
+  </main>
 
-            // Ciência & Tecnologia
-            { id: 'W9S_V9XW0z0', name: 'Física Quântica Documentário', category: 'Ciência & Tecnologia' },
-            { id: 'rfscVS0vtbw', name: 'Lógica de Programação', category: 'Ciência & Tecnologia' }
-        ];
+  <footer>
+    Bolota TV &copy; 2026 - Central de Programação e Transmissões Ao Vivo
+  </footer>
 
-        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v6')) || [];
-        let currentActiveId = 'gCNeDWCI0vo';
+  <script>
+    const channels = [
+      {
+        id: "logica",
+        name: "Lógica de Programação",
+        category: "Educação",
+        badge: "Curso",
+        badgeType: "edu",
+        embedUrl: "https://www.youtube.com/embed/8mei6E_I-28?autoplay=1",
+        ytUrl: "https://www.youtube.com/watch?v=8mei6E_I-28"
+      },
+      {
+        id: "bandnews",
+        name: "BandNews TV / Band",
+        category: "Ao Vivo",
+        badge: "AO VIVO",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UCv6n26iJp2a60M-k29Jm9jQ",
+        ytUrl: "https://www.youtube.com/@bandjornalismo/live"
+      },
+      {
+        id: "jovempan",
+        name: "Jovem Pan News",
+        category: "Ao Vivo",
+        badge: "AO VIVO",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UCP391YRAjSOdM_bwievgaZA",
+        ytUrl: "https://www.youtube.com/@jovempannews/live"
+      },
+      {
+        id: "tvsenado",
+        name: "TV Senado",
+        category: "Ao Vivo",
+        badge: "AO VIVO",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UCLgti7NuK0RuW9wty-fxPjQ",
+        ytUrl: "https://www.youtube.com/@tvsenado/live"
+      },
+      {
+        id: "camarasanta",
+        name: "TV Câmara Santa Maria (RS)",
+        category: "Santa Maria",
+        badge: "Local",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UCd0s2W_hYv6U1G7m8eY_k5A",
+        ytUrl: "https://www.youtube.com/@TVC%C3%A2maraSantaMaria/streams"
+      },
+      {
+        id: "tvufsm",
+        name: "TV Campus UFSM (Santa Maria)",
+        category: "Santa Maria",
+        badge: "Local",
+        badgeType: "edu",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UC5mZ5lK91s1gT7qL3h0VvAw",
+        ytUrl: "https://www.youtube.com/@tvcampusufsm"
+      },
+      {
+        id: "tvcamara",
+        name: "TV Câmara Federal",
+        category: "Ao Vivo",
+        badge: "AO VIVO",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UC9mSr_hZ2i7_N6k1vP_Kksw",
+        ytUrl: "https://www.youtube.com/@camaradosdeputadosoficial/live"
+      },
+      {
+        id: "cnnbr",
+        name: "CNN Brasil",
+        category: "Ao Vivo",
+        badge: "AO VIVO",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UCvdwhh_fDyWccR42-rReSiA",
+        ytUrl: "https://www.youtube.com/@CNNBrasil/live"
+      },
+      {
+        id: "recordnews",
+        name: "Record News",
+        category: "Ao Vivo",
+        badge: "AO VIVO",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UCv6o8bE-Hn_kZ6eF07qQ-lA",
+        ytUrl: "https://www.youtube.com/@RecordNews/live"
+      },
+      {
+        id: "tvbrasil",
+        name: "TV Brasil (EBC)",
+        category: "Ao Vivo",
+        badge: "AO VIVO",
+        badgeType: "live",
+        embedUrl: "https://www.youtube.com/embed/live_stream?channel=UC8xYlVv-d3cO3fVq2f_e7yA",
+        ytUrl: "https://www.youtube.com/@tvbrasil/live"
+      }
+    ];
 
-        function renderChannels() {
-            const listElement = document.getElementById('channelList');
-            listElement.innerHTML = '';
-            
-            if (favorites.length > 0) {
-                listElement.innerHTML += `<div class="category-title">⭐ Favoritos</div>`;
-                channelsData.forEach((ch, idx) => {
-                    if (favorites.includes(ch.id)) {
-                        listElement.innerHTML += createChannelHTML(ch, idx, true);
-                    }
-                });
-            }
+    let currentCategory = 'all';
 
-            const categories = [...new Set(channelsData.map(ch => ch.category))];
-            categories.forEach(category => {
-                listElement.innerHTML += `<div class="category-title">📺 ${category}</div>`;
-                channelsData.forEach((ch, idx) => {
-                    if (ch.category === category) {
-                        listElement.innerHTML += createChannelHTML(ch, idx, favorites.includes(ch.id));
-                    }
-                });
-            });
+    function renderChannels() {
+      const listEl = document.getElementById('channelList');
+      listEl.innerHTML = '';
+
+      const query = document.getElementById('searchInput').value.toLowerCase();
+
+      channels.forEach(ch => {
+        const matchesCat = currentCategory === 'all' || ch.category === currentCategory;
+        const matchesSearch = ch.name.toLowerCase().includes(query) || ch.category.toLowerCase().includes(query);
+
+        if (matchesCat && matchesSearch) {
+          const li = document.createElement('li');
+          li.className = 'channel-item';
+          li.onclick = () => selectChannel(ch);
+
+          li.innerHTML = `
+            <div class="channel-meta">
+              <span class="channel-name">${ch.name}</span>
+              <span class="channel-cat">${ch.category}</span>
+            </div>
+            <span class="${ch.badgeType === 'live' ? 'badge-live' : 'badge-edu'}">${ch.badge}</span>
+          `;
+          listEl.appendChild(li);
         }
+      });
+    }
 
-        function createChannelHTML(channel, index, isFav) {
-            const activeClass = (channel.id === currentActiveId) ? 'active' : '';
-            const favClass = isFav ? 'favorited' : '';
-            return `
-                <div class="channel-item ${activeClass}">
-                    <div class="channel-name" onclick="playChannelByIndex(${index})">${channel.name}</div>
-                    <button class="fav-btn ${favClass}" onclick="toggleFavorite('${channel.id}', event)">★</button>
-                </div>
-            `;
+    function selectChannel(ch) {
+      document.getElementById('videoPlayer').src = ch.embedUrl;
+      document.getElementById('activeTitle').innerText = ch.name;
+      document.getElementById('activeCat').innerText = ch.category;
+      document.getElementById('ytLink').href = ch.ytUrl;
+
+      // Destacar canal selecionado
+      const items = document.querySelectorAll('.channel-item');
+      items.forEach(item => {
+        if (item.querySelector('.channel-name').innerText === ch.name) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
         }
+      });
+    }
 
-        function toggleFavorite(id, event) {
-            event.stopPropagation();
-            favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
-            localStorage.setItem('bolota_tv_favs_v6', JSON.stringify(favorites));
-            renderChannels();
-        }
+    function filterCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      renderChannels();
+    }
 
-        function playChannelByIndex(index) {
-            const ch = channelsData[index];
-            if (!ch) return;
-            
-            currentActiveId = ch.id;
-            const player = document.getElementById('yt-player');
-            player.src = `https://www.youtube-nocookie.com/embed/${ch.id}?autoplay=1`;
-            document.getElementById('current-channel').innerText = ch.name;
-            renderChannels(); 
+    function filterChannels() {
+      renderChannels();
+    }
 
-            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-        }
-
-        function toggleFullScreen() {
-            const elem = document.getElementById('playerWrapper');
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-            }
-        }
-
-        function toggleMiniPlayer() { document.getElementById('playerWrapper').classList.toggle('mini-mode'); }
-        function filterChannels() {
-            const query = document.getElementById('search').value.toLowerCase();
-            document.querySelectorAll('.channel-item').forEach(item => {
-                const text = item.querySelector('.channel-name').textContent.toLowerCase();
-                item.style.display = text.includes(query) ? 'flex' : 'none';
-            });
-        }
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
-        function closeMenuOnVideoClick() { if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open'); }
-
-        function updateClock() {
-            document.getElementById('local-time').innerText = new Date().toLocaleTimeString('pt-BR');
-        }
-        setInterval(updateClock, 1000); updateClock();
-
-        async function fetchWeather(lat, lon) {
-            try {
-                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-                const data = await response.json();
-                if(data?.current_weather) {
-                    document.getElementById('local-weather').innerText = `${Math.round(data.current_weather.temperature)}°C 🌤️`;
-                }
-            } catch { document.getElementById('local-weather').innerText = "--°C"; }
-        }
-
-        function getLocationAndWeather() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
-                    err => fetchWeather(-29.6842, -53.8069)
-                );
-            } else fetchWeather(-29.6842, -53.8069);
-        }
-        getLocationAndWeather(); setInterval(getLocationAndWeather, 1800000);
-
-        renderChannels();
-    </script>
+    // Inicialização
+    window.onload = () => {
+      renderChannels();
+      // Inicia por padrão com o primeiro canal
+      if (channels.length > 0) {
+        selectChannel(channels[0]);
+      }
+    };
+  </script>
 </body>
 </html>
