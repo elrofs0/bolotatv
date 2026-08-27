@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.7 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.8 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -335,51 +335,50 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        const TEST_TIMEOUT_MS = 8000;
+        const TEST_TIMEOUT_MS = 6000;
         const TEST_CONCURRENCY = 3;
 
-        // SEU PROXY DO CLOUDFLARE WORKERS ATIVO:
         const PROXY_WORKER = 'https://bolotaproxy.betaincensos.workers.dev/?url=';
 
         const canalDatabase = [
-            // BRASIL
-            { name: "TV Câmara (Federal)", category: "br", country: "br",
+            // BRASIL (Sinais Oficiais e Diretos)
+            { name: "TV Câmara (Federal)", category: "br", country: "br", direct: true,
               url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
-            { name: "TV Brasil (EBC)", category: "br", country: "br",
+            { name: "TV Brasil (EBC)", category: "br", country: "br", direct: true,
               url: "https://ebc-tvbrasil.akamaized.net/hls/live/2034086/tvbrasil/master.m3u8" },
-            { name: "TV Senado", category: "br", country: "br",
+            { name: "TV Senado", category: "br", country: "br", direct: true,
               url: "https://v1.senado.leg.br/hls/tvsenado/index.m3u8" },
-            { name: "COM Brasil", category: "br", country: "br",
+            { name: "COM Brasil", category: "br", country: "br", direct: false,
               url: "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8" },
-            { name: "Rede Brasil", category: "br", country: "br",
+            { name: "Rede Brasil", category: "br", country: "br", direct: false,
               url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8" },
-            { name: "Deutsche Welle (PT)", category: "noticias", country: "br",
+            { name: "Deutsche Welle (PT)", category: "noticias", country: "br", direct: true,
               url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8" },
 
             // AMÉRICA LATINA / ARGENTINA
-            { name: "TV Universidad (UNLP)", category: "ar", country: "ar",
+            { name: "TV Universidad (UNLP)", category: "ar", country: "ar", direct: true,
               url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8" },
-            { name: "TV Solidaria", category: "ar", country: "ar",
+            { name: "TV Solidaria", category: "ar", country: "ar", direct: false,
               url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8" },
 
             // NOTÍCIAS INTERNACIONAIS
-            { name: "France 24 (English)", category: "noticias", country: "intl",
+            { name: "France 24 (English)", category: "noticias", country: "intl", direct: true,
               url: "https://france24-en-samsung.amagi.tv/playlist.m3u8" },
-            { name: "NHK World Japan (EN)", category: "noticias", country: "intl",
+            { name: "NHK World Japan (EN)", category: "noticias", country: "intl", direct: true,
               url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8" },
-            { name: "Euronews (English)", category: "noticias", country: "intl",
+            { name: "Euronews (English)", category: "noticias", country: "intl", direct: true,
               url: "https://euronews-euronews-express-1-us.samsung.amagi.tv/playlist.m3u8" },
 
             // CINE 24H
-            { name: "Sintel Movie 24H", category: "cine", country: "intl",
+            { name: "Sintel Movie 24H", category: "cine", country: "intl", direct: true,
               url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8" },
-            { name: "Tears of Steel 4K", category: "cine", country: "intl",
+            { name: "Tears of Steel 4K", category: "cine", country: "intl", direct: true,
               url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" },
-            { name: "Big Buck Bunny 24H", category: "cine", country: "intl",
+            { name: "Big Buck Bunny 24H", category: "cine", country: "intl", direct: true,
               url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" }
         ];
 
-        canalDatabase.forEach(c => { c.status = undefined; c.reason = ''; });
+        canalDatabase.forEach(c => { c.status = undefined; c.reason = ''; c.useProxy = false; });
 
         let vjsPlayer;
         let currentCategory = 'all';
@@ -389,25 +388,14 @@
                 autoplay: false,
                 controls: true,
                 responsive: true,
-                fluid: true,
-                html5: { vhs: { overrideNative: true } }
+                fluid: true
             });
-
-            // Interceptor do Video.js para passar todos os fragmentos pelo seu Cloudflare Worker
-            if (videojs.Vhs && videojs.Vhs.xhr) {
-                videojs.Vhs.xhr.beforeRequest = function(options) {
-                    if (options.uri && !options.uri.includes('workers.dev')) {
-                        options.uri = PROXY_WORKER + encodeURIComponent(options.uri);
-                    }
-                    return options;
-                };
-            }
 
             vjsPlayer.on('error', () => {
                 const err = vjsPlayer.error();
                 const code = err ? err.code : '?';
                 document.getElementById('now-playing').innerText =
-                    `[ ERRO ${code}: FALHA NO SINAL OU TRANSMISSÃO FORA DO AR ]`;
+                    `[ ERRO ${code}: FALHA NO SINAL DO CANAL ]`;
             });
 
             updateClock();
@@ -439,28 +427,24 @@
             channel.reason = '';
             renderChannels();
 
-            // Teste 1: Conexão Direta
+            // Teste 1: Conexão Direta Sem Proxy
             try {
                 const res = await fetch(channel.url, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
                 if (res.ok) {
-                    const text = await res.text();
-                    if (text.includes('#EXTM3U')) {
-                        channel.status = 'ok';
-                        return;
-                    }
+                    channel.status = 'ok';
+                    channel.useProxy = false;
+                    return;
                 }
             } catch (e) {}
 
-            // Teste 2: Via Seu Cloudflare Worker
+            // Teste 2: Se falhar direto, testa via Worker
             try {
                 const pUrl = PROXY_WORKER + encodeURIComponent(channel.url);
                 const res = await fetch(pUrl, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
                 if (res.ok) {
-                    const text = await res.text();
-                    if (text.includes('#EXTM3U')) {
-                        channel.status = 'ok';
-                        return;
-                    }
+                    channel.status = 'ok';
+                    channel.useProxy = true;
+                    return;
                 }
             } catch (e) {}
 
@@ -550,9 +534,12 @@
 
             vjsPlayer.reset();
             
-            // Passa o link via Cloudflare Worker
-            const streamUrl = PROXY_WORKER + encodeURIComponent(channel.url);
-            vjsPlayer.src({ src: streamUrl, type: 'application/x-mpegURL' });
+            // Escolhe rota direta ou via Worker dependendo da necessidade do sinal
+            const finalUrl = (channel.useProxy || !channel.direct) 
+                ? (PROXY_WORKER + encodeURIComponent(channel.url)) 
+                : channel.url;
+
+            vjsPlayer.src({ src: finalUrl, type: 'application/x-mpegURL' });
 
             vjsPlayer.play().then(() => {
                 document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
