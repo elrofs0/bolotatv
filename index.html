@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.1 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.2 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -336,7 +336,7 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // Proxy Cloudflare configurado e ativo
+        // Proxy Cloudflare Ativo
         const PROXY_WORKER = 'https://bolota-tv-proxy.betaincensos.workers.dev/';
         const FALLBACK_PUBLIC_PROXY = 'https://corsproxy.io/?';
 
@@ -350,33 +350,39 @@
         ];
 
         const canalDatabase = [
-            { name: "TV Câmara (Legislativo BR)", category: "br", country: "br",
-              url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
+            // BRASIL
+            { name: "TV Câmara (Federal)", category: "br", country: "br",
+              url: "https://stream3.camara.gov.br/tv1/manifest.m3u8", ref: "https://www.camara.leg.br/" },
+            { name: "TV Brasil (EBC)", category: "br", country: "br",
+              url: "https://tvbrasil-stream.ebc.com.br/index.m3u8", ref: "https://tvbrasil.ebc.com.br/" },
             { name: "Rede Minas (Cultura)", category: "br", country: "br",
-              url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8" },
-            { name: "Rede Brasil", category: "br", country: "br",
-              url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8" },
+              url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8", ref: "https://redeminas.tv/" },
             { name: "COM Brasil", category: "br", country: "br",
               url: "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8" },
+            { name: "Amazon Sat (Norte)", category: "br", country: "br",
+              url: "https://amazonsat.brasilstream.com.br/hls/amazonsat/index.m3u8" },
             { name: "ISTV Nacional", category: "br", country: "br",
               url: "https://video08.logicahost.com.br/istvnacional/srt.stream/istvnacional.m3u8" },
             { name: "Deutsche Welle (Português)", category: "noticias", country: "br",
               url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8" },
 
+            // ARGENTINA
             { name: "Canal 26 (Buenos Aires)", category: "noticias", country: "ar",
-              url: "https://live-01-02-canal26.com.ar/hls/live.m3u8" },
-            { name: "TeleSUR (América Latina)", category: "noticias", country: "ar",
-              url: "https://tv.telesur.cdn.tda.as/hls/live.m3u8" },
+              url: "https://stream-gtlc.telecentro.net.ar/hls/canal26hls/main.m3u8", ref: "https://www.canal26.com/" },
+            { name: "TeleSUR (Latinoamérica)", category: "noticias", country: "ar",
+              url: "https://tv.telesur.cdn.tda.as/hls/live.m3u8", ref: "https://www.telesurtv.net/" },
             { name: "TV Universidad (UNLP)", category: "ar", country: "ar",
-              url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8" },
-            { name: "TV Solidaria", category: "ar", country: "ar",
+              url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8", ref: "https://tv.unlp.edu.ar/" },
+            { name: "TV Solidaria AR", category: "ar", country: "ar",
               url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8" },
 
+            // NOTÍCIAS INTERNACIONAIS
             { name: "France 24 (English)", category: "noticias", country: "intl",
-              url: "https://uvotv-aniview.global.ssl.fastly.net/hls/live/2120684/france24english/playlist.m3u8" },
+              url: "https://static.france24.com/live/F24_EN_LO_HLS/live_tv.m3u8", ref: "https://www.france24.com/" },
             { name: "NHK World Japan (EN)", category: "noticias", country: "intl",
               url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8" },
 
+            // CINE 24H & DEMO
             { name: "Tears of Steel 4K", category: "cine", country: "intl",
               url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" },
             { name: "Big Buck Bunny 24H", category: "cine", country: "intl",
@@ -388,17 +394,21 @@
         let vjsPlayer;
         let currentCategory = 'all';
 
-        function precisaDeProxy(url) {
-            return !DOMINIOS_SEM_PROXY.some(d => url.includes(d));
+        function precisaDeProxy(channel) {
+            // Se o canal necessita de Referer específico, obriga passar pelo Worker
+            if (channel.ref) return true;
+            return !DOMINIOS_SEM_PROXY.some(d => channel.url.includes(d));
         }
 
         function getPlayableUrl(channel) {
-            if (!precisaDeProxy(channel.url)) return channel.url;
+            if (!precisaDeProxy(channel)) return channel.url;
             
             if (PROXY_WORKER && PROXY_WORKER.trim() !== '') {
-                const baseUrl = PROXY_WORKER.endsWith('/') ? PROXY_WORKER : PROXY_WORKER + '/';
-                let proxied = baseUrl + '?url=' + encodeURIComponent(channel.url);
-                if (channel.ref) proxied += '&ref=' + encodeURIComponent(channel.ref);
+                const base = PROXY_WORKER.trim().endsWith('/') ? PROXY_WORKER.trim() : PROXY_WORKER.trim() + '/';
+                let proxied = base + '?url=' + encodeURIComponent(channel.url);
+                if (channel.ref) {
+                    proxied += '&ref=' + encodeURIComponent(channel.ref);
+                }
                 return proxied;
             }
             return FALLBACK_PUBLIC_PROXY + encodeURIComponent(channel.url);
@@ -570,7 +580,7 @@
             vjsPlayer.play().then(() => {
                 document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
             }).catch(() => {
-                console.log('Interação do usuário necessária para áudio/vídeo.');
+                console.log('Interação do usuário necessária para reprodução.');
             });
         }
 
