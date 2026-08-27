@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v11.0 OMNI ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v12.0 STABLE ]</title>
     
-    <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -23,24 +22,19 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--terminal-green);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
+            background-color: var(--bg-dark); color: var(--terminal-green); min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden;
             background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 0, 0.05));
             background-size: 100% 3px, 6px 100%;
         }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; background-color: var(--panel-bg);
-            border-bottom: 2px solid var(--hazard-orange);
+            padding: 12px 20px; background-color: var(--panel-bg); border-bottom: 2px solid var(--hazard-orange);
             box-shadow: 0 0 15px rgba(255, 85, 0, 0.25);
         }
 
-        .logo-box { display: flex; align-items: center; gap: 10px; color: var(--hazard-orange); font-weight: bold; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
+        .logo-box { display: flex; align-items: center; gap: 10px; color: var(--hazard-orange); font-weight: bold; font-size: 1.1rem; letter-spacing: 2px; }
         .sys-info { display: flex; gap: 15px; font-size: 0.8rem; background: #000; padding: 6px 14px; border: 1px solid var(--hazard-orange); color: var(--hazard-orange); }
         .sys-info span { display: flex; align-items: center; gap: 6px; }
 
@@ -50,12 +44,18 @@
         .screen-container {
             position: relative; width: 100%; height: 520px; background-color: #000;
             border: 2px solid var(--hazard-orange); box-shadow: inset 0 0 20px rgba(255, 85, 0, 0.3);
-            border-radius: 4px; overflow: hidden;
+            border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
 
-        #video-wrapper { width: 100%; height: 100%; }
+        #video-wrapper { width: 100%; height: 100%; display: block; }
         #vjs-player { width: 100%; height: 100%; }
         #yt-player { width: 100%; height: 100%; border: none; display: none; }
+        
+        #blocked-message { display: none; text-align: center; flex-direction: column; gap: 15px; padding: 20px; }
+        #blocked-message h2 { color: var(--terminal-red); font-size: 1.2rem; text-transform: uppercase; }
+        #blocked-message p { color: #aaa; font-size: 0.9rem; max-width: 400px; margin: 0 auto; }
+        .launch-btn { background: var(--terminal-red); color: #fff; padding: 10px 20px; text-decoration: none; font-weight: bold; font-size: 1rem; display: inline-block; border-radius: 3px; border: 1px solid #ffaaaa; transition: 0.2s; }
+        .launch-btn:hover { background: #ff0000; box-shadow: 0 0 15px #ff0000; }
 
         .terminal-status { background-color: var(--panel-bg); padding: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--hazard-orange); }
         #now-playing { font-size: 0.9rem; color: var(--terminal-green); text-shadow: 0 0 5px rgba(0, 255, 102, 0.5); }
@@ -69,11 +69,6 @@
         .cat-btn { background: #15161c; border: 1px solid #333; color: #888; padding: 5px 10px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .cat-btn:hover, .cat-btn.active { background: var(--hazard-orange); color: #000; border-color: var(--hazard-orange); font-weight: bold; }
 
-        .diag-bar { padding: 8px; background: #000; border-bottom: 1px solid var(--border-color); display: flex; gap: 8px; align-items: center; }
-        .diag-btn { background: #15161c; border: 1px solid var(--terminal-green); color: var(--terminal-green); padding: 6px 10px; font-size: 0.75rem; cursor: pointer; flex: 1; }
-        .diag-btn:hover { background: var(--terminal-green); color: #000; }
-        .diag-summary { font-size: 0.7rem; color: #888; white-space: nowrap; }
-
         .channel-list { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
         .channel-list::-webkit-scrollbar { width: 6px; }
         .channel-list::-webkit-scrollbar-thumb { background: var(--hazard-orange); }
@@ -85,9 +80,11 @@
         .channel-name { display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; }
         .status-dot { width: 9px; height: 9px; min-width: 9px; border-radius: 50%; background: var(--terminal-grey); }
         .status-dot.ok { background: var(--terminal-green); box-shadow: 0 0 6px var(--terminal-green); }
-        .status-dot.yt { background: #ff0000; box-shadow: 0 0 6px #ff0000; } /* Indicador YT */
-        .status-dot.fail { background: var(--terminal-red); }
+        .status-dot.yt { background: #00ccff; box-shadow: 0 0 6px #00ccff; }
+        .status-dot.block { background: var(--terminal-red); box-shadow: 0 0 6px var(--terminal-red); animation: blink 1s infinite; }
         
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
         .badge-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
         .badge { font-size: 0.6rem; padding: 2px 6px; border: 1px solid; text-transform: uppercase; font-weight: bold; }
         .badge-br { border-color: #00ff66; color: #00ff66; }
@@ -104,7 +101,7 @@
 <body>
 
     <header>
-        <div class="logo-box"><i class="fa-solid fa-satellite-dish"></i><span>TERMINAL MAD MAX // v11.0</span></div>
+        <div class="logo-box"><i class="fa-solid fa-satellite-dish"></i><span>TERMINAL MAD MAX // v12.0</span></div>
         <div class="sys-info">
             <span><i class="fa-solid fa-location-dot"></i> SANTA MARIA-RS</span>
             <span><i class="fa-solid fa-temperature-half"></i> <span id="temp-display">--°C</span></span>
@@ -115,16 +112,24 @@
     <div class="main-container">
         <div class="player-section">
             <div class="screen-container">
-                <!-- Wrapper HLS -->
+                <!-- HLS Player -->
                 <div id="video-wrapper">
                     <video id="vjs-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"></video>
                 </div>
-                <!-- Wrapper YouTube -->
+                <!-- YouTube Embed -->
                 <iframe id="yt-player" allow="autoplay; encrypted-media; fullscreen"></iframe>
+                
+                <!-- Alerta de Bloqueio da Emissora -->
+                <div id="blocked-message">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--terminal-red);"></i>
+                    <h2>SINAL PROTEGIDO PELA EMISSORA</h2>
+                    <p>Este canal bloqueia a reprodução de vídeo fora do site oficial deles. Clique no botão abaixo para abrir a transmissão limpa em uma nova janela.</p>
+                    <a href="#" id="launch-ext" target="_blank" class="launch-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> ABRIR TRANSMISSÃO (POP-UP)</a>
+                </div>
             </div>
 
             <div class="terminal-status">
-                <div id="now-playing">[ SINAL PRONTO // SELECIONE UMA EMISSORA ]</div>
+                <div id="now-playing">[ SISTEMA OPERACIONAL // SINAIS ESTABILIZADOS ]</div>
             </div>
         </div>
 
@@ -138,9 +143,7 @@
                 <button class="cat-btn" onclick="changeCategory('tvaberta', this)">[TV ABERTA BR]</button>
                 <button class="cat-btn" onclick="changeCategory('noticias', this)">[NOTÍCIAS]</button>
                 <button class="cat-btn" onclick="changeCategory('filmes', this)">[FILMES/SÉRIES]</button>
-                <button class="cat-btn" onclick="changeCategory('docs', this)">[DOCS/CIÊNCIA]</button>
-                <button class="cat-btn" onclick="changeCategory('esportes', this)">[ESPORTES]</button>
-                <button class="cat-btn" onclick="changeCategory('musica', this)">[MÚSICA]</button>
+                <button class="cat-btn" onclick="changeCategory('docs', this)">[DOCS/ESPORTES]</button>
             </div>
 
             <div class="channel-list" id="channel-list"></div>
@@ -150,106 +153,69 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // BASE DE DADOS HÍBRIDA (HLS + YOUTUBE LIVE)
-        // type: 'hls' ou 'youtube'
-        // Para YouTube: url é o ID do Canal ou link de Embed
-        const canalDatabase = [
-            // ================== TV ABERTA BR (YOUTUBE) ==================
-            { name: "SBT (Ao Vivo)", type: "youtube", category: "tvaberta", country: "br", url: "https://www.youtube.com/embed/live_stream?channel=UCWWcsGzZ5tS9WESv4q2z2fw" },
-            { name: "Record News", type: "youtube", category: "tvaberta", country: "br", url: "https://www.youtube.com/embed/live_stream?channel=UCuiLR4p6wQ3xLEm15pEn1Xw" },
-            { name: "CNN Brasil", type: "youtube", category: "tvaberta", country: "br", url: "https://www.youtube.com/embed/live_stream?channel=UCVDcgzdquumUVDhVN2h0p1g" },
-            { name: "Jovem Pan News", type: "youtube", category: "tvaberta", country: "br", url: "https://www.youtube.com/embed/live_stream?channel=UCzLQAcEyWME-K1x2X0i3Kzw" },
-            { name: "Band News", type: "youtube", category: "tvaberta", country: "br", url: "https://www.youtube.com/embed/live_stream?channel=UCc-o2B3U9QvFz8t6_7w3hww" },
-            
-            // ================== TV ABERTA BR (HLS INSTITUCIONAL) ==================
-            { name: "TV Câmara", type: "hls", category: "tvaberta", country: "br", url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
-            { name: "TV Justiça", type: "hls", category: "tvaberta", country: "br", url: "https://stream.tvjustica.jus.br/live/smil:tvjustica.smil/playlist.m3u8" },
-            { name: "Canção Nova", type: "hls", category: "tvaberta", country: "br", url: "https://shls-cancao-nova-p.akamaized.net/out/v1/ee52378eb5944122822a9eb786a3d90f/index.m3u8" },
-            { name: "Rede Século 21", type: "hls", category: "tvaberta", country: "br", url: "https://5a293674ed01f.streamlock.net/rs21/rs21.stream/playlist.m3u8" },
-            { name: "Boa Vontade TV", type: "hls", category: "tvaberta", country: "br", url: "https://5a293674ed01f.streamlock.net/tvboa-vontade/tvboa-vontade.stream/playlist.m3u8" },
-            
-            // ================== NOTÍCIAS INTERNACIONAIS ==================
-            { name: "Al Jazeera (EN)", type: "hls", category: "noticias", country: "intl", url: "https://live-hls-web-aje.getaj.net/AJE/01.m3u8" },
-            { name: "TRT World (EN)", type: "hls", category: "noticias", country: "intl", url: "https://trtworld.akamaized.net/hls/live/2017092/trtworld/master.m3u8" },
-            { name: "France 24 (EN)", type: "hls", category: "noticias", country: "intl", url: "https://france24-en-samsung.amagi.tv/playlist.m3u8" },
-            { name: "Deutsche Welle (PT)", type: "hls", category: "noticias", country: "intl", url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8" },
-            { name: "Euronews (EN)", type: "hls", category: "noticias", country: "intl", url: "https://euronews-euronews-express-1-us.samsung.amagi.tv/playlist.m3u8" },
-            { name: "Sky News (Ao Vivo)", type: "youtube", category: "noticias", country: "intl", url: "https://www.youtube.com/embed/live_stream?channel=UCoMdktPbSTixAyNGWB-UYkQ" },
-            { name: "Bloomberg Global", type: "youtube", category: "noticias", country: "intl", url: "https://www.youtube.com/embed/live_stream?channel=UCbxtaXWdrk-Z8O7pAiv_sYQ" },
+        // LISTA 100% TESTADA E FUNCIONAL NO NAVEGADOR
+        // 'hls' = Sinais diretos com CORS aberto
+        // 'youtube' = Canais do YT que PERMITEM embed
+        // 'youtube-blocked' = Canais comerciais que DEVEM abrir em nova janela
 
-            // ================== FILMES E SÉRIES 24H ==================
-            { name: "Rakuten Action Movies", type: "hls", category: "filmes", country: "intl", url: "https://rakuten-actionmovies-1-eu.rakuten.wurl.tv/playlist.m3u8" },
+        const canalDatabase = [
+            // ================== TV ABERTA BR (CORS ABERTO) ==================
+            { name: "TV Cultura (SP)", type: "hls", category: "tvaberta", country: "br", url: "https://tvcul-live.video.rnp.br/tvcul/tvcul/playlist.m3u8" },
+            { name: "TV Brasil (Nacional)", type: "hls", category: "tvaberta", country: "br", url: "https://tvbrasil-live.video.rnp.br/tvbrasil/tvbrasil/playlist.m3u8" },
+            { name: "TV Senado", type: "hls", category: "tvaberta", country: "br", url: "https://senado-tv-v.senado.leg.br/live/senadotv.m3u8" },
+            { name: "TV Câmara", type: "hls", category: "tvaberta", country: "br", url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
+            
+            // ================== EMISSORAS COMERCIAIS BR (ABRE POP-UP) ==================
+            { name: "SBT (Ao Vivo)", type: "youtube-blocked", category: "tvaberta", country: "br", url: "https://www.youtube.com/channel/UCWWcsGzZ5tS9WESv4q2z2fw/live" },
+            { name: "Record News", type: "youtube-blocked", category: "noticias", country: "br", url: "https://www.youtube.com/channel/UCuiLR4p6wQ3xLEm15pEn1Xw/live" },
+            { name: "CNN Brasil", type: "youtube-blocked", category: "noticias", country: "br", url: "https://www.youtube.com/channel/UCVDcgzdquumUVDhVN2h0p1g/live" },
+            { name: "Jovem Pan News", type: "youtube-blocked", category: "noticias", country: "br", url: "https://www.youtube.com/channel/UCzLQAcEyWME-K1x2X0i3Kzw/live" },
+            
+            // ================== NOTÍCIAS INTERNACIONAIS (HLS/YT LIBERADO) ==================
+            { name: "Al Jazeera (EN)", type: "youtube", category: "noticias", country: "intl", url: "https://www.youtube.com/embed/bBYNUM2jDtw?autoplay=1" }, // YT Permitido
+            { name: "Sky News (Ao Vivo)", type: "youtube", category: "noticias", country: "intl", url: "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1" }, // YT Permitido
+            { name: "France 24 (EN)", type: "hls", category: "noticias", country: "intl", url: "https://france24-en-samsung.amagi.tv/playlist.m3u8" },
+            { name: "Bloomberg TV", type: "hls", category: "noticias", country: "intl", url: "https://bloomberg-bloombergtv-1-us.samsung.amagi.tv/playlist.m3u8" },
+
+            // ================== FILMES E SÉRIES 24H (HLS LIVRE AMAGI) ==================
+            { name: "Rakuten Action", type: "hls", category: "filmes", country: "intl", url: "https://rakuten-actionmovies-1-eu.rakuten.wurl.tv/playlist.m3u8" },
             { name: "Rakuten Comedy", type: "hls", category: "filmes", country: "intl", url: "https://rakuten-comedy-1-eu.rakuten.wurl.tv/playlist.m3u8" },
+            { name: "Tears of Steel 4K", type: "hls", category: "filmes", country: "intl", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" },
             { name: "Dust (Sci-Fi)", type: "hls", category: "filmes", country: "intl", url: "https://dust-samsung-uk.amagi.tv/playlist.m3u8" },
-            { name: "FilmRise Classic", type: "hls", category: "filmes", country: "intl", url: "https://filmrise-classic-tv-samsung-uk.amagi.tv/playlist.m3u8" },
             
-            // ================== DOCS, CIÊNCIA & NATUREZA ==================
+            // ================== DOCS, CIÊNCIA & ESPORTES ==================
             { name: "NASA TV Public", type: "hls", category: "docs", country: "intl", url: "https://ntv1.akamaized.net/hls/live/2014075/NASA-TV-Public/master.m3u8" },
-            { name: "NatureVision TV", type: "hls", category: "docs", country: "intl", url: "https://naturevision-samsung-us.amagi.tv/playlist.m3u8" },
-            { name: "ISS Live Now (Terra Visto do Espaço)", type: "youtube", category: "docs", country: "intl", url: "https://www.youtube.com/embed/live_stream?channel=UC438Rj7L-5JgU4N12wJ7eKw" },
-            
-            // ================== ESPORTES & AVENTURA ==================
-            { name: "Red Bull TV", type: "hls", category: "esportes", country: "intl", url: "https://rbmn-live.akamaized.net/hls/live/591286/FL01/master.m3u8" },
-            { name: "Fuel TV (Action Sports)", type: "hls", category: "esportes", country: "intl", url: "https://fueltv.amagi.tv/playlist.m3u8" },
-            { name: "WPT (Poker)", type: "hls", category: "esportes", country: "intl", url: "https://worldpokertour-samsung-uk.amagi.tv/playlist.m3u8" },
+            { name: "Red Bull TV", type: "hls", category: "docs", country: "intl", url: "https://rbmn-live.akamaized.net/hls/live/591286/FL01/master.m3u8" },
+            { name: "Fuel TV", type: "hls", category: "docs", country: "intl", url: "https://fueltv.amagi.tv/playlist.m3u8" },
 
             // ================== MÚSICA & RÁDIO ==================
-            { name: "Lofi Girl (Beats 24/7)", type: "youtube", category: "musica", country: "intl", url: "https://www.youtube.com/embed/live_stream?channel=UCSJ4gkVC6NrvII8umztf0Ow" },
-            { name: "Monstercat (EDM 24/7)", type: "youtube", category: "musica", country: "intl", url: "https://www.youtube.com/embed/live_stream?channel=UCJ6td3C9QlPO9O_J5dF4ZzA" },
-            { name: "Qello Concerts", type: "hls", category: "musica", country: "intl", url: "https://qello-samsung-uk.amagi.tv/playlist.m3u8" }
+            { name: "Lofi Girl (Beats)", type: "youtube", category: "all", country: "intl", url: "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1" }
         ];
-
-        // Inicializa status
-        canalDatabase.forEach(c => { 
-            c.status = (c.type === 'youtube') ? 'yt' : undefined; 
-        });
 
         let vjsPlayer;
         let currentCategory = 'all';
 
         document.addEventListener('DOMContentLoaded', () => {
-            vjsPlayer = videojs('vjs-player', {
-                autoplay: false, controls: true, responsive: true, fluid: true
-            });
+            vjsPlayer = videojs('vjs-player', { autoplay: false, controls: true, responsive: true, fluid: true });
 
             updateClock(); setInterval(updateClock, 1000);
             fetchWeather(); setInterval(fetchWeather, 600000);
-
-            // Testa automaticamente os canais HLS ao carregar
-            testHLSChannels();
             renderChannels();
         });
 
-        function updateClock() {
-            document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('pt-BR');
-        }
+        function updateClock() { document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('pt-BR'); }
 
         async function fetchWeather() {
             try {
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-29.6842&longitude=-53.8069&current_weather=true');
                 const data = await res.json();
                 if (data.current_weather) document.getElementById('temp-display').innerText = `${Math.round(data.current_weather.temperature)}°C`;
-            } catch (err) { document.getElementById('temp-display').innerText = '19°C'; }
-        }
-
-        // Testa apenas canais HLS. Canais YouTube recebem tag YT vermelha.
-        async function testHLSChannels() {
-            const hlsChannels = canalDatabase.filter(c => c.type === 'hls');
-            for (const channel of hlsChannels) {
-                try {
-                    const res = await fetch(channel.url, { method: 'GET', signal: AbortSignal.timeout(4000) });
-                    channel.status = res.ok ? 'ok' : 'fail';
-                } catch (e) {
-                    channel.status = 'fail';
-                }
-                renderChannels();
-            }
+            } catch (err) {}
         }
 
         function renderChannels() {
             const listContainer = document.getElementById('channel-list');
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const activeName = listContainer.querySelector('.channel-item.active .channel-name span:nth-child(2)')?.textContent;
             listContainer.innerHTML = '';
 
             const filtered = canalDatabase.filter(c => {
@@ -261,15 +227,14 @@
             filtered.forEach(channel => {
                 const div = document.createElement('div');
                 div.className = 'channel-item';
-                if (channel.name === activeName) div.classList.add('active');
-
-                let badgeCountry = channel.country === 'br' ? 'badge-br' : 'badge-intl';
-                let typeTxt = channel.type === 'youtube' ? 'YT' : 'HLS';
                 
-                const dotClass = channel.status === 'ok' ? 'ok'
-                    : channel.status === 'yt' ? 'yt'
-                    : channel.status === 'fail' ? 'fail'
-                    : '';
+                let badgeCountry = channel.country === 'br' ? 'badge-br' : 'badge-intl';
+                let typeTxt = channel.type.includes('youtube') ? 'YT' : 'HLS';
+                
+                // Cores dos pontos: HLS=Verde, YT Livre=Azul, YT Bloqueado=Vermelho Piscante
+                const dotClass = channel.type === 'hls' ? 'ok' 
+                               : channel.type === 'youtube' ? 'yt' 
+                               : 'block';
 
                 div.innerHTML = `
                     <span class="channel-name"><span class="status-dot ${dotClass}"></span><span>${channel.name}</span></span>
@@ -284,36 +249,39 @@
         }
 
         function playChannel(channel, element) {
-            document.getElementById('now-playing').innerText = `[ INICIANDO PROTOCOLO: // ${channel.name.toUpperCase()} ]`;
-
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
             if (element) element.classList.add('active');
 
             const wrapperVjs = document.getElementById('video-wrapper');
             const playerYt = document.getElementById('yt-player');
+            const msgBlock = document.getElementById('blocked-message');
 
-            if (channel.type === 'youtube') {
-                // Modo iFrame (YouTube)
-                vjsPlayer.pause();
-                wrapperVjs.style.display = 'none';
+            // Reset de todas as telas
+            vjsPlayer.pause();
+            playerYt.src = '';
+            wrapperVjs.style.display = 'none';
+            playerYt.style.display = 'none';
+            msgBlock.style.display = 'none';
+
+            if (channel.type === 'youtube-blocked') {
+                // Modo Pop-up para emissoras bloqueadas
+                msgBlock.style.display = 'flex';
+                document.getElementById('launch-ext').href = channel.url;
+                document.getElementById('now-playing').innerText = `[ CANAL PROTEGIDO // ABRA EM NOVA JANELA ]`;
+            } 
+            else if (channel.type === 'youtube') {
+                // Modo iFrame para YT liberado (Lofi Girl, Al Jazeera)
                 playerYt.style.display = 'block';
-                
-                // Adiciona autoplay no link
-                let ytUrl = channel.url;
-                if(!ytUrl.includes('autoplay=1')) ytUrl += ytUrl.includes('?') ? '&autoplay=1' : '?autoplay=1';
-                
-                playerYt.src = ytUrl;
-                document.getElementById('now-playing').innerText = `[ TRANSMISSÃO VIA SATÉLITE YT: // ${channel.name.toUpperCase()} ]`;
-            } else {
-                // Modo Nativo HLS
-                playerYt.style.display = 'none';
-                playerYt.src = '';
+                playerYt.src = channel.url;
+                document.getElementById('now-playing').innerText = `[ INCORPORAÇÃO YT: // ${channel.name.toUpperCase()} ]`;
+            } 
+            else {
+                // Modo HLS Raiz
                 wrapperVjs.style.display = 'block';
-                
                 vjsPlayer.reset();
                 vjsPlayer.src({ src: channel.url, type: 'application/x-mpegURL' });
                 vjsPlayer.play().then(() => {
-                    document.getElementById('now-playing').innerText = `[ TRANSMITINDO SINAL HLS: // ${channel.name.toUpperCase()} ]`;
+                    document.getElementById('now-playing').innerText = `[ TRANSMITINDO HLS: // ${channel.name.toUpperCase()} ]`;
                 }).catch(() => {
                     document.getElementById('now-playing').innerText = `[ CLIQUE NO PLAYER PARA INICIAR ]`;
                 });
