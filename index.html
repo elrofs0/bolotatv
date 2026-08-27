@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v6.0 ]</title>
     
     <!-- Video.js HLS Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -33,11 +33,11 @@
             flex-direction: column;
             overflow-x: hidden;
             /* Efeito CRT Scanlines */
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
             background-size: 100% 3px, 6px 100%;
         }
 
-        /* Top Bar Estilo Wasteland Header */
+        /* Wasteland Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -45,7 +45,7 @@
             padding: 12px 20px;
             background-color: var(--panel-bg);
             border-bottom: 2px solid var(--hazard-orange);
-            box-shadow: 0 0 15px rgba(255, 85, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 85, 0, 0.25);
         }
 
         .logo-box {
@@ -54,15 +54,15 @@
             gap: 10px;
             color: var(--hazard-orange);
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
         .sys-info {
             display: flex;
-            gap: 20px;
-            font-size: 0.85rem;
+            gap: 15px;
+            font-size: 0.8rem;
             background: #000;
             padding: 6px 14px;
             border: 1px solid var(--hazard-orange);
@@ -71,10 +71,10 @@
 
         .sys-info span { display: flex; align-items: center; gap: 6px; }
 
-        /* Dashboard Container */
+        /* Main Grid */
         .main-container {
             display: grid;
-            grid-template-columns: 1fr 380px;
+            grid-template-columns: 1fr 390px;
             gap: 15px;
             padding: 15px;
             max-width: 1600px;
@@ -89,7 +89,7 @@
             gap: 10px;
         }
 
-        /* Dual Player Wrapper (Suporta HLS e Youtube sem travar) */
+        /* Screen Wrapper */
         .screen-container {
             position: relative;
             width: 100%;
@@ -101,13 +101,10 @@
             overflow: hidden;
         }
 
-        #vjs-player, #yt-iframe {
+        #vjs-player {
             width: 100%;
             height: 100%;
-            border: none;
         }
-
-        .hidden { display: none !important; }
 
         .terminal-status {
             background-color: var(--panel-bg);
@@ -117,12 +114,12 @@
         }
 
         #now-playing {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--terminal-green);
             text-shadow: 0 0 5px rgba(0, 255, 102, 0.5);
         }
 
-        /* Sidebar & Lista Estilo Terminal */
+        /* Sidebar & Channels */
         .sidebar {
             background-color: var(--panel-bg);
             border: 1px solid var(--hazard-orange);
@@ -160,7 +157,7 @@
             background: #15161c;
             border: 1px solid #333;
             color: #888;
-            padding: 4px 10px;
+            padding: 5px 10px;
             font-size: 0.75rem;
             cursor: pointer;
             white-space: nowrap;
@@ -214,15 +211,17 @@
             padding: 2px 6px;
             border: 1px solid;
             text-transform: uppercase;
+            font-weight: bold;
         }
 
-        .badge-hls { border-color: var(--terminal-green); color: var(--terminal-green); }
-        .badge-yt { border-color: #ff3333; color: #ff3333; }
+        .badge-br { border-color: #00ff66; color: #00ff66; }
+        .badge-ar { border-color: #00ccff; color: #00ccff; }
+        .badge-demo { border-color: #ffaa00; color: #ffaa00; }
 
         @media (max-width: 900px) {
             .main-container { grid-template-columns: 1fr; height: auto; }
             .screen-container { height: 260px; }
-            .sidebar { height: 400px; }
+            .sidebar { height: 420px; }
         }
     </style>
 </head>
@@ -230,8 +229,8 @@
 
     <header>
         <div class="logo-box">
-            <i class="fa-solid fa-biohazard"></i>
-            <span>WAR-ROOM // BOLOTA TV v5.0</span>
+            <i class="fa-solid fa-radio"></i>
+            <span>WAR-ROOM // BOLOTA TV</span>
         </div>
         <div class="sys-info">
             <span><i class="fa-solid fa-location-dot"></i> SANTA MARIA-RS</span>
@@ -241,140 +240,155 @@
     </header>
 
     <div class="main-container">
-        <!-- Player Area -->
+        <!-- Area do Player HLS -->
         <div class="player-section">
             <div class="screen-container">
-                <!-- Engine 1: Video.js para m3u8 -->
-                <video id="vjs-player" class="video-js vjs-default-skin" controls preload="auto"></video>
-                <!-- Engine 2: Iframe para YouTube Direct -->
-                <iframe id="yt-iframe" class="hidden" allowfullscreen allow="autoplay"></iframe>
+                <video id="vjs-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"></video>
             </div>
 
             <div class="terminal-status">
-                <div id="now-playing">[ FREQUÊNCIA LIVRE // SELECIONE UM CANAL ]</div>
+                <div id="now-playing">[ SINAL PRONTO // SELECIONE UMA EMISSORA ]</div>
             </div>
         </div>
 
-        <!-- Controls / Channels -->
+        <!-- Lista de Canais e Filtros -->
         <div class="sidebar">
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="> FILTRAR CANAIS..." onkeyup="filterChannels()">
+                <input type="text" id="searchInput" placeholder="> BUSCAR CANAL..." onkeyup="filterChannels()">
             </div>
             
             <div class="categories-bar">
                 <button class="cat-btn active" onclick="changeCategory('all', this)">[TODOS]</button>
-                <button class="cat-btn" onclick="changeCategory('m3u8', this)">[M3U8 HLS]</button>
+                <button class="cat-btn" onclick="changeCategory('br', this)">[BRASIL 🇧🇷]</button>
+                <button class="cat-btn" onclick="changeCategory('ar', this)">[ARGENTINA 🇦🇷]</button>
                 <button class="cat-btn" onclick="changeCategory('noticias', this)">[NOTÍCIAS]</button>
-                <button class="cat-btn" onclick="changeCategory('filmes', this)">[FILMES/DEMO]</button>
-                <button class="cat-btn" onclick="changeCategory('local', this)">[LOCAL RS]</button>
             </div>
 
             <div class="channel-list" id="channel-list"></div>
         </div>
     </div>
 
-    <!-- Video.js Engine -->
+    <!-- Script Video.js -->
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // Banco de Dados Consolidado (M3U8 com CORS ativado + YouTube Direct Fallback)
+        // Canais M3U8 com servidores HLS ativos e liberados para CORS
         const canalDatabase = [
-            // SINAIS M3U8 NATIVOS (HLS com CORS Testados)
+            // BRASIL (BR)
             {
-                name: "France 24 News (M3U8)",
-                category: "noticias",
-                engine: "hls",
-                url: "https://static.france24.com/live/F24_EN_LO_HLS/live_tv.m3u8"
+                name: "TV Brasil (Nacional)",
+                category: "br",
+                country: "br",
+                url: "https://stmv1.srvif.com/tvbrasil/tvbrasil/playlist.m3u8"
             },
             {
-                name: "Deutsche Welle Live (M3U8)",
+                name: "TV Senado (Ao Vivo)",
                 category: "noticias",
-                engine: "hls",
-                url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"
+                country: "br",
+                url: "https://stmv1.srvif.com/tvsenado/tvsenado/playlist.m3u8"
             },
             {
-                name: "Tears of Steel 4K (M3U8)",
-                category: "filmes",
-                engine: "hls",
+                name: "Rede Minas (Cultura)",
+                category: "br",
+                country: "br",
+                url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8"
+            },
+            {
+                name: "Record News (Notícias)",
+                category: "noticias",
+                country: "br",
+                url: "https://stmv1.srvif.com/recordnews/recordnews/playlist.m3u8"
+            },
+            {
+                name: "TV Evangelizar (Aberto)",
+                category: "br",
+                country: "br",
+                url: "https://stmv1.srvif.com/tvevangelizar/tvevangelizar/playlist.m3u8"
+            },
+
+            // ARGENTINA (AR)
+            {
+                name: "Canal 26 (Buenos Aires)",
+                category: "noticias",
+                country: "ar",
+                url: "https://live-01-02-canal26.com.ar/hls/live.m3u8"
+            },
+            {
+                name: "Chaco TV (Argentina)",
+                category: "ar",
+                country: "ar",
+                url: "https://stmv1.srvif.com/chacotv/chacotv/playlist.m3u8"
+            },
+            {
+                name: "France 24 (Español Latam)",
+                category: "noticias",
+                country: "ar",
+                url: "https://static.france24.com/live/F24_ES_LO_HLS/live_tv.m3u8"
+            },
+            {
+                name: "TeleSUR (América Latina)",
+                category: "noticias",
+                country: "ar",
+                url: "https://tv.telesur.cdn.tda.as/hls/live.m3u8"
+            },
+
+            // CANAIS TESTE / FILMES DEMO
+            {
+                name: "Tears of Steel 4K (Demo)",
+                category: "demo",
+                country: "demo",
                 url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
             },
             {
-                name: "Big Buck Bunny (M3U8)",
-                category: "filmes",
-                engine: "hls",
+                name: "Big Buck Bunny (Demo)",
+                category: "demo",
+                country: "demo",
                 url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-            },
-            {
-                name: "Sintel Open Movie (M3U8)",
-                category: "filmes",
-                engine: "hls",
-                url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-            },
-
-            // SINAIS YOUTUBE (Com Fallback Iframe para evitar travamento CORS)
-            {
-                name: "Record News (Ao Vivo)",
-                category: "noticias",
-                engine: "youtube",
-                url: "https://www.youtube.com/embed/live_stream?channel=UCuiLR4p6wQ3xLEm15pEn1Xw&autoplay=1"
-            },
-            {
-                name: "Jovem Pan News (Ao Vivo)",
-                category: "noticias",
-                engine: "youtube",
-                url: "https://www.youtube.com/embed/live_stream?channel=UC93p-68fC34y5mThv2I3e0g&autoplay=1"
-            },
-            {
-                name: "Lofi Girl Radio 24/7",
-                category: "filmes",
-                engine: "youtube",
-                url: "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1"
-            },
-            {
-                name: "TV Câmara Santa Maria (RS)",
-                category: "local",
-                engine: "youtube",
-                url: "https://www.youtube.com/embed/live_stream?channel=UCqR53N2sUpwQZ9pPkW3O4Ew&autoplay=1"
             }
         ];
 
         let vjsPlayer;
         let currentCategory = 'all';
 
-        // 1. Inicialização do Terminal
         document.addEventListener('DOMContentLoaded', () => {
-            vjsPlayer = videojs('vjs-player');
-            
-            // Iniciar Relógio e Clima
+            // Inicializa Video.js com suporte a HLS nativo
+            vjsPlayer = videojs('vjs-player', {
+                autoplay: false,
+                controls: true,
+                responsive: true
+            });
+
+            // Monitor de Erro de Transmissão (Alerta se o sinal cair)
+            vjsPlayer.on('error', () => {
+                document.getElementById('now-playing').innerText = '[ ERRO DE SINAL // FREQUÊNCIA INDISPONÍVEL NO MOMENTO ]';
+            });
+
             updateClock();
             setInterval(updateClock, 1000);
             fetchWeather();
-            setInterval(fetchWeather, 600000); // Atualiza clima a cada 10 min
+            setInterval(fetchWeather, 600000);
 
             renderChannels();
         });
 
-        // 2. Relógio em Tempo Real
         function updateClock() {
             const now = new Date();
             document.getElementById('clock-display').innerText = now.toLocaleTimeString('pt-BR');
         }
 
-        // 3. Clima de Santa Maria (RS) via API Open-Meteo Gratuita
         async function fetchWeather() {
             try {
-                // Lat/Lon de Santa Maria - RS (-29.6842, -53.8069)
+                // Coordenadas geográficas de Santa Maria - RS (-29.6842, -53.8069)
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-29.6842&longitude=-53.8069&current_weather=true');
                 const data = await res.json();
                 if(data.current_weather) {
                     document.getElementById('temp-display').innerText = `${Math.round(data.current_weather.temperature)}°C`;
                 }
             } catch (err) {
-                document.getElementById('temp-display').innerText = '19°C'; // Fallback
+                document.getElementById('temp-display').innerText = '19°C';
             }
         }
 
-        // 4. Renderização e Filtros de Canais
         function renderChannels() {
             const listContainer = document.getElementById('channel-list');
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -382,54 +396,49 @@
 
             const filtered = canalDatabase.filter(c => {
                 const matchCategory = currentCategory === 'all' || 
-                                     (currentCategory === 'm3u8' && c.engine === 'hls') ||
-                                     c.category === currentCategory;
+                                     c.category === currentCategory || 
+                                     c.country === currentCategory;
                 const matchSearch = c.name.toLowerCase().includes(searchVal);
                 return matchCategory && matchSearch;
             });
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = '<div style="color:#666; padding:10px; font-size:0.8rem;">[SEM SINAL NESTA FREQUÊNCIA]</div>';
+                listContainer.innerHTML = '<div style="color:#666; padding:10px; font-size:0.8rem;">[SINAL NÃO LOCALIZADO]</div>';
                 return;
             }
 
             filtered.forEach(channel => {
                 const div = document.createElement('div');
                 div.className = 'channel-item';
+                
+                let badgeClass = 'badge-demo';
+                if (channel.country === 'br') badgeClass = 'badge-br';
+                if (channel.country === 'ar') badgeClass = 'badge-ar';
+
                 div.innerHTML = `
                     <span>> ${channel.name}</span>
-                    <span class="badge ${channel.engine === 'hls' ? 'badge-hls' : 'badge-yt'}">${channel.engine}</span>
+                    <span class="badge ${badgeClass}">${channel.country.toUpperCase()}</span>
                 `;
                 div.onclick = () => playChannel(channel, div);
                 listContainer.appendChild(div);
             });
         }
 
-        // 5. Alternância Inteligente de Engine (HLS vs YouTube)
         function playChannel(channel, element) {
             document.getElementById('now-playing').innerText = `[ CONECTADO: // ${channel.name.toUpperCase()} ]`;
             
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
 
-            const vjsEl = document.getElementById('vjs-player');
-            const ytEl = document.getElementById('yt-iframe');
+            // Carrega e força a reprodução HLS no Video.js
+            vjsPlayer.src({
+                src: channel.url,
+                type: 'application/x-mpegURL'
+            });
 
-            if (channel.engine === 'hls') {
-                // Ativa Video.js, Desativa Iframe
-                ytEl.classList.add('hidden');
-                ytEl.src = '';
-                vjsEl.classList.remove('hidden');
-
-                vjsPlayer.src({ src: channel.url, type: 'application/x-mpegURL' });
-                vjsPlayer.play().catch(() => console.log('Aguardando clique para iniciar áudio/vídeo.'));
-            } else {
-                // Ativa Iframe, Desativa Video.js
-                vjsPlayer.pause();
-                vjsEl.classList.add('hidden');
-                ytEl.classList.remove('hidden');
-                ytEl.src = channel.url;
-            }
+            vjsPlayer.play().catch(err => {
+                console.log('Clique no player para liberar o áudio/vídeo inicial.');
+            });
         }
 
         function changeCategory(cat, btn) {
