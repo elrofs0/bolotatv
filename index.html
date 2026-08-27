@@ -357,12 +357,12 @@
     'cespi.unlp.edu.ar'
 ];
 
-      const canalDatabase = [
+     const canalDatabase = [
     // BRASIL
     { name: "TV Câmara (Federal)", category: "br", country: "br",
       url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
     { name: "Rede Minas (Cultura)", category: "br", country: "br",
-      url: "https://v4-slbps-sambavideos.akamaized.net/live/3282,8114/master.m3u8" },
+      url: "https://5a29759d57a91.streamlock.net/redeminas/redeminas/playlist.m3u8" },
     { name: "Rede Brasil", category: "br", country: "br",
       url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8" },
     { name: "COM Brasil", category: "br", country: "br",
@@ -373,18 +373,18 @@
       url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8" },
 
     // ARGENTINA
-    { name: "Canal 26 (Buenos Aires)", category: "noticias", country: "ar",
-      url: "https://live-01-02-canal26.com.ar/hls/live.m3u8" },
-    { name: "TeleSUR (América Latina)", category: "noticias", country: "ar",
-      url: "https://cdnesmain.telesur.ultrabase.net/mbliveMain/hd/playlist.m3u8" },
+    { name: "Canal 26 (Buenos Aires)", category: "noticias", country: "ar", useAltProxy: true,
+      url: "http://200.115.193.177/live/26hd-720/.m3u8" },
+    { name: "TeleSUR (América Latina)", category: "noticias", country: "ar", useAltProxy: true,
+      url: "https://telesur.s2.videocdn.scaleengine.net/telesur-iphone/play/live.m3u8" },
     { name: "TV Universidad (UNLP)", category: "ar", country: "ar",
       url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8" },
     { name: "TV Solidaria", category: "ar", country: "ar",
       url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8" },
 
     // NOTÍCIAS INTERNACIONAIS
-    { name: "France 24 (English)", category: "noticias", country: "intl",
-      url: "https://f24hls-i.akamaihd.net/hls/live/221193/F24_EN_LO_HLS/master_1000.m3u8" },
+    { name: "France 24 (English)", category: "noticias", country: "intl", useAltProxy: true,
+      url: "https://stream.ecable.tv/france24/index.m3u8" },
     { name: "NHK World Japan (EN)", category: "noticias", country: "intl",
       url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8" },
 
