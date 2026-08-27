@@ -184,16 +184,18 @@
         renderChannels();
 
         function playChannel(id, type, channelName) {
-            currentActiveId = id;
-            const player = document.getElementById('yt-player');
-            
-            let url = `https://www.youtube.com/embed/${id}?autoplay=1`;
-            
-            player.src = url;
-            document.getElementById('current-channel').innerText = channelName;
-            renderChannels(); 
+    currentActiveId = id;
+    const player = document.getElementById('yt-player');
+    
+    // Ao clicar em um canal, o som entra automaticamente sem mudo
+    let url = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    
+    player.src = url;
+    document.getElementById('current-channel').innerText = channelName;
+    renderChannels(); 
 
-            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+}
         }
 
         function toggleMiniPlayer() { document.getElementById('playerWrapper').classList.toggle('mini-mode'); }
