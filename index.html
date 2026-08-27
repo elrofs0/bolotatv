@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.5 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v10.7 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -34,7 +34,7 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 0, 0.05));
             background-size: 100% 3px, 6px 100%;
         }
 
@@ -335,11 +335,11 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        const TEST_TIMEOUT_MS = 7000;
+        const TEST_TIMEOUT_MS = 8000;
         const TEST_CONCURRENCY = 3;
 
-        const PROXY_PRIMARY = 'https://bolotaproxy.betaincensos.workers.dev/';
-        const PROXY_SECONDARY = 'https://api.allorigins.win/raw?url=';
+        // SEU PROXY DO CLOUDFLARE WORKERS ATIVO:
+        const PROXY_WORKER = 'https://bolotaproxy.betaincensos.workers.dev/?url=';
 
         const canalDatabase = [
             // BRASIL
@@ -393,11 +393,11 @@
                 html5: { vhs: { overrideNative: true } }
             });
 
-            // Interceptor VHS do Video.js para contornar CORS nos segmentos de vídeo
+            // Interceptor do Video.js para passar todos os fragmentos pelo seu Cloudflare Worker
             if (videojs.Vhs && videojs.Vhs.xhr) {
                 videojs.Vhs.xhr.beforeRequest = function(options) {
-                    if (options.uri && !options.uri.includes('corsproxy.io') && !options.uri.includes('allorigins')) {
-                        options.uri = PROXY_PRIMARY + encodeURIComponent(options.uri);
+                    if (options.uri && !options.uri.includes('workers.dev')) {
+                        options.uri = PROXY_WORKER + encodeURIComponent(options.uri);
                     }
                     return options;
                 };
@@ -406,9 +406,8 @@
             vjsPlayer.on('error', () => {
                 const err = vjsPlayer.error();
                 const code = err ? err.code : '?';
-                const msg = err ? err.message : 'desconhecido';
                 document.getElementById('now-playing').innerText =
-                    `[ ERRO ${code}: ${msg.toUpperCase()} // SINAL PODE ESTAR OFFLINE ]`;
+                    `[ ERRO ${code}: FALHA NO SINAL OU TRANSMISSÃO FORA DO AR ]`;
             });
 
             updateClock();
@@ -440,7 +439,7 @@
             channel.reason = '';
             renderChannels();
 
-            // Rota 1: Fetch Direto
+            // Teste 1: Conexão Direta
             try {
                 const res = await fetch(channel.url, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
                 if (res.ok) {
@@ -452,9 +451,9 @@
                 }
             } catch (e) {}
 
-            // Rota 2: Via Proxy Primário (corsproxy.io)
+            // Teste 2: Via Seu Cloudflare Worker
             try {
-                const pUrl = PROXY_PRIMARY + encodeURIComponent(channel.url);
+                const pUrl = PROXY_WORKER + encodeURIComponent(channel.url);
                 const res = await fetch(pUrl, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
                 if (res.ok) {
                     const text = await res.text();
@@ -465,21 +464,8 @@
                 }
             } catch (e) {}
 
-            // Rota 3: Via Proxy Secundário (allorigins)
-            try {
-                const pUrl2 = PROXY_SECONDARY + encodeURIComponent(channel.url);
-                const res = await fetch(pUrl2, { method: 'GET', signal: AbortSignal.timeout(TEST_TIMEOUT_MS) });
-                if (res.ok) {
-                    const text = await res.text();
-                    if (text.includes('#EXTM3U')) {
-                        channel.status = 'ok';
-                        return;
-                    }
-                }
-            } catch (e) {}
-
             channel.status = 'fail';
-            channel.reason = 'Erro de CORS / Bloqueio no Navegador';
+            channel.reason = 'Sinal Inacessível';
         }
 
         async function testAllChannels() {
@@ -523,14 +509,8 @@
                 return matchCategory && matchSearch;
             });
 
-            if (filtered.length === 0) {
-                listContainer.innerHTML = '<div style="color:#666; padding:10px; font-size:0.8rem;">[SINAL NÃO LOCALIZADO]</div>';
-                return;
-            }
-
             filtered.forEach(channel => {
                 const wrapper = document.createElement('div');
-
                 const div = document.createElement('div');
                 div.className = 'channel-item';
                 if (channel.name === activeName) div.classList.add('active');
@@ -569,12 +549,15 @@
             if (element) element.classList.add('active');
 
             vjsPlayer.reset();
-            vjsPlayer.src({ src: channel.url, type: 'application/x-mpegURL' });
+            
+            // Passa o link via Cloudflare Worker
+            const streamUrl = PROXY_WORKER + encodeURIComponent(channel.url);
+            vjsPlayer.src({ src: streamUrl, type: 'application/x-mpegURL' });
 
             vjsPlayer.play().then(() => {
                 document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
             }).catch(() => {
-                console.log('Interação do usuário necessária para reprodução.');
+                document.getElementById('now-playing').innerText = `[ CLIQUE NO PLAYER PARA INICIAR ]`;
             });
         }
 
