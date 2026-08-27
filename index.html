@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v6.0 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v7.0 ]</title>
     
-    <!-- Video.js HLS Engine -->
+    <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -32,8 +32,7 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            /* Efeito CRT Scanlines */
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
             background-size: 100% 3px, 6px 100%;
         }
 
@@ -216,7 +215,7 @@
 
         .badge-br { border-color: #00ff66; color: #00ff66; }
         .badge-ar { border-color: #00ccff; color: #00ccff; }
-        .badge-demo { border-color: #ffaa00; color: #ffaa00; }
+        .badge-intl { border-color: #ffaa00; color: #ffaa00; }
 
         @media (max-width: 900px) {
             .main-container { grid-template-columns: 1fr; height: auto; }
@@ -247,7 +246,7 @@
             </div>
 
             <div class="terminal-status">
-                <div id="now-playing">[ SINAL PRONTO // SELECIONE UMA EMISSORA ]</div>
+                <div id="now-playing">[ SINAL PRONTO // SELECIONE UMA EMISSORA NA LISTA ]</div>
             </div>
         </div>
 
@@ -262,6 +261,7 @@
                 <button class="cat-btn" onclick="changeCategory('br', this)">[BRASIL 🇧🇷]</button>
                 <button class="cat-btn" onclick="changeCategory('ar', this)">[ARGENTINA 🇦🇷]</button>
                 <button class="cat-btn" onclick="changeCategory('noticias', this)">[NOTÍCIAS]</button>
+                <button class="cat-btn" onclick="changeCategory('cine', this)">[CINE 24H]</button>
             </div>
 
             <div class="channel-list" id="channel-list"></div>
@@ -272,9 +272,21 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // Canais M3U8 com servidores HLS ativos e liberados para CORS
+        // Transmissões M3U8 verificadas com permissão de CORS ativas
         const canalDatabase = [
             // BRASIL (BR)
+            {
+                name: "Deutsche Welle (Português)",
+                category: "br",
+                country: "br",
+                url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"
+            },
+            {
+                name: "TV Senado (Aberto BR)",
+                category: "noticias",
+                country: "br",
+                url: "https://stmv1.srvif.com/tvsenado/tvsenado/playlist.m3u8"
+            },
             {
                 name: "TV Brasil (Nacional)",
                 category: "br",
@@ -282,43 +294,13 @@
                 url: "https://stmv1.srvif.com/tvbrasil/tvbrasil/playlist.m3u8"
             },
             {
-                name: "TV Senado (Ao Vivo)",
-                category: "noticias",
-                country: "br",
-                url: "https://stmv1.srvif.com/tvsenado/tvsenado/playlist.m3u8"
-            },
-            {
-                name: "Rede Minas (Cultura)",
+                name: "Rede Minas (Cultura BR)",
                 category: "br",
                 country: "br",
                 url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8"
             },
-            {
-                name: "Record News (Notícias)",
-                category: "noticias",
-                country: "br",
-                url: "https://stmv1.srvif.com/recordnews/recordnews/playlist.m3u8"
-            },
-            {
-                name: "TV Evangelizar (Aberto)",
-                category: "br",
-                country: "br",
-                url: "https://stmv1.srvif.com/tvevangelizar/tvevangelizar/playlist.m3u8"
-            },
 
-            // ARGENTINA (AR)
-            {
-                name: "Canal 26 (Buenos Aires)",
-                category: "noticias",
-                country: "ar",
-                url: "https://live-01-02-canal26.com.ar/hls/live.m3u8"
-            },
-            {
-                name: "Chaco TV (Argentina)",
-                category: "ar",
-                country: "ar",
-                url: "https://stmv1.srvif.com/chacotv/chacotv/playlist.m3u8"
-            },
+            // ARGENTINA (AR) & AMÉRICA LATINA
             {
                 name: "France 24 (Español Latam)",
                 category: "noticias",
@@ -326,24 +308,54 @@
                 url: "https://static.france24.com/live/F24_ES_LO_HLS/live_tv.m3u8"
             },
             {
-                name: "TeleSUR (América Latina)",
+                name: "Canal 26 (Buenos Aires)",
+                category: "noticias",
+                country: "ar",
+                url: "https://live-01-02-canal26.com.ar/hls/live.m3u8"
+            },
+            {
+                name: "TeleSUR (Ao Vivo Latam)",
                 category: "noticias",
                 country: "ar",
                 url: "https://tv.telesur.cdn.tda.as/hls/live.m3u8"
             },
-
-            // CANAIS TESTE / FILMES DEMO
             {
-                name: "Tears of Steel 4K (Demo)",
-                category: "demo",
-                country: "demo",
+                name: "Chaco TV (Argentina)",
+                category: "ar",
+                country: "ar",
+                url: "https://stmv1.srvif.com/chacotv/chacotv/playlist.m3u8"
+            },
+
+            // CINE / MULTIMÍDIA / TRANSMISSÕES CONTINUAS
+            {
+                name: "Tears of Steel (Sci-Fi 4K)",
+                category: "cine",
+                country: "intl",
                 url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
             },
             {
-                name: "Big Buck Bunny (Demo)",
-                category: "demo",
-                country: "demo",
+                name: "Big Buck Bunny (Animation 24h)",
+                category: "cine",
+                country: "intl",
                 url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+            },
+            {
+                name: "Sintel (Movie HLS)",
+                category: "cine",
+                country: "intl",
+                url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
+            },
+            {
+                name: "Apple BipBop (Test Signal 1)",
+                category: "cine",
+                country: "intl",
+                url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
+            },
+            {
+                name: "JW Player Test Signal 2",
+                category: "cine",
+                country: "intl",
+                url: "https://playertest.longtailvideo.com/adaptive/oceans/oceans.m3u8"
             }
         ];
 
@@ -351,16 +363,26 @@
         let currentCategory = 'all';
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Inicializa Video.js com suporte a HLS nativo
+            // Inicialização forçando o manipulador VHS do Video.js
             vjsPlayer = videojs('vjs-player', {
                 autoplay: false,
                 controls: true,
-                responsive: true
+                responsive: true,
+                fluid: true,
+                html5: {
+                    vhs: {
+                        overrideNative: true
+                    },
+                    nativeAudioTracks: false,
+                    nativeVideoTracks: false
+                }
             });
 
-            // Monitor de Erro de Transmissão (Alerta se o sinal cair)
+            // Tratamento de erro detalhado na interface
             vjsPlayer.on('error', () => {
-                document.getElementById('now-playing').innerText = '[ ERRO DE SINAL // FREQUÊNCIA INDISPONÍVEL NO MOMENTO ]';
+                const err = vjsPlayer.error();
+                console.error("Erro Video.js:", err);
+                document.getElementById('now-playing').innerText = '[ FALHA NO SINAL // BLOQUEIO DE CORS OU LINK OFF-LINE ]';
             });
 
             updateClock();
@@ -411,7 +433,7 @@
                 const div = document.createElement('div');
                 div.className = 'channel-item';
                 
-                let badgeClass = 'badge-demo';
+                let badgeClass = 'badge-intl';
                 if (channel.country === 'br') badgeClass = 'badge-br';
                 if (channel.country === 'ar') badgeClass = 'badge-ar';
 
@@ -425,19 +447,22 @@
         }
 
         function playChannel(channel, element) {
-            document.getElementById('now-playing').innerText = `[ CONECTADO: // ${channel.name.toUpperCase()} ]`;
+            document.getElementById('now-playing').innerText = `[ Sintonizando: ${channel.name.toUpperCase()} ]`;
             
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
 
-            // Carrega e força a reprodução HLS no Video.js
+            // Reseta e atribui nova fonte HLS
+            vjsPlayer.reset();
             vjsPlayer.src({
                 src: channel.url,
                 type: 'application/x-mpegURL'
             });
 
-            vjsPlayer.play().catch(err => {
-                console.log('Clique no player para liberar o áudio/vídeo inicial.');
+            vjsPlayer.play().then(() => {
+                document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
+            }).catch(err => {
+                console.log('Interação do usuário necessária para áudio/vídeo.', err);
             });
         }
 
