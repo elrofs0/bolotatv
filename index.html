@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolota Tv</title>
-    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="referrer" content="no-referrer-when-downgrade">
     <style>
         :root {
             --bg-color: #050505;
-            --sidebar-bg: rgba(15, 15, 20, 0.9);
+            --sidebar-bg: rgba(15, 15, 20, 0.95);
             --text-color: #ffffff;
-            --accent-color: #0066cc;
             --card-hover: rgba(255, 255, 255, 0.08);
             --fav-color: #f1c40f;
         }
@@ -102,8 +101,8 @@
     <div class="main-content" onclick="closeMenuOnVideoClick()">
         <div class="player-wrapper" id="playerWrapper">
             <iframe id="yt-player" 
-                    src="https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1" 
-                    allow="autoplay; encrypted-media; picture-in-picture" 
+                    src="https://www.youtube-nocookie.com/embed/gCNeDWCI0vo?autoplay=1&mute=1" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen>
             </iframe>
         </div>
@@ -122,10 +121,9 @@
         const channelsData = [
             // TV Aberta & Notícias
             { id: 'gCNeDWCI0vo', name: 'Record News Ao Vivo', category: 'TV Aberta & Notícias' },
-            { id: 'u0k-rU0WpEU', name: 'Band News Ao Vivo', category: 'TV Aberta & Notícias' },
             { id: '21X5lGlDOfg', name: 'NASA TV Ao Vivo', category: 'TV Aberta & Notícias' },
             
-            // Música & Entretenimento (Evelyn)
+            // Música & Entretenimento
             { id: 'w4cTYnOPdNk', name: 'Stray Kids - MANIAC (Ao Vivo)', category: 'Música & Entretenimento' },
             { id: 'dBD90g1sU3M', name: 'Stray Kids - S-Class (Ao Vivo)', category: 'Música & Entretenimento' },
             { id: 'jfKfPfyJRdk', name: 'Lofi Girl (Música para Estudar)', category: 'Música & Entretenimento' },
@@ -140,7 +138,7 @@
             { id: 'rfscVS0vtbw', name: 'Lógica de Programação', category: 'Ciência & Tecnologia' }
         ];
 
-        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v4')) || [];
+        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v5')) || [];
         let currentActiveId = 'gCNeDWCI0vo';
 
         function renderChannels() {
@@ -181,7 +179,7 @@
         function toggleFavorite(id, event) {
             event.stopPropagation();
             favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
-            localStorage.setItem('bolota_tv_favs_v4', JSON.stringify(favorites));
+            localStorage.setItem('bolota_tv_favs_v5', JSON.stringify(favorites));
             renderChannels();
         }
 
@@ -191,7 +189,9 @@
             
             currentActiveId = ch.id;
             const player = document.getElementById('yt-player');
-            player.src = `https://www.youtube.com/embed/${ch.id}?autoplay=1`;
+            const originHost = window.location.origin;
+            
+            player.src = `https://www.youtube-nocookie.com/embed/${ch.id}?autoplay=1&origin=${encodeURIComponent(originHost)}`;
             document.getElementById('current-channel').innerText = ch.name;
             renderChannels(); 
 
