@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v8.0 ]</title>
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v9.0 ]</title>
     
     <!-- Video.js Engine -->
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
@@ -36,7 +36,6 @@
             background-size: 100% 3px, 6px 100%;
         }
 
-        /* Wasteland Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -70,7 +69,6 @@
 
         .sys-info span { display: flex; align-items: center; gap: 6px; }
 
-        /* Main Layout */
         .main-container {
             display: grid;
             grid-template-columns: 1fr 390px;
@@ -117,7 +115,6 @@
             text-shadow: 0 0 5px rgba(0, 255, 102, 0.5);
         }
 
-        /* Sidebar & Channels */
         .sidebar {
             background-color: var(--panel-bg);
             border: 1px solid var(--hazard-orange);
@@ -269,9 +266,24 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // Servidores M3U8 estáveis
+        // =====================================================================
+        // CONFIGURE AQUI: cole a URL do seu Worker (veja worker.js / passo a passo)
+        // Enquanto estiver com o valor de exemplo abaixo, o player tenta
+        // conectar direto (sem proxy) — funciona só pra streams que já
+        // liberam CORS por conta própria.
+        // =====================================================================
+        const PROXY_WORKER = 'https://bolota-tv-proxy.betaincensos.workers.dev/';
+
+        // Domínios que já servem HLS com CORS liberado -> não precisam de proxy
+        const DOMINIOS_SEM_PROXY = [
+            'unified-streaming.com',
+            'mux.dev',
+            'akamaized.net'
+        ];
+
+        // Servidores M3U8
         const canalDatabase = [
-            // BRASIL
+            // ---------- BRASIL ----------
             {
                 name: "TV Brasil (Aberto BR)",
                 category: "br",
@@ -285,10 +297,40 @@
                 url: "https://stmv1.srvif.com/tvsenado/tvsenado/playlist.m3u8"
             },
             {
+                name: "TV Câmara (Legislativo BR)",
+                category: "br",
+                country: "br",
+                url: "https://stream3.camara.gov.br/tv1/manifest.m3u8"
+            },
+            {
                 name: "Rede Minas (Cultura)",
                 category: "br",
                 country: "br",
                 url: "https://video01.icst.com.br/live/redeminas/playlist.m3u8"
+            },
+            {
+                name: "Rede Brasil",
+                category: "br",
+                country: "br",
+                url: "https://video09.logicahost.com.br/redebrasiloficial/redebrasiloficial/playlist.m3u8"
+            },
+            {
+                name: "COM Brasil",
+                category: "br",
+                country: "br",
+                url: "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8"
+            },
+            {
+                name: "ISTV Nacional",
+                category: "br",
+                country: "br",
+                url: "https://video08.logicahost.com.br/istvnacional/srt.stream/istvnacional.m3u8"
+            },
+            {
+                name: "AgroBrasil TV",
+                category: "br",
+                country: "br",
+                url: "http://45.162.230.234:1935/agrobrasiltv/agrobrasiltv/playlist.m3u8"
             },
             {
                 name: "Deutsche Welle (Português)",
@@ -297,18 +339,12 @@
                 url: "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"
             },
 
-            // ARGENTINA & LATAM
+            // ---------- ARGENTINA & LATAM ----------
             {
                 name: "Canal 26 (Buenos Aires)",
                 category: "noticias",
                 country: "ar",
                 url: "https://live-01-02-canal26.com.ar/hls/live.m3u8"
-            },
-            {
-                name: "France 24 (Español)",
-                category: "noticias",
-                country: "ar",
-                url: "https://static.france24.com/live/F24_ES_LO_HLS/live_tv.m3u8"
             },
             {
                 name: "TeleSUR (América Latina)",
@@ -322,8 +358,41 @@
                 country: "ar",
                 url: "https://stmv1.srvif.com/chacotv/chacotv/playlist.m3u8"
             },
+            {
+                name: "TV Universidad (UNLP)",
+                category: "ar",
+                country: "ar",
+                url: "https://stratus.stream.cespi.unlp.edu.ar/hls/tvunlp.m3u8"
+            },
+            {
+                name: "TV Solidaria",
+                category: "ar",
+                country: "ar",
+                url: "https://canadaremar2.todostreaming.es/live/argentina-web.m3u8"
+            },
+            {
+                name: "Xtrema Cine Clásico",
+                category: "cine",
+                country: "ar",
+                url: "https://stmv6.voxtvhd.com.br/cineclasico/cineclasico/playlist.m3u8",
+                ref: "https://xtrematv.com/?p=1460"
+            },
 
-            // CINE / MULTIMÍDIA
+            // ---------- INTERNACIONAL ----------
+            {
+                name: "France 24 (Español)",
+                category: "noticias",
+                country: "intl",
+                url: "https://static.france24.com/live/F24_ES_LO_HLS/live_tv.m3u8"
+            },
+            {
+                name: "NHK World Japan (EN)",
+                category: "noticias",
+                country: "intl",
+                url: "https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8"
+            },
+
+            // ---------- CINE / MULTIMÍDIA (streams de teste, alta estabilidade) ----------
             {
                 name: "Tears of Steel 4K",
                 category: "cine",
@@ -335,25 +404,28 @@
                 category: "cine",
                 country: "intl",
                 url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-            },
-            {
-                name: "Sintel Open Movie",
-                category: "cine",
-                country: "intl",
-                url: "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
             }
         ];
 
         let vjsPlayer;
         let currentCategory = 'all';
 
-        // Função de Proxy CORS Automático
-        function getProxiedUrl(originalUrl) {
-            // Se for link de teste direto da CDN que permite CORS, roda direto, caso contrário passa pelo proxy
-            if (originalUrl.includes('unified-streaming.com') || originalUrl.includes('mux.dev') || originalUrl.includes('akamaihd.net')) {
-                return originalUrl;
-            }
-            return 'https://corsproxy.io/?' + encodeURIComponent(originalUrl);
+        function proxyEstaConfigurado() {
+            return PROXY_WORKER && !PROXY_WORKER.includes('SEU-WORKER-AQUI');
+        }
+
+        function precisaDeProxy(url) {
+            return !DOMINIOS_SEM_PROXY.some(d => url.includes(d));
+        }
+
+        // Monta a URL final que o player vai usar: passa pelo Worker
+        // (que reescreve o manifesto inteiro) quando configurado e necessário.
+        function getPlayableUrl(channel) {
+            if (!precisaDeProxy(channel.url)) return channel.url;
+            if (!proxyEstaConfigurado()) return channel.url; // sem worker, tenta direto
+            let proxied = PROXY_WORKER + '?url=' + encodeURIComponent(channel.url);
+            if (channel.ref) proxied += '&ref=' + encodeURIComponent(channel.ref);
+            return proxied;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -367,10 +439,19 @@
                 }
             });
 
-            // Oculta a janela de erro nativa do Video.js para tratar no painel terminal
             vjsPlayer.on('error', () => {
-                document.getElementById('now-playing').innerText = '[ AVISO: SINAL OSCILANDO OU INDISPONÍVEL NO MOMENTO ]';
+                const err = vjsPlayer.error();
+                const code = err ? err.code : '?';
+                const msg = err ? err.message : 'desconhecido';
+                document.getElementById('now-playing').innerText =
+                    `[ ERRO ${code}: ${msg.toUpperCase()} // SINAL PODE ESTAR OFFLINE ]`;
+                console.error('Video.js error:', err);
             });
+
+            if (!proxyEstaConfigurado()) {
+                document.getElementById('now-playing').innerText =
+                    '[ AVISO: PROXY_WORKER NÃO CONFIGURADO — VEJA O TOPO DO <SCRIPT> ]';
+            }
 
             updateClock();
             setInterval(updateClock, 1000);
@@ -438,11 +519,9 @@
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
             if(element) element.classList.add('active');
 
-            const proxiedStreamUrl = getProxiedUrl(channel.url);
-
             vjsPlayer.reset();
             vjsPlayer.src({
-                src: proxiedStreamUrl,
+                src: getPlayableUrl(channel),
                 type: 'application/x-mpegURL'
             });
 
