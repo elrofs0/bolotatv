@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolota Tv</title>
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --sidebar-bg: rgba(15, 15, 20, 0.9);
+            --text-color: #ffffff;
+            --accent-color: #0066cc;
+            --card-hover: rgba(255, 255, 255, 0.08);
+            --fav-color: #f1c40f;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { 
+            background-color: var(--bg-color);
+            background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920&auto=format&fit=crop'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+        
+        /* Layout Lateral */
+        .sidebar { width: 320px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: transform 0.3s ease; z-index: 1000; }
+        .sidebar-header { padding: 25px 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.2)); border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .sidebar-header h1 { font-size: 1.8rem; color: var(--text-color); margin-bottom: 15px; font-weight: 800; text-shadow: 2px 2px 4px #000; letter-spacing: 1.5px;}
+        .sidebar-header h1 span { color: #00a8ff; }
+        
+        .search-box { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: border 0.2s;}
+        .search-box:focus { border-color: #00a8ff; box-shadow: 0 0 8px rgba(0, 168, 255, 0.3); }
+
+        .info-widget { padding: 12px 20px; background: rgba(0,0,0,0.7); display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; color: #ccc; border-bottom: 1px solid rgba(255,255,255,0.05);}
+        
+        .channel-list { flex: 1; overflow-y: auto; padding: 15px 10px; }
+        .channel-list::-webkit-scrollbar { width: 6px; }
+        .channel-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+
+        .category-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.2px; color: #00a8ff; margin: 20px 0 10px 10px; font-weight: bold;}
+        
+        .channel-item { width: 100%; padding: 12px 15px; background: transparent; border: 1px solid transparent; color: #eaeaea; font-size: 0.95rem; cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; margin-bottom: 4px; }
+        .channel-item:hover { background-color: var(--card-hover); transform: translateX(4px); }
+        .channel-item.active { background-color: rgba(0, 168, 255, 0.15); color: #fff; border: 1px solid rgba(0, 168, 255, 0.3); font-weight: bold; }
+        .channel-name { flex: 1; text-align: left; }
+        
+        .fav-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #444; transition: color 0.2s, transform 0.2s; padding-left: 10px; }
+        .fav-btn.favorited { color: var(--fav-color); text-shadow: 0 0 10px rgba(241, 196, 15, 0.4); }
+        .fav-btn:hover { transform: scale(1.1); }
+
+        /* Área do Player */
+        .main-content { flex: 1; display: flex; flex-direction: column; background-color: #000; position: relative; }
+        .menu-toggle { display: none; position: absolute; top: 15px; left: 15px; background: rgba(0, 168, 255, 0.8); border: none; color: white; padding: 10px 15px; border-radius: 6px; cursor: pointer; z-index: 2000; font-size: 1rem; backdrop-filter: blur(5px); }
+
+        .player-wrapper { flex: 1; position: relative; width: 100%; background: #000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        /* Modo Mini-Player PIP */
+        .player-wrapper.mini-mode { position: fixed; bottom: 25px; right: 25px; width: 400px; height: 225px; z-index: 9999; box-shadow: 0 15px 40px rgba(0,0,0,0.8); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); flex: none; }
+
+        .player-footer { padding: 15px 25px; background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0.8)); display: flex; justify-content: space-between; align-items: center; z-index: 10; border-top: 1px solid rgba(255,255,255,0.05);}
+        .channel-info p { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .channel-info h2 { font-size: 1.3rem; font-weight: 500; }
+        
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .pip-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .pip-btn:hover { background: rgba(255,255,255,0.2); }
+
+        @media (max-width: 900px) {
+            .menu-toggle { display: block; }
+            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); box-shadow: 10px 0 20px rgba(0,0,0,0.7); }
+            .sidebar.open { transform: translateX(0); }
+            .player-wrapper { height: 35vh; flex: none; margin-top: 55px;}
+            .main-content { justify-content: flex-start; }
+            .player-footer { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .player-wrapper.mini-mode { width: 280px; height: 157px; bottom: 15px; right: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-toggle" onclick="toggleMenu()">☰ Canais</button>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1>Bolota <span>Tv</span></h1>
+            <input type="text" id="search" class="search-box" placeholder="Buscar canal ou assunto..." onkeyup="filterChannels()">
+        </div>
+        
+        <div class="info-widget">
+            <span id="local-time">--:--:--</span>
+            <span id="local-weather">Buscando Clima...</span>
+        </div>
+
+        <div class="channel-list" id="channelList">
+            <!-- Gerado pelo Javascript -->
+        </div>
+    </div>
+
+    <div class="main-content" onclick="closeMenuOnVideoClick()">
+        <div class="player-wrapper" id="playerWrapper">
+            <!-- Player inicia com a ISS/NASA - Estabilidade Absoluta -->
+            <iframe id="yt-player" 
+                    src="https://www.youtube-nocookie.com/embed/21X5lGlDOfg?autoplay=1&mute=1" 
+                    allow="autoplay; encrypted-media; picture-in-picture" 
+                    allowfullscreen>
+            </iframe>
+        </div>
+        <div class="player-footer">
+            <div class="channel-info">
+                <p>Sintonizado Agora</p>
+                <h2 id="current-channel">NASA Live (Estação Espacial)</h2>
+            </div>
+            <div class="controls">
+                <button class="pip-btn" onclick="toggleMiniPlayer()">🔳 Modo Mini-Player (PIP)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // -----------------------------------------
+        // GRADE DE CANAIS PERSONALIZADA
+        // -----------------------------------------
+        const channelsData = [
+            // TV Aberta & Notícias
+            { id: 'UCuiLR4p6wQ3xLEm15pEn1Xw', type: 'live_channel', name: 'Record News 24h', category: 'TV Aberta & Notícias' },
+            { id: 'UC4wawQE7QvR08B01aV-G-qQ', type: 'live_channel', name: 'CNN Brasil', category: 'TV Aberta & Notícias' },
+            { id: '21X5lGlDOfg', type: 'video', name: 'NASA Live (Estação Espacial)', category: 'TV Aberta & Notícias' },
+            
+            // Música & Entretenimento (Focado na Evelyn e foco nos estudos)
+            { id: 'PLwLz7E8-G3aQnQ0L1iSj4bMv0nC_4i7E7', type: 'playlist', name: 'Stray Kids & K-Pop Mix', category: 'Música & Entretenimento' },
+            { id: 'PL3-sRm8xAzY-epJEQO3-pQmgN0qS8Kk1N', type: 'playlist', name: 'K-Pop Girl Groups', category: 'Música & Entretenimento' },
+            { id: 'jfKfPfyJRdk', type: 'video', name: 'Lofi Girl (Rádio de Estudos)', category: 'Música & Entretenimento' },
+
+            // Filosofia & Hermetismo
+            { id: 'PLxI8SqClvdYVQ8y6L-1D8Q7K8x9_nL4L7', type: 'playlist', name: 'Aristóteles & Platão', category: 'Filosofia & Oculto' },
+            { id: 'PL-3f_mFwXq7z7-b2wY5_rXQ-3L_C7X5G_', type: 'playlist', name: 'O Caibalion Clássico', category: 'Filosofia & Oculto' },
+            { id: 'PL9_Z2z9u_c9-h7r3w5M_3Xz-9z_X9_9_z', type: 'playlist', name: 'Fundamentos da Astrologia', category: 'Filosofia & Oculto' },
+
+            // Ciência & Tecnologia
+            { id: 'PLX5u2X4vN8h7W6vX4w8Y8m_v7_C8A3XWw', type: 'playlist', name: 'Mecânica Quântica (Docs)', category: 'Ciência & Tecnologia' },
+            { id: 'PLHz_AreHm4dkzED6fP4w68wE_w72gM4wY', type: 'playlist', name: 'Lógica e Sistemas', category: 'Ciência & Tecnologia' },
+
+            // Séries e Filmes
+            { id: 'PLX5m8v4u3wN9W8vX_4m8vW3_xM8wV4mW', type: 'playlist', name: 'Sessão Cinema Retrô', category: 'Filmes & Documentários' }
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem('bolota_tv_favs_v2')) || [];
+        let currentActiveId = '21X5lGlDOfg'; // Inicia com NASA (Video fixo, 100% à prova de falhas locais)
+
+        function renderChannels() {
+            const listElement = document.getElementById('channelList');
+            listElement.innerHTML = '';
+            
+            if (favorites.length > 0) {
+                listElement.innerHTML += `<div class="category-title">⭐ Favoritos</div>`;
+                channelsData.filter(ch => favorites.includes(ch.id)).forEach(ch => listElement.innerHTML += createChannelHTML(ch, true));
+            }
+
+            const categories = [...new Set(channelsData.map(ch => ch.category))];
+            categories.forEach(category => {
+                listElement.innerHTML += `<div class="category-title">📺 ${category}</div>`;
+                channelsData.filter(ch => ch.category === category).forEach(ch => {
+                    listElement.innerHTML += createChannelHTML(ch, favorites.includes(ch.id));
+                });
+            });
+        }
+
+        function createChannelHTML(channel, isFav) {
+            const activeClass = (channel.id === currentActiveId) ? 'active' : '';
+            const favClass = isFav ? 'favorited' : '';
+            return `
+                <div class="channel-item ${activeClass}" id="btn-${channel.id}">
+                    <div class="channel-name" onclick="playChannel('${channel.id}', '${channel.type}', '${channel.name}')">${channel.name}</div>
+                    <button class="fav-btn ${favClass}" onclick="toggleFavorite('${channel.id}', event)">★</button>
+                </div>
+            `;
+        }
+
+        function toggleFavorite(id, event) {
+            event.stopPropagation();
+            favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
+            localStorage.setItem('bolota_tv_favs_v2', JSON.stringify(favorites));
+            renderChannels();
+        }
+        renderChannels();
+
+        // -----------------------------------------
+        // MOTOR DE REPRODUÇÃO (OTIMIZADO PARA GITHUB)
+        // -----------------------------------------
+        function playChannel(id, type, channelName) {
+            currentActiveId = id;
+            const player = document.getElementById('yt-player');
+            
+            // Pega o domínio atual (No GitHub vai ser o seu repositório, no VS Code é o localhost)
+            // Isso avisa ao YouTube que a requisição é válida.
+            const siteOrigin = window.location.origin; 
+            
+            let url = '';
+            if (type === 'live_channel') {
+                url = `https://www.youtube-nocookie.com/embed/live_stream?channel=${id}&autoplay=1&mute=1&origin=${siteOrigin}`;
+            } else if (type === 'playlist') {
+                url = `https://www.youtube-nocookie.com/embed/videoseries?list=${id}&autoplay=1&mute=1&origin=${siteOrigin}`;
+            } else {
+                url = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&origin=${siteOrigin}`;
+            }
+            
+            player.src = url;
+            document.getElementById('current-channel').innerText = channelName;
+            renderChannels(); 
+
+            if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+        }
+
+        function toggleMiniPlayer() { document.getElementById('playerWrapper').classList.toggle('mini-mode'); }
+        function filterChannels() {
+            const query = document.getElementById('search').value.toLowerCase();
+            document.querySelectorAll('.channel-item').forEach(item => {
+                const text = item.querySelector('.channel-name').textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+        function closeMenuOnVideoClick() { if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open'); }
+
+        // -----------------------------------------
+        // RELÓGIO & CLIMA GPS
+        // -----------------------------------------
+        function updateClock() {
+            document.getElementById('local-time').innerText = new Date().toLocaleTimeString('pt-BR');
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        async function fetchWeather(lat, lon) {
+            try {
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const data = await response.json();
+                if(data?.current_weather) {
+                    document.getElementById('local-weather').innerText = `${Math.round(data.current_weather.temperature)}°C 🌤️`;
+                }
+            } catch { document.getElementById('local-weather').innerText = "--°C"; }
+        }
+
+        function getLocationAndWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => fetchWeather(pos.coords.latitude, pos.coords.longitude),
+                    err => fetchWeather(-29.6842, -53.8069)
+                );
+            } else fetchWeather(-29.6842, -53.8069);
+        }
+        getLocationAndWeather(); setInterval(getLocationAndWeather, 1800000);
+    </script>
+</body>
+</html>
