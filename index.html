@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[ TERMINAL MAD MAX // BOLOTA TV v12.0 STABLE ]</title>
-    
+    <title>[ TERMINAL MAD MAX // BOLOTA TV v14.0 M3U-ONLY ]</title>
+
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+
     <style>
         :root {
             --hazard-orange: #ff5500;
@@ -31,11 +31,11 @@
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px 20px; background-color: var(--panel-bg); border-bottom: 2px solid var(--hazard-orange);
-            box-shadow: 0 0 15px rgba(255, 85, 0, 0.25);
+            box-shadow: 0 0 15px rgba(255, 85, 0, 0.25); flex-wrap: wrap; gap: 8px;
         }
 
         .logo-box { display: flex; align-items: center; gap: 10px; color: var(--hazard-orange); font-weight: bold; font-size: 1.1rem; letter-spacing: 2px; }
-        .sys-info { display: flex; gap: 15px; font-size: 0.8rem; background: #000; padding: 6px 14px; border: 1px solid var(--hazard-orange); color: var(--hazard-orange); }
+        .sys-info { display: flex; gap: 15px; font-size: 0.8rem; background: #000; padding: 6px 14px; border: 1px solid var(--hazard-orange); color: var(--hazard-orange); flex-wrap: wrap; }
         .sys-info span { display: flex; align-items: center; gap: 6px; }
 
         .main-container { display: grid; grid-template-columns: 1fr 420px; gap: 15px; padding: 15px; max-width: 1800px; margin: 0 auto; width: 100%; height: calc(100vh - 65px); }
@@ -49,16 +49,20 @@
 
         #video-wrapper { width: 100%; height: 100%; display: block; }
         #vjs-player { width: 100%; height: 100%; }
-        #yt-player { width: 100%; height: 100%; border: none; display: none; }
-        
-        #blocked-message { display: none; text-align: center; flex-direction: column; gap: 15px; padding: 20px; }
-        #blocked-message h2 { color: var(--terminal-red); font-size: 1.2rem; text-transform: uppercase; }
-        #blocked-message p { color: #aaa; font-size: 0.9rem; max-width: 400px; margin: 0 auto; }
-        .launch-btn { background: var(--terminal-red); color: #fff; padding: 10px 20px; text-decoration: none; font-weight: bold; font-size: 1rem; display: inline-block; border-radius: 3px; border: 1px solid #ffaaaa; transition: 0.2s; }
-        .launch-btn:hover { background: #ff0000; box-shadow: 0 0 15px #ff0000; }
 
-        .terminal-status { background-color: var(--panel-bg); padding: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--hazard-orange); }
+        #error-message { display: none; text-align: center; flex-direction: column; gap: 12px; padding: 20px; }
+        #error-message h2 { color: var(--terminal-red); font-size: 1.1rem; text-transform: uppercase; }
+        #error-message p { color: #aaa; font-size: 0.85rem; max-width: 400px; margin: 0 auto; }
+        .retry-btn { background: var(--terminal-red); color: #fff; padding: 8px 16px; text-decoration: none; font-weight: bold; font-size: 0.9rem; display: inline-block; border-radius: 3px; border: 1px solid #ffaaaa; cursor: pointer; font-family: inherit; }
+        .retry-btn:hover { background: #ff0000; box-shadow: 0 0 15px #ff0000; }
+
+        .terminal-status { background-color: var(--panel-bg); padding: 12px; border: 1px solid var(--border-color); border-left: 4px solid var(--hazard-orange); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
         #now-playing { font-size: 0.9rem; color: var(--terminal-green); text-shadow: 0 0 5px rgba(0, 255, 102, 0.5); }
+        #sync-status { font-size: 0.7rem; color: var(--terminal-grey); white-space: nowrap; }
+        #sync-status.syncing { color: var(--hazard-orange); animation: blink 1s infinite; }
+        #sync-status.error { color: var(--terminal-red); }
+        .refresh-btn { background: #000; border: 1px solid var(--terminal-green); color: var(--terminal-green); padding: 4px 10px; font-size: 0.7rem; cursor: pointer; font-family: inherit; }
+        .refresh-btn:hover { background: var(--terminal-green); color: #000; }
 
         .sidebar { background-color: var(--panel-bg); border: 1px solid var(--hazard-orange); display: flex; flex-direction: column; overflow: hidden; }
         .search-container { padding: 10px; border-bottom: 1px solid var(--border-color); background: #090a0d; }
@@ -76,20 +80,20 @@
         .channel-item { padding: 10px; background: #090a0d; border: 1px solid #1a1c24; color: #aaa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; transition: all 0.15s ease; gap: 8px; }
         .channel-item:hover { border-color: var(--terminal-green); color: var(--terminal-green); background: #11141a; }
         .channel-item.active { border-color: var(--hazard-orange); background: rgba(255, 85, 0, 0.15); color: var(--hazard-orange); font-weight: bold; }
+        .channel-item.dead { opacity: 0.35; }
 
         .channel-name { display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; }
-        .status-dot { width: 9px; height: 9px; min-width: 9px; border-radius: 50%; background: var(--terminal-grey); }
-        .status-dot.ok { background: var(--terminal-green); box-shadow: 0 0 6px var(--terminal-green); }
-        .status-dot.yt { background: #00ccff; box-shadow: 0 0 6px #00ccff; }
-        .status-dot.block { background: var(--terminal-red); box-shadow: 0 0 6px var(--terminal-red); animation: blink 1s infinite; }
-        
+        .status-dot { width: 9px; height: 9px; min-width: 9px; border-radius: 50%; background: var(--terminal-green); box-shadow: 0 0 6px var(--terminal-green); }
+        .status-dot.dead { background: var(--terminal-red); box-shadow: none; animation: none; }
+
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         .badge-group { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
         .badge { font-size: 0.6rem; padding: 2px 6px; border: 1px solid; text-transform: uppercase; font-weight: bold; }
         .badge-br { border-color: #00ff66; color: #00ff66; }
         .badge-intl { border-color: #00ccff; color: #00ccff; }
-        .badge-type { border-color: #ffaa00; color: #ffaa00; }
+
+        .list-footer-note { padding: 8px; font-size: 0.65rem; color: var(--terminal-grey); text-align: center; border-top: 1px solid var(--border-color); }
 
         @media (max-width: 1000px) {
             .main-container { grid-template-columns: 1fr; height: auto; }
@@ -101,7 +105,7 @@
 <body>
 
     <header>
-        <div class="logo-box"><i class="fa-solid fa-satellite-dish"></i><span>TERMINAL MAD MAX // v12.0</span></div>
+        <div class="logo-box"><i class="fa-solid fa-satellite-dish"></i><span>TERMINAL MAD MAX // v14.0 M3U-ONLY</span></div>
         <div class="sys-info">
             <span><i class="fa-solid fa-location-dot"></i> SANTA MARIA-RS</span>
             <span><i class="fa-solid fa-temperature-half"></i> <span id="temp-display">--°C</span></span>
@@ -112,24 +116,24 @@
     <div class="main-container">
         <div class="player-section">
             <div class="screen-container">
-                <!-- HLS Player -->
                 <div id="video-wrapper">
                     <video id="vjs-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"></video>
                 </div>
-                <!-- YouTube Embed -->
-                <iframe id="yt-player" allow="autoplay; encrypted-media; fullscreen"></iframe>
-                
-                <!-- Alerta de Bloqueio da Emissora -->
-                <div id="blocked-message">
+
+                <div id="error-message">
                     <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--terminal-red);"></i>
-                    <h2>SINAL PROTEGIDO PELA EMISSORA</h2>
-                    <p>Este canal bloqueia a reprodução de vídeo fora do site oficial deles. Clique no botão abaixo para abrir a transmissão limpa em uma nova janela.</p>
-                    <a href="#" id="launch-ext" target="_blank" class="launch-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> ABRIR TRANSMISSÃO (POP-UP)</a>
+                    <h2>SINAL INDISPONÍVEL</h2>
+                    <p>Este canal não respondeu. É comum em listas públicas — servidores caem e voltam o tempo todo. Tente novamente ou escolha outro canal na lista.</p>
+                    <button class="retry-btn" onclick="retryCurrent()"><i class="fa-solid fa-rotate"></i> TENTAR DE NOVO</button>
                 </div>
             </div>
 
             <div class="terminal-status">
-                <div id="now-playing">[ SISTEMA OPERACIONAL // SINAIS ESTABILIZADOS ]</div>
+                <div id="now-playing">[ SISTEMA OPERACIONAL // SINCRONIZANDO LISTAS ]</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="sync-status">--</span>
+                    <button class="refresh-btn" onclick="loadAllPlaylists(true)"><i class="fa-solid fa-rotate"></i> RESYNC</button>
+                </div>
             </div>
         </div>
 
@@ -137,70 +141,63 @@
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="> BUSCAR CANAL..." onkeyup="filterChannels()">
             </div>
-            
+
             <div class="categories-bar">
                 <button class="cat-btn active" onclick="changeCategory('all', this)">[TODOS]</button>
-                <button class="cat-btn" onclick="changeCategory('tvaberta', this)">[TV ABERTA BR]</button>
+                <button class="cat-btn" onclick="changeCategory('tvaberta', this)">[TV ABERTA/GERAL BR]</button>
                 <button class="cat-btn" onclick="changeCategory('noticias', this)">[NOTÍCIAS]</button>
                 <button class="cat-btn" onclick="changeCategory('filmes', this)">[FILMES/SÉRIES]</button>
                 <button class="cat-btn" onclick="changeCategory('docs', this)">[DOCS/ESPORTES]</button>
+                <button class="cat-btn" onclick="changeCategory('infantil', this)">[INFANTIL]</button>
+                <button class="cat-btn" onclick="changeCategory('musica', this)">[MÚSICA]</button>
             </div>
 
             <div class="channel-list" id="channel-list"></div>
+            <div class="list-footer-note" id="list-footer-note"></div>
         </div>
     </div>
 
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // LISTA 100% TESTADA E FUNCIONAL NO NAVEGADOR
-        // 'hls' = Sinais diretos com CORS aberto
-        // 'youtube' = Canais do YT que PERMITEM embed
-        // 'youtube-blocked' = Canais comerciais que DEVEM abrir em nova janela
+        // =====================================================================
+        // BOLOTA TV v14.0 — 100% M3U/HLS, SEM YOUTUBE
+        // Fonte pública: projeto iptv-org (github.com/iptv-org/iptv).
+        // Canais nacionais (BR) sempre priorizados no topo da lista "TODOS".
+        // =====================================================================
 
-        const canalDatabase = [
-            // ================== TV ABERTA BR (CORS ABERTO) ==================
-            { name: "TV Cultura (SP)", type: "hls", category: "tvaberta", country: "br", url: "https://tvcul-live.video.rnp.br/tvcul/tvcul/playlist.m3u8" },
-            { name: "TV Brasil (Nacional)", type: "hls", category: "tvaberta", country: "br", url: "https://tvbrasil-live.video.rnp.br/tvbrasil/tvbrasil/playlist.m3u8" },
-            { name: "TV Senado", type: "hls", category: "tvaberta", country: "br", url: "https://senado-tv-v.senado.leg.br/live/senadotv.m3u8" },
-            { name: "TV Câmara", type: "hls", category: "tvaberta", country: "br", url: "https://stream3.camara.gov.br/tv1/manifest.m3u8" },
-            
-            // ================== EMISSORAS COMERCIAIS BR (ABRE POP-UP) ==================
-            { name: "SBT (Ao Vivo)", type: "youtube-blocked", category: "tvaberta", country: "br", url: "https://www.youtube.com/channel/UCWWcsGzZ5tS9WESv4q2z2fw/live" },
-            { name: "Record News", type: "youtube-blocked", category: "noticias", country: "br", url: "https://www.youtube.com/channel/UCuiLR4p6wQ3xLEm15pEn1Xw/live" },
-            { name: "CNN Brasil", type: "youtube-blocked", category: "noticias", country: "br", url: "https://www.youtube.com/channel/UCVDcgzdquumUVDhVN2h0p1g/live" },
-            { name: "Jovem Pan News", type: "youtube-blocked", category: "noticias", country: "br", url: "https://www.youtube.com/channel/UCzLQAcEyWME-K1x2X0i3Kzw/live" },
-            
-            // ================== NOTÍCIAS INTERNACIONAIS (HLS/YT LIBERADO) ==================
-            { name: "Al Jazeera (EN)", type: "youtube", category: "noticias", country: "intl", url: "https://www.youtube.com/embed/bBYNUM2jDtw?autoplay=1" }, // YT Permitido
-            { name: "Sky News (Ao Vivo)", type: "youtube", category: "noticias", country: "intl", url: "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1" }, // YT Permitido
-            { name: "France 24 (EN)", type: "hls", category: "noticias", country: "intl", url: "https://france24-en-samsung.amagi.tv/playlist.m3u8" },
-            { name: "Bloomberg TV", type: "hls", category: "noticias", country: "intl", url: "https://bloomberg-bloombergtv-1-us.samsung.amagi.tv/playlist.m3u8" },
-
-            // ================== FILMES E SÉRIES 24H (HLS LIVRE AMAGI) ==================
-            { name: "Rakuten Action", type: "hls", category: "filmes", country: "intl", url: "https://rakuten-actionmovies-1-eu.rakuten.wurl.tv/playlist.m3u8" },
-            { name: "Rakuten Comedy", type: "hls", category: "filmes", country: "intl", url: "https://rakuten-comedy-1-eu.rakuten.wurl.tv/playlist.m3u8" },
-            { name: "Tears of Steel 4K", type: "hls", category: "filmes", country: "intl", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" },
-            { name: "Dust (Sci-Fi)", type: "hls", category: "filmes", country: "intl", url: "https://dust-samsung-uk.amagi.tv/playlist.m3u8" },
-            
-            // ================== DOCS, CIÊNCIA & ESPORTES ==================
-            { name: "NASA TV Public", type: "hls", category: "docs", country: "intl", url: "https://ntv1.akamaized.net/hls/live/2014075/NASA-TV-Public/master.m3u8" },
-            { name: "Red Bull TV", type: "hls", category: "docs", country: "intl", url: "https://rbmn-live.akamaized.net/hls/live/591286/FL01/master.m3u8" },
-            { name: "Fuel TV", type: "hls", category: "docs", country: "intl", url: "https://fueltv.amagi.tv/playlist.m3u8" },
-
-            // ================== MÚSICA & RÁDIO ==================
-            { name: "Lofi Girl (Beats)", type: "youtube", category: "all", country: "intl", url: "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1" }
+        const M3U_SOURCES = [
+            { url: "https://iptv-org.github.io/iptv/countries/br.m3u", country: "br" },
+            { url: "https://iptv-org.github.io/iptv/categories/news.m3u", forceCategory: "noticias" },
+            { url: "https://iptv-org.github.io/iptv/categories/movies.m3u", forceCategory: "filmes" },
+            { url: "https://iptv-org.github.io/iptv/categories/series.m3u", forceCategory: "filmes" },
+            { url: "https://iptv-org.github.io/iptv/categories/documentary.m3u", forceCategory: "docs" },
+            { url: "https://iptv-org.github.io/iptv/categories/sports.m3u", forceCategory: "docs" },
+            { url: "https://iptv-org.github.io/iptv/categories/kids.m3u", forceCategory: "infantil" },
+            { url: "https://iptv-org.github.io/iptv/categories/music.m3u", forceCategory: "musica" },
+            { url: "https://iptv-org.github.io/iptv/categories/entertainment.m3u" },
+            { url: "https://iptv-org.github.io/iptv/categories/general.m3u" }
         ];
+
+        const RESYNC_INTERVAL_MS = 6 * 60 * 60 * 1000; // resync automático a cada 6h
+        const MAX_RENDER = 600; // trava de performance — a base completa passa de 3000 canais
 
         let vjsPlayer;
         let currentCategory = 'all';
+        let canalDatabase = [];
+        let lastUpdate = null;
+        let currentlyPlayingKey = null;
+        let currentChannel = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             vjsPlayer = videojs('vjs-player', { autoplay: false, controls: true, responsive: true, fluid: true });
+            vjsPlayer.on('error', () => showError());
 
             updateClock(); setInterval(updateClock, 1000);
             fetchWeather(); setInterval(fetchWeather, 600000);
-            renderChannels();
+
+            loadAllPlaylists();
+            setInterval(loadAllPlaylists, RESYNC_INTERVAL_MS);
         });
 
         function updateClock() { document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('pt-BR'); }
@@ -213,8 +210,124 @@
             } catch (err) {}
         }
 
+        // ---------------------- CARGA E PARSE DO M3U ----------------------
+
+        function setSyncStatus(text, cls) {
+            const el = document.getElementById('sync-status');
+            el.innerText = text;
+            el.className = cls || '';
+        }
+
+        async function loadAllPlaylists(manual) {
+            setSyncStatus(manual ? 'RESSINCRONIZANDO...' : 'SINCRONIZANDO...', 'syncing');
+            if (manual) document.getElementById('now-playing').innerText = '[ ATUALIZANDO LISTA DE CANAIS... ]';
+
+            const results = await Promise.allSettled(M3U_SOURCES.map(fetchPlaylist));
+            let merged = [];
+            let failed = [];
+
+            results.forEach((r, i) => {
+                if (r.status === 'fulfilled') merged = merged.concat(r.value);
+                else failed.push(M3U_SOURCES[i].url.split('/').pop());
+            });
+
+            // Dedup por nome+url
+            const seen = new Set();
+            merged = merged.filter(c => {
+                const key = c.name + '|' + c.url;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+
+            // Prioridade: canais nacionais (BR) sempre primeiro, depois ordem alfabética
+            merged.sort((a, b) => {
+                if (a.country !== b.country) return a.country === 'br' ? -1 : 1;
+                return a.name.localeCompare(b.name, 'pt-BR');
+            });
+
+            canalDatabase = merged;
+            lastUpdate = new Date();
+            renderChannels();
+
+            const totalStr = `${canalDatabase.length} canais`;
+            const hora = lastUpdate.toLocaleTimeString('pt-BR');
+            if (failed.length === 0) {
+                setSyncStatus(`✓ SYNC OK // ${totalStr} // ${hora}`, '');
+            } else {
+                setSyncStatus(`⚠ SYNC PARCIAL (${failed.length} fonte(s) falharam) // ${totalStr} // ${hora}`, 'error');
+            }
+            const npText = document.getElementById('now-playing').innerText;
+            if (!npText.includes('TRANSMITINDO')) {
+                document.getElementById('now-playing').innerText = '[ SISTEMA OPERACIONAL // SINAIS ESTABILIZADOS ]';
+            }
+        }
+
+        async function fetchPlaylist(src) {
+            const res = await fetch(src.url, { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const text = await res.text();
+            return parseM3U(text)
+                .filter(raw => isPlayableUrl(raw.url))
+                .map(raw => classifyChannel(raw, src));
+        }
+
+        function isPlayableUrl(url) {
+            if (!/^https?:\/\//i.test(url)) return false; // sem rtmp/rtsp/mms/udp — o navegador não toca isso
+            if (/youtube\.com|youtu\.be/i.test(url)) return false; // sem youtube, por pedido
+            return true;
+        }
+
+        function parseM3U(text) {
+            const lines = text.split(/\r?\n/);
+            const channels = [];
+            let current = null;
+            for (const line of lines) {
+                if (line.startsWith('#EXTINF')) {
+                    const nameMatch = line.match(/,(.*)$/);
+                    const tvgIdMatch = line.match(/tvg-id="([^"]*)"/);
+                    const groupMatch = line.match(/group-title="([^"]*)"/);
+                    current = {
+                        name: nameMatch ? nameMatch[1].trim() : 'Canal desconhecido',
+                        tvgId: tvgIdMatch ? tvgIdMatch[1] : '',
+                        group: groupMatch ? groupMatch[1] : ''
+                    };
+                } else if (line && !line.startsWith('#') && current) {
+                    current.url = line.trim();
+                    channels.push(current);
+                    current = null;
+                }
+            }
+            return channels;
+        }
+
+        function detectCountry(raw, src) {
+            if (src.country === 'br') return 'br';
+            if (/\.br@/i.test(raw.tvgId)) return 'br';
+            if (/brazil|brasil/i.test(raw.group || '')) return 'br';
+            return 'intl';
+        }
+
+        function classifyChannel(raw, src) {
+            const country = detectCountry(raw, src);
+            let category = src.forceCategory;
+            if (!category) {
+                const g = (raw.group || '').toLowerCase();
+                if (g.includes('news')) category = 'noticias';
+                else if (g.includes('movie') || g.includes('series')) category = 'filmes';
+                else if (g.includes('kids') || g.includes('family') || g.includes('animation')) category = 'infantil';
+                else if (g.includes('music')) category = 'musica';
+                else if (g.includes('sport') || g.includes('documentary') || g.includes('science')) category = 'docs';
+                else category = country === 'br' ? 'tvaberta' : 'docs';
+            }
+            return { name: raw.name, category: category, country: country, url: raw.url };
+        }
+
+        // ---------------------- RENDER ----------------------
+
         function renderChannels() {
             const listContainer = document.getElementById('channel-list');
+            const footerNote = document.getElementById('list-footer-note');
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
             listContainer.innerHTML = '';
 
@@ -224,68 +337,73 @@
                 return matchCategory && matchSearch;
             });
 
-            filtered.forEach(channel => {
+            const toRender = filtered.slice(0, MAX_RENDER);
+
+            toRender.forEach(channel => {
                 const div = document.createElement('div');
                 div.className = 'channel-item';
-                
-                let badgeCountry = channel.country === 'br' ? 'badge-br' : 'badge-intl';
-                let typeTxt = channel.type.includes('youtube') ? 'YT' : 'HLS';
-                
-                // Cores dos pontos: HLS=Verde, YT Livre=Azul, YT Bloqueado=Vermelho Piscante
-                const dotClass = channel.type === 'hls' ? 'ok' 
-                               : channel.type === 'youtube' ? 'yt' 
-                               : 'block';
+
+                const badgeCountry = channel.country === 'br' ? 'badge-br' : 'badge-intl';
 
                 div.innerHTML = `
-                    <span class="channel-name"><span class="status-dot ${dotClass}"></span><span>${channel.name}</span></span>
+                    <span class="channel-name"><span class="status-dot"></span><span>${escapeHtml(channel.name)}</span></span>
                     <span class="badge-group">
-                        <span class="badge badge-type">${typeTxt}</span>
                         <span class="badge ${badgeCountry}">${channel.country.toUpperCase()}</span>
                     </span>
                 `;
                 div.onclick = () => playChannel(channel, div);
+                if (currentlyPlayingKey && (channel.name + '|' + channel.url) === currentlyPlayingKey) {
+                    div.classList.add('active');
+                }
                 listContainer.appendChild(div);
             });
+
+            if (filtered.length > MAX_RENDER) {
+                footerNote.innerText = `Mostrando ${MAX_RENDER} de ${filtered.length} — refine a busca para ver mais`;
+            } else if (filtered.length === 0) {
+                footerNote.innerText = canalDatabase.length === 0 ? 'Sincronizando...' : 'Nenhum canal encontrado';
+            } else {
+                footerNote.innerText = `${filtered.length} canal(is) nesta categoria`;
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.innerText = str;
+            return div.innerHTML;
         }
 
         function playChannel(channel, element) {
             document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
             if (element) element.classList.add('active');
+            currentlyPlayingKey = channel.name + '|' + channel.url;
+            currentChannel = channel;
 
-            const wrapperVjs = document.getElementById('video-wrapper');
-            const playerYt = document.getElementById('yt-player');
-            const msgBlock = document.getElementById('blocked-message');
+            hideError();
+            document.getElementById('video-wrapper').style.display = 'block';
+            vjsPlayer.reset();
+            vjsPlayer.src({ src: channel.url, type: 'application/x-mpegURL' });
+            vjsPlayer.play().then(() => {
+                document.getElementById('now-playing').innerText = `[ TRANSMITINDO: // ${channel.name.toUpperCase()} ]`;
+            }).catch(() => {
+                document.getElementById('now-playing').innerText = `[ CLIQUE NO PLAYER PARA INICIAR ]`;
+            });
+        }
 
-            // Reset de todas as telas
-            vjsPlayer.pause();
-            playerYt.src = '';
-            wrapperVjs.style.display = 'none';
-            playerYt.style.display = 'none';
-            msgBlock.style.display = 'none';
+        function retryCurrent() {
+            if (currentChannel) playChannel(currentChannel, document.querySelector('.channel-item.active'));
+        }
 
-            if (channel.type === 'youtube-blocked') {
-                // Modo Pop-up para emissoras bloqueadas
-                msgBlock.style.display = 'flex';
-                document.getElementById('launch-ext').href = channel.url;
-                document.getElementById('now-playing').innerText = `[ CANAL PROTEGIDO // ABRA EM NOVA JANELA ]`;
-            } 
-            else if (channel.type === 'youtube') {
-                // Modo iFrame para YT liberado (Lofi Girl, Al Jazeera)
-                playerYt.style.display = 'block';
-                playerYt.src = channel.url;
-                document.getElementById('now-playing').innerText = `[ INCORPORAÇÃO YT: // ${channel.name.toUpperCase()} ]`;
-            } 
-            else {
-                // Modo HLS Raiz
-                wrapperVjs.style.display = 'block';
-                vjsPlayer.reset();
-                vjsPlayer.src({ src: channel.url, type: 'application/x-mpegURL' });
-                vjsPlayer.play().then(() => {
-                    document.getElementById('now-playing').innerText = `[ TRANSMITINDO HLS: // ${channel.name.toUpperCase()} ]`;
-                }).catch(() => {
-                    document.getElementById('now-playing').innerText = `[ CLIQUE NO PLAYER PARA INICIAR ]`;
-                });
-            }
+        function showError() {
+            document.getElementById('video-wrapper').style.display = 'none';
+            document.getElementById('error-message').style.display = 'flex';
+            document.getElementById('now-playing').innerText = '[ FALHA NO SINAL // CANAL INDISPONÍVEL ]';
+            const activeEl = document.querySelector('.channel-item.active');
+            if (activeEl) activeEl.querySelector('.status-dot').classList.add('dead');
+        }
+
+        function hideError() {
+            document.getElementById('error-message').style.display = 'none';
         }
 
         function changeCategory(cat, btn) {
