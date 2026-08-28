@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TERMINAL MAD MAX // BOLOTA TV v14.0</title>
-    <!-- Video.js para streaming HLS/M3U8 -->
-   <link href="https://cloudflare.com" rel="stylesheet" />
-<script src="https://cloudflare.com"></script>
+    <!-- CDN ultra estável da Cloudflare (cdnjs) livre de bloqueios de rede -->
+    <link href="https://cloudflare.com" rel="stylesheet" />
+    <script src="https://cloudflare.com"></script>
     <style>
         :root {
             --neon-green: #39ff14;
@@ -14,7 +14,6 @@
             --terminal-gray: #1a2e1a;
         }
 
-        /* Efeito de monitor CRT antigo */
         body {
             background-color: var(--dark-bg);
             color: var(--neon-green);
@@ -28,7 +27,6 @@
             text-transform: uppercase;
         }
 
-        /* Scanlines simulando tubo de imagem */
         body::before {
             content: " ";
             display: block;
@@ -58,7 +56,6 @@
             height: calc(100% - 120px);
         }
 
-        /* Menu Lateral de Canais */
         #sidebar {
             width: 320px;
             border: 2px solid var(--neon-green);
@@ -98,7 +95,6 @@
             padding: 5px;
         }
 
-        /* Custom Scrollbar */
         #lista-canais::-webkit-scrollbar { width: 8px; }
         #lista-canais::-webkit-scrollbar-track { background: var(--dark-bg); }
         #lista-canais::-webkit-scrollbar-thumb { background: var(--neon-green); }
@@ -117,7 +113,6 @@
             border: 1px solid var(--neon-green);
         }
 
-        /* Área do Player Central */
         #content-area {
             flex: 1;
             border: 2px solid var(--neon-green);
@@ -128,7 +123,6 @@
             align-items: center;
         }
 
-        /* Mensagem de Erro / Sinal Indisponível */
         #screen-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -165,7 +159,6 @@
 
         .btn-retry:hover { background: #ff6666; }
 
-        /* Ajustes do Player de Vídeo */
         .video-js {
             width: 100% !important;
             height: 100% !important;
@@ -206,26 +199,27 @@
                 </div>
             </div>
 
-            <video id="tv-player" class="video-js vjs-default-skin" controls preload="auto"></video>
+            <!-- ID alterada para 'meu-player' para sincronizar perfeitamente com o JavaScript abaixo -->
+            <video id="meu-player" class="video-js vjs-default-skin" controls preload="auto"></video>
             
         </div>
     </div>
 
     <script>
-               let bancoCanais = [];
+        let bancoCanais = [];
         let canalAtualUrl = "";
         const player = videojs('meu-player');
         const overlay = document.getElementById('screen-overlay');
 
-        // 1. Relógio Digital Ativo (Isolado para nunca travar)
+        // 1. Relógio Digital Ativo
         try {
             setInterval(() => {
                 const agora = new Date();
                 document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
             }, 1000);
-        } catch(e) { console.error("Erro no relógio:", e); }
+        } catch(e) { console.error(e); }
 
-        // 2. Busca de Temperatura Segura (Com bloco try/catch para não quebrar o site se a API falhar)
+        // 2. Clima de Santa Maria-RS
         async function buscarTemperatura() {
             try {
                 const res = await fetch('https://open-meteo.com');
@@ -236,24 +230,19 @@
                     document.getElementById('temp').innerText = t + "°C";
                 }
             } catch (err) {
-                console.warn("API de clima inacessível ou bloqueada pelo GitHub. Usando Fallback.");
-                document.getElementById('temp').innerText = "22°C"; 
+                document.getElementById('temp').innerText = "24°C"; 
             }
         }
         buscarTemperatura();
         setInterval(buscarTemperatura, 600000);
 
-        // 3. Requisição Anti-Cache para ler o canais.json
+        // 3. Requisição do JSON com Cache Buster dinâmico
         fetch('canais.json?v=' + new Date().getTime())
             .then(response => {
                 if (!response.ok) throw new Error("Erro de rede");
                 return response.json();
             })
             .then(data => {
-                if (!data || data.length === 0) {
-                    document.getElementById('lista-canais').innerHTML = "<div style='padding:10px;'>CANAIS_JSON_VAZIO</div>";
-                    return;
-                }
                 bancoCanais = data.map(canal => ({
                     nome: (canal.nome || canal.name || "SEM NOME").toUpperCase(),
                     url: canal.url || canal.stream || "",
@@ -262,14 +251,19 @@
                 carregarLista(bancoCanais);
             })
             .catch(err => {
-                console.error("Erro Crítico ao buscar o JSON:", err);
+                console.error("Erro:", err);
                 document.getElementById('lista-canais').innerHTML = "<div style='color:#ff3333; padding:10px;'>ERR: FALHA AO CARREGAR CANAIS.JSON</div>";
             });
 
-        // 4. Renderização dos Canais
+        // 4. Renderização
         function carregarLista(canais) {
             const listaContainer = document.getElementById('lista-canais');
             listaContainer.innerHTML = "";
+            
+            if (!canais || canais.length === 0) {
+                listaContainer.innerHTML = "<div style='padding:10px;'>NENHUM CANAL CONFIGURADO</div>";
+                return;
+            }
             
             canais.forEach(canal => {
                 const item = document.createElement('div');
@@ -280,7 +274,7 @@
             });
         }
 
-        // 5. Sintonia e Stream
+        // 5. Sintonia
         function sintonizar(url, elementoHtml) {
             canalAtualUrl = url;
             overlay.classList.add('hidden');
@@ -292,7 +286,6 @@
             player.play();
         }
 
-        // 6. Monitor de erros de sinal
         player.on('error', function() {
             overlay.classList.remove('hidden');
         });
@@ -303,7 +296,7 @@
             }
         }
 
-        // 7. Filtros por Categoria
+        // 7. Filtros
         function filtrar(categoria) {
             document.querySelectorAll('.filter-bar .filter-btn').forEach(btn => btn.classList.remove('active'));
             if (window.event && window.event.target) {
@@ -317,3 +310,6 @@
                 carregarLista(filtrados);
             }
         }
+    </script>
+</body>
+</html>
