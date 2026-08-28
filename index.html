@@ -98,7 +98,7 @@
             padding: 5px;
         }
 
-        /* Custom Scrollbar futurista */
+        /* Custom Scrollbar */
         #lista-canais::-webkit-scrollbar { width: 8px; }
         #lista-canais::-webkit-scrollbar-track { background: var(--dark-bg); }
         #lista-canais::-webkit-scrollbar-thumb { background: var(--neon-green); }
@@ -171,7 +171,6 @@
             height: 100% !important;
         }
         
-        /* Força controles ocultos quando o erro está visível */
         .hidden { display: none !important; }
     </style>
 </head>
@@ -184,7 +183,6 @@
 
     <div id="main-container">
         
-        <!-- Painel Lateral -->
         <div id="sidebar">
             <div class="filter-bar">
                 <button class="filter-btn active" onclick="filtrar('TODOS')">[TODOS]</button>
@@ -194,77 +192,88 @@
                 <button class="filter-btn" onclick="filtrar('DOCUMENTARIOS')">[DOCS/ESPORTES]</button>
             </div>
             <div id="lista-canais">
-                <!-- Injetado por JS -->
+                <!-- Preenchido dinamicamente via JS -->
             </div>
         </div>
 
-        <!-- Tela Principal -->
         <div id="content-area">
             
-            <!-- Interface de Sinal Indisponível (Sobreposição de Erro) -->
             <div id="screen-overlay" class="hidden">
                 <div class="alert-box">
                     <h2>## SINAL INDISPONÍVEL ##</h2>
-                    <p>ESTE CANAL NÃO RESPONDEU. É COMUM EM LISTAS PÚBLICAS — SERVIDORES CAEM E VOLTAM O TEMPO TODO. TENTE NOVAMENTE OU ESCOLHA OUTRO CANAL NA LISTA.</p>
+                    <p>ESTE CANAL NÃO RESPONDEU. É COMUM EM LISTAS PÚBLICAS — SERVIDORES CAEM E VOLTAM O TEMPO DO TODO. TENTE NOVAMENTE OU ESCOLHA OUTRO CANAL NA LISTA.</p>
                     <button class="btn-retry" onclick="tentarNovamente()">TENTAR DE NOVO</button>
                 </div>
             </div>
 
-            <!-- Player de Vídeo Real -->
             <video id="tv-player" class="video-js vjs-default-skin" controls preload="auto"></video>
             
         </div>
     </div>
 
     <script>
-        // Dados de teste mockados com categorias (Substitua depois pelo canais.json real)
-        const bancoCanais = [
-            { nome: "TV CULTURA", url: "https://wmscdn.com", categoria: "TV ABERTA" },
-            { nome: "NASA TV", url: "https://nasa.gov", categoria: "DOCUMENTARIOS" },
-            { nome: "CANAL QUEBRADO TESTE", url: "https://servidor-off.com", categoria: "FILMES" }
-        ];
-
+        let bancoCanais = [];
         let canalAtualUrl = "";
         const player = videojs('tv-player');
         const overlay = document.getElementById('screen-overlay');
 
-        // Relógio digital no header
+        // Relógio digital
         setInterval(() => {
             const agora = new Date();
             document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
         }, 1000);
 
-        // Renderiza os canais na tela
+        // REQUISIÇÃO DO JSON: Busca os dados de canais.json
+        fetch('canais.json')
+            .then(response => {
+                if (!response.ok) throw new Error("Erro de rede");
+                return response.json();
+            })
+            .then(data => {
+                bancoCanais = data;
+                carregarLista(bancoCanais);
+            })
+            .catch(err => {
+                console.error("Erro ao carregar o arquivo JSON:", err);
+                document.getElementById('lista-canais').innerHTML = "<div style='color:#ff3333; padding:10px;'>ERR: FALHA AO CARREGAR CANAIS.JSON</div>";
+            });
+
+        // Renderiza os canais na barra lateral
         function carregarLista(canais) {
             const listaContainer = document.getElementById('lista-canais');
             listaContainer.innerHTML = "";
             
+            if (canais.length === 0) {
+                listaContainer.innerHTML = "<div style='padding:10px;'>NENHUM CANAL CONFIGURADO</div>";
+                return;
+            }
+            
             canais.forEach(canal => {
                 const item = document.createElement('div');
                 item.className = 'canal-item';
-                item.innerHTML = `<span>> ${canal.nome}</span> <span>[${canal.categoria}]</span>`;
+                const nomeCanal = (canal.nome || "SEM NOME").toUpperCase();
+                const catCanal = (canal.categoria || "GERAL").toUpperCase();
+                
+                item.innerHTML = `<span>> ${nomeCanal}</span> <span>[${catCanal}]</span>`;
                 item.onclick = () => sintonizar(canal.url, item);
                 listaContainer.appendChild(item);
             });
         }
 
-        // Função para dar Play no Canal
+        // Dá play na stream
         function sintonizar(url, elementoHtml) {
             canalAtualUrl = url;
-            overlay.classList.add('hidden'); // Esconde erro anterior
+            overlay.classList.add('hidden');
             
-            // Remove destaque do canal antigo
             document.querySelectorAll('.canal-item').forEach(el => el.classList.remove('playing'));
             if(elementoHtml) elementoHtml.classList.add('playing');
 
-            // Tenta reproduzir a stream
             player.src({ type: 'application/x-mpegURL', src: url });
             player.play();
         }
 
-        // Intercepta erros de rede do player de vídeo
+        // Monitora falhas no sinal do vídeo
         player.on('error', function() {
-            // Se der erro de carregamento (HLS quebrado), ativa a tela Mad Max de erro
             overlay.classList.remove('hidden');
         });
 
@@ -274,20 +283,20 @@
             }
         }
 
-        // Filtros do menu superior
+        // Filtra os canais por categoria
         function filtrar(categoria) {
-            // Atualiza botões
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.filter-bar .filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
 
             if(categoria === 'TODOS') {
                 carregarLista(bancoCanais);
             } else {
                 const filtrados = bancoCanais.filter(c => c.categoria === categoria);
+                carregarLista(filtrados);
+            }
         }
-        
-        // Inicialização
-        carregarLista(bancoCanais);
     </script>
 </body>
 </html>
