@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TERMINAL MAD MAX // BOLOTA TV v14.0</title>
     
-    <!-- Chamadas da biblioteca oficial organizadas para carregar ANTES do script do site -->
+    <!-- Scripts oficiais da Cloudflare organizados na ordem correta de carregamento -->
     <link href="https://cloudflare.com" rel="stylesheet" />
     <script src="https://cloudflare.com"></script>
 
@@ -201,7 +201,6 @@
                 </div>
             </div>
 
-            <!-- ID alterada para 'meu-player' para sincronizar perfeitamente com o JavaScript abaixo -->
             <video id="meu-player" class="video-js vjs-default-skin" controls preload="auto"></video>
             
         </div>
@@ -210,16 +209,22 @@
     <script>
         let bancoCanais = [];
         let canalAtualUrl = "";
-        const player = videojs('meu-player');
+        let player;
         const overlay = document.getElementById('screen-overlay');
 
-        // 1. Relógio Digital Ativo
+        // Inicialização protegida do player de vídeo
         try {
-            setInterval(() => {
-                const agora = new Date();
-                document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
-            }, 1000);
-        } catch(e) { console.error(e); }
+            player = videojs('meu-player');
+            player.on('error', function() {
+                overlay.classList.remove('hidden');
+            });
+        } catch(e) { console.error("Erro ao iniciar player:", e); }
+
+        // 1. Relógio Ativo
+        setInterval(() => {
+            const agora = new Date();
+            document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
+        }, 1000);
 
         // 2. Clima de Santa Maria-RS
         async function buscarTemperatura() {
@@ -238,7 +243,7 @@
         buscarTemperatura();
         setInterval(buscarTemperatura, 600000);
 
-        // 3. Requisição do JSON com Cache Buster dinâmico
+        // 3. Requisição do JSON com Cache Buster
         fetch('canais.json?v=' + new Date().getTime())
             .then(response => {
                 if (!response.ok) throw new Error("Erro de rede");
@@ -278,6 +283,7 @@
 
         // 5. Sintonia
         function sintonizar(url, elementoHtml) {
+            if(!player) return;
             canalAtualUrl = url;
             overlay.classList.add('hidden');
             
@@ -287,10 +293,6 @@
             player.src({ type: 'application/x-mpegURL', src: url });
             player.play();
         }
-
-        player.on('error', function() {
-            overlay.classList.remove('hidden');
-        });
 
         function tentarNovamente() {
             if(canalAtualUrl) {
