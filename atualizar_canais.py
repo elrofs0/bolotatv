@@ -1,81 +1,112 @@
+"""
+BOLOTA TV — Atualizador automático de canais
+Fonte: iptv-org/iptv (streams/br.m3u), a maior lista pública e ativamente
+mantida de canais IPTV do Brasil.
+
+O que este script garante:
+- Só entram canais HTTPS (canais http:// são bloqueados pelo navegador
+  quando o site roda em https, como no GitHub Pages — "mixed content").
+- Canais marcados [Geo-blocked] são descartados (não funcionam pra maioria).
+- Sem duplicados: mantém apenas a primeira URL válida de cada canal.
+- Categorização automática por palavras-chave no nome/tvg-id.
+- Se a fonte falhar ou vier vazia, o canais.json atual NÃO é sobrescrito
+  (evita zerar a lista do site por uma falha temporária de rede).
+"""
+
 import asyncio
 import aiohttp
 import json
 import re
+from collections import OrderedDict
 
-# URL da lista focada em canais abertos e streams FAST estáveis do Brasil
-M3U_URL = "https://github.io"
+M3U_URL = "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/br.m3u"
 
-def mapear_categoria(grupo, nome):
-    nome = nome.upper()
-    grupo = grupo.upper() if grupo else ""
-    if "NEWS" in grupo or "NOTI" in nome:
-        return "NOTICIAS"
-    elif "MOVIES" in grupo or "SERIES" in grupo or "FILME" in nome:
-        return "FILMES"
-    elif "DOCUMENTARIES" in grupo or "SPORTS" in grupo or "DOC" in nome or "ESPORTE" in nome:
-        return "DOCUMENTARIOS"
-    else:
-        return "TV ABERTA"
+CATEGORIAS = [
+    ("NOTICIAS", ["NEWS", "NOTIC", "JORNAL", "CNN", "TIMES BRASIL", "BM&C", "J3NEWS"]),
+    ("ESPORTES", ["SPORT", "ESPN", "SPORTV", "PREMIERE", "COMBATE", "N SPORTS", "CAZETV", "CAZE TV"]),
+    ("FILMES", ["MOVIE", "FILME", "CINE", "TELECINE", "MEGAPIX", "TCM"]),
+    ("SERIES", ["SERIES", "SÉRIE", "AXN", "SONY", "WARNER", "FX", "AMC", "TRUTV", "COMEDY CENTRAL"]),
+    ("INFANTIL", ["KIDS", "GLOOB", "DISCOVERY KIDS", "NICK", "CARTOON", "DISNEY", "ZOOMOO", "DUMDUM", "BOX KIDS", "BABYFIRST", "RA TIM BUM"]),
+    ("DOCUMENTARIOS", ["DISCOVERY", "HISTORY", "NATGEO", "NATIONAL GEO", "CURTA", "TRAVEL BOX", "TERRA VIVA", "AGRO", "FISH TV", "PETLOVERS", "BIS", "CANAL SAUDE", "CANAL SAÚDE"]),
+    ("RELIGIAO", ["GOSPEL", "EVANGELIZAR", "CANCAO NOVA", "CANÇÃO NOVA", "NOVO TEMPO", "REDE VIDA", "BOAS NOVAS", "APARECIDA", "GIDEOES", "ADORAR"]),
+    ("GOV_EDUCACAO", ["SENADO", "CAMARA", "CÂMARA", "JUSTICA", "JUSTIÇA", "TV ESCOLA", "TV CULTURA", "UFG", "UFOP", "CANAL GOV", "CANAL EDUCACAO", "CANAL EDUCAÇÃO", "CANAL LIBRAS"]),
+]
 
-async def processar_lista():
-    print("[LOG] Iniciando varredura de canais estáveis...")
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-    }
-    
+# Linhas #EXTINF podem ter qualquer número de atributos tvg-* antes da vírgula + nome
+EXTINF_RE = re.compile(r'#EXTINF:-?\d+(?P<attrs>(?:\s+[\w-]+="[^"]*")*)\s*,(?P<nome>.+)$')
+TVGID_RE = re.compile(r'tvg-id="([^"]*)"')
+
+
+def mapear_categoria(nome: str, tvg_id: str = "") -> str:
+    alvo = f"{nome} {tvg_id}".upper()
+    for categoria, chaves in CATEGORIAS:
+        if any(chave in alvo for chave in chaves):
+            return categoria
+    return "TV ABERTA"
+
+
+async def buscar_m3u() -> str:
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; BolotaTV/1.0)"}
     async with aiohttp.ClientSession(headers=headers) as session:
-        try:
-            async with session.get(M3U_URL, timeout=20) as response:
-                if response.status != 200: return
-                conteudo = await response.text()
-        except Exception:
-            return
+        async with session.get(M3U_URL, timeout=aiohttp.ClientTimeout(total=30)) as resp:
+            resp.raise_for_status()
+            return await resp.text()
 
-    linhas = conteudo.splitlines()
-    canais_processados = []
-    canal_atual = {}
-    dentro_do_brasil = False
 
-    group_title_regex = re.compile(r'group-title="([^"]+)"')
+def processar(conteudo: str) -> list[dict]:
+    linhas = [l.strip() for l in conteudo.splitlines() if l.strip()]
+    canais: "OrderedDict[str, dict]" = OrderedDict()
+    nome_atual = None
+    tvgid_atual = ""
 
     for linha in linhas:
         if linha.startswith("#EXTINF"):
-            grupo_match = group_title_regex.search(linha)
-            grupo = grupo_match.group(1) if grupo_match else ""
-            
-            if grupo.strip().lower() == "brazil":
-                dentro_do_brasil = True
-                nome = linha.split(",")[-1].strip()
-                
-                # FILTRAGEM DE SEGURANÇA: Só aceita canais oficiais estáveis (Pluto, Samsung, Cultura, Record, etc.)
-                # Evita servidores caseiros (.ts ou IPs numéricos que morrem em 24h)
-                if any(x in nome.upper() for x in ["PLUTO", "SAMSUNG", "CULTURA", "RECORD", "SOUL", "SBT", "BAND"]):
-                    canal_atual = {
-                        "nome": nome,
-                        "categoria": mapear_categoria(grupo, nome)
-                    }
-                else:
-                    dentro_do_brasil = False
-            else:
-                dentro_do_brasil = False
-                
-        elif linha.startswith("http"):
-            if dentro_do_brasil and canal_atual:
-                url_limpa = linha.strip()
-                # Só aceita links HTTPS padrão para não dar erro de segurança no navegador
-                if url_limpa.startswith("https"):
-                    canal_atual["url"] = url_limpa
-                    canais_processados.append(canal_atual)
-                canal_atual = {}
-                dentro_do_brasil = False
+            m = EXTINF_RE.match(linha)
+            if not m:
+                nome_atual = None
+                continue
+            nome_atual = m.group("nome").strip()
+            tvgid_m = TVGID_RE.search(m.group("attrs"))
+            tvgid_atual = tvgid_m.group(1) if tvgid_m else ""
+        elif linha.startswith("#"):
+            # Ex: #EXTVLCOPT, #EXTGRP — ignora mas preserva o canal atual
+            continue
+        elif linha.startswith("http") and nome_atual:
+            eh_geo_bloqueado = "GEO-BLOCKED" in nome_atual.upper()
+            eh_https = linha.startswith("https")
+            if eh_https and not eh_geo_bloqueado and nome_atual not in canais:
+                canais[nome_atual] = {
+                    "nome": nome_atual,
+                    "categoria": mapear_categoria(nome_atual, tvgid_atual),
+                    "url": linha,
+                }
+            nome_atual = None  # essa entrada já foi consumida
 
-    if len(canais_processados) == 0:
+    return list(canais.values())
+
+
+async def main():
+    print("[LOG] Baixando lista atualizada de canais (iptv-org/br.m3u)...")
+    try:
+        conteudo = await buscar_m3u()
+    except Exception as e:
+        print(f"[ERRO] Falha ao baixar a lista: {e}. Mantendo canais.json atual.")
         return
 
+    canais = processar(conteudo)
+
+    if len(canais) < 50:
+        # Fonte provavelmente veio corrompida/incompleta — não sobrescreve o site
+        print(f"[ERRO] Só {len(canais)} canais processados (esperado bem mais). Abortando sem sobrescrever.")
+        return
+
+    canais.sort(key=lambda c: (c["categoria"], c["nome"]))
+
     with open("canais.json", "w", encoding="utf-8") as f:
-        json.dump(canais_processados, f, ensure_ascii=False, indent=2)
-    print(f"[LOG] Sucesso! {len(canais_processados)} canais estáveis indexados.")
+        json.dump(canais, f, ensure_ascii=False, indent=2)
+
+    print(f"[LOG] Sucesso: {len(canais)} canais únicos, HTTPS, sem geo-bloqueio, salvos em canais.json.")
+
 
 if __name__ == "__main__":
-    asyncio.run(processar_lista())
+    asyncio.run(main())
