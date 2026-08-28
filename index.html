@@ -265,26 +265,33 @@
                 document.getElementById('lista-canais').innerHTML = "<div style='color:#ff3333; padding:10px;'>ERR: FALHA AO CARREGAR CANAIS.JSON</div>";
             });
 
-        // 4. Renderização
-        function carregarLista(canais) {
-            const listaContainer = document.getElementById('lista-canais');
-            listaContainer.innerHTML = "";
-            
-            if (!canais || canais.length === 0) {
-                listaContainer.innerHTML = "<div style='padding:10px;'>NENHUM CANAL CONFIGURADO</div>";
-                return;
-            }
-            
-            canais.forEach(canal => {
-                const item = document.createElement('div');
-                item.className = 'canal-item';
-                item.innerHTML = `<span>> ${canal.nome}</span> <span>[${canal.categoria}]</span>`;
-                item.onclick = () => sintonizar(canal.url, item);
-                listaContainer.appendChild(item);
-            });
-        }
+      function carregarLista(canais) {
+    const listaContainer = document.getElementById('lista-canais');
+    listaContainer.innerHTML = "";
+    
+    // Links base codificados de forma simples para o editor do GitHub não encurtar
+    const dominioBase = ["images-live-tv-vge", "akamaized", "net"].join(".");
+    const urlCine = "https://" + dominioBase + "/v1/AUTH_b90d2ab9-f1fb-4f6c-85e7-2b36e8db3747/p0_vge_bra/plutotvcinesucessos_bra/main.m3u8";
+    const urlAnime = "https://" + dominioBase + "/v1/AUTH_b90d2ab9-f1fb-4f6c-85e7-2b36e8db3747/p0_vge_bra/plutotvanime_bra/main.m3u8";
+    const urlInvest = "https://" + dominioBase + "/v1/AUTH_b90d2ab9-f1fb-4f6c-85e7-2b36e8db3747/p0_vge_bra/plutotvinvestigaca_bra/main.m3u8";
 
-        // 5. Sintonia
+    const canaisDeApresentacao = [
+        { nome: "⭐ PLUTO TV CINE SUCESSOS", url: urlCine, categoria: "FILMES" },
+        { nome: "⭐ PLUTO TV ANIME", url: urlAnime, categoria: "TV ABERTA" },
+        { nome: "⭐ PLUTO TV INVESTIGAÇÃO", url: urlInvest, categoria: "NOTICIAS" }
+    ];
+
+    const listaFinal = canaisDeApresentacao.concat(canais || []);
+
+    listaFinal.forEach(canal => {
+        const item = document.createElement('div');
+        item.className = 'canal-item';
+        item.innerHTML = `<span>> ${canal.nome}</span> <span>[${canal.categoria}]</span>`;
+        item.onclick = () => sintonizar(canal.url, item);
+        listaContainer.appendChild(item);
+    });
+}
+
         function sintonizar(url, elementoHtml) {
             if(!player) {
                 console.error("Erro: Biblioteca de vídeo não inicializada.");
