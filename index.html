@@ -241,14 +241,19 @@
         buscarTemperatura();
         setInterval(buscarTemperatura, 600000); // Atualiza o clima a cada 10 minutos
 
-        // 3. Requisição Anti-Cache para ler o canais.json
+               // 3. Requisição Anti-Cache para ler o canais.json
         fetch('canais.json?v=' + new Date().getTime())
             .then(response => {
                 if (!response.ok) throw new Error("Erro ao ler arquivo JSON");
                 return response.json();
             })
             .then(data => {
-                bancoCanais = data;
+                // Padroniza as chaves do JSON para maiúsculas e evita erros de leitura do Python
+                bancoCanais = data.map(canal => ({
+                    nome: (canal.nome || canal.name || "SEM NOME").toUpperCase(),
+                    url: canal.url || canal.stream || "",
+                    categoria: (canal.categoria || canal.category || "TV ABERTA").toUpperCase()
+                }));
                 carregarLista(bancoCanais);
             })
             .catch(err => {
@@ -269,14 +274,13 @@
             canais.forEach(canal => {
                 const item = document.createElement('div');
                 item.className = 'canal-item';
-                const nomeCanal = (canal.nome || "SEM NOME").toUpperCase();
-                const catCanal = (canal.categoria || "GERAL").toUpperCase();
                 
-                item.innerHTML = `<span>> ${nomeCanal}</span> <span>[${catCanal}]</span>`;
+                item.innerHTML = `<span>> ${canal.nome}</span> <span>[${canal.categoria}]</span>`;
                 item.onclick = () => sintonizar(canal.url, item);
                 listaContainer.appendChild(item);
             });
         }
+
 
         // 5. Sintonia e Stream
         function sintonizar(url, elementoHtml) {
