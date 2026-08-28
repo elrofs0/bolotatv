@@ -223,8 +223,8 @@
             document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
         }, 1000);
 
-        // REQUISIÇÃO DO JSON: Busca os dados de canais.json
-        fetch('canais.json')
+                // REQUISIÇÃO DO JSON: Busca os dados de canais.json contornando o cache
+        fetch('canais.json?v=' + new Date().getTime())
             .then(response => {
                 if (!response.ok) throw new Error("Erro de rede");
                 return response.json();
@@ -237,6 +237,7 @@
                 console.error("Erro ao carregar o arquivo JSON:", err);
                 document.getElementById('lista-canais').innerHTML = "<div style='color:#ff3333; padding:10px;'>ERR: FALHA AO CARREGAR CANAIS.JSON</div>";
             });
+
 
         // Renderiza os canais na barra lateral
         function carregarLista(canais) {
