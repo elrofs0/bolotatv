@@ -1,332 +1,584 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL MAD MAX // BOLOTA TV v14.0</title>
-    
-       <!-- CDN Oficial do Video.js com caminhos absolutos e corretos -->
-    <link rel="stylesheet" href="https://unpkg.com/video.js@8.10.0/dist/video-js.min.css" />
-    <script src="https://unpkg.com/video.js@8.10.0/dist/video.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERMINAL MAD MAX // BOLOTA TV v15.0</title>
 
-    <style>
-        :root {
-            --neon-green: #39ff14;
-            --dark-bg: #050a05;
-            --terminal-gray: #1a2e1a;
-        }
+<link rel="stylesheet" href="https://unpkg.com/video.js@8.10.0/dist/video-js.min.css" />
+<script src="https://unpkg.com/video.js@8.10.0/dist/video.min.js"></script>
 
-        body {
-            background-color: var(--dark-bg);
-            color: var(--neon-green);
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            height: 95vh;
-            overflow: hidden;
-            text-transform: uppercase;
-        }
+<style>
+  :root{
+    --neon: #39ff14;
+    --neon-dim: #1c8a0c;
+    --bg: #050a05;
+    --panel: #0a140a;
+    --border: #1f4d1f;
+    --danger: #ff4444;
+    --muted: #6fae6f;
+    --sidebar-w: 340px;
+    --header-h: 56px;
+  }
 
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 9999;
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
-        }
+  *{ box-sizing: border-box; }
 
-        header {
-            border: 2px solid var(--neon-green);
-            padding: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            background: var(--terminal-gray);
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
-        }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--neon);
+    font-family: 'Consolas', 'Courier New', monospace;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
 
-        #main-container {
-            display: flex;
-            flex: 1;
-            gap: 15px;
-            height: calc(100% - 120px);
-        }
+  /* scanline sutil, sem exagero */
+  body::before{
+    content:"";
+    position: fixed; inset:0;
+    background: linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.15) 50%);
+    background-size: 100% 3px;
+    pointer-events: none;
+    z-index: 999;
+    opacity: .5;
+  }
 
-        #sidebar {
-            width: 320px;
-            border: 2px solid var(--neon-green);
-            display: flex;
-            flex-direction: column;
-            background: rgba(0,0,0,0.8);
-        }
+  header{
+    height: var(--header-h);
+    flex-shrink:0;
+    border-bottom: 2px solid var(--border);
+    background: var(--panel);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 0 14px;
+    gap: 12px;
+  }
 
-        .filter-bar {
-            padding: 5px;
-            border-bottom: 2px solid var(--neon-green);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            background: var(--terminal-gray);
-        }
+  header .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight:bold;
+    letter-spacing:.5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size: 13px;
+  }
 
-        .filter-btn {
-            background: transparent;
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
-            font-family: inherit;
-            padding: 3px 6px;
-            cursor: pointer;
-            font-size: 11px;
-        }
+  header .status{
+    font-size:11px;
+    color: var(--muted);
+    text-align:right;
+    white-space:nowrap;
+  }
 
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--neon-green);
-            color: black;
-            font-weight: bold;
-        }
+  #menu-toggle{
+    display:none;
+    background:transparent;
+    border:1px solid var(--neon);
+    color:var(--neon);
+    font-family:inherit;
+    padding:6px 10px;
+    cursor:pointer;
+    font-weight:bold;
+  }
 
-        #lista-canais {
-            flex: 1;
-            overflow-y: auto;
-            padding: 5px;
-        }
+  #main{
+    flex:1;
+    display:flex;
+    min-height:0;
+  }
 
-        #lista-canais::-webkit-scrollbar { width: 8px; }
-        #lista-canais::-webkit-scrollbar-track { background: var(--dark-bg); }
-        #lista-canais::-webkit-scrollbar-thumb { background: var(--neon-green); }
+  #sidebar{
+    width: var(--sidebar-w);
+    flex-shrink:0;
+    border-right: 2px solid var(--border);
+    background: var(--panel);
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+  }
 
-        .canal-item {
-            padding: 8px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            margin-bottom: 3px;
-            display: flex;
-            justify-content: space-between;
-        }
+  #search-wrap{
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+  }
 
-        .canal-item:hover, .canal-item.playing {
-            background: rgba(57, 255, 20, 0.2);
-            border: 1px solid var(--neon-green);
-        }
+  #search{
+    width:100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--neon);
+    font-family: inherit;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  #search:focus{ outline: 1px solid var(--neon); }
+  #search::placeholder{ color: var(--neon-dim); }
 
-        #content-area {
-            flex: 1;
-            border: 2px solid var(--neon-green);
-            position: relative;
-            background: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  .filter-bar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--border);
+    overflow-x:auto;
+  }
 
-        #screen-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--dark-bg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+  .filter-btn{
+    background: transparent;
+    border: 1px solid var(--neon-dim);
+    color: var(--neon-dim);
+    font-family: inherit;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 10.5px;
+    white-space: nowrap;
+  }
+  .filter-btn:hover{ border-color: var(--neon); color: var(--neon); }
+  .filter-btn.active{
+    background: var(--neon);
+    color: #001a00;
+    border-color: var(--neon);
+    font-weight:bold;
+  }
 
-        .alert-box {
-            border: 3px dashed #ff3333;
-            padding: 30px;
-            color: #ff3333;
-            background: rgba(255, 0, 0, 0.05);
-            max-width: 500px;
-            box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
-        }
+  #list-meta{
+    padding: 6px 10px;
+    font-size: 10.5px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
 
-        .btn-retry {
-            margin-top: 20px;
-            background: #ff3333;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            font-family: inherit;
-            font-weight: bold;
-            cursor: pointer;
-        }
+  #lista-canais{
+    flex:1;
+    overflow-y:auto;
+    padding: 4px;
+  }
+  #lista-canais::-webkit-scrollbar{ width:8px; }
+  #lista-canais::-webkit-scrollbar-track{ background: var(--bg); }
+  #lista-canais::-webkit-scrollbar-thumb{ background: var(--neon-dim); }
 
-        .btn-retry:hover { background: #ff6666; }
+  .canal-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding: 9px 8px;
+    border: 1px solid transparent;
+    border-left: 3px solid var(--cat-color, var(--neon-dim));
+    cursor:pointer;
+    margin-bottom: 3px;
+    font-size: 12.5px;
+  }
+  .canal-item:hover{ background: rgba(57,255,20,0.08); }
+  .canal-item.playing{
+    background: rgba(57,255,20,0.16);
+    border-color: var(--neon);
+  }
 
-        .video-js {
-            width: 100% !important;
-            height: 100% !important;
-        }
-        
-        .hidden { display: none !important; }
-    </style>
+  .canal-nome{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .canal-tag{
+    font-size:9.5px;
+    color: var(--cat-color, var(--muted));
+    border: 1px solid var(--cat-color, var(--muted));
+    padding: 1px 5px;
+    flex-shrink:0;
+  }
+
+  .fav-btn{
+    background:none;
+    border:none;
+    color: var(--neon-dim);
+    cursor:pointer;
+    font-size:14px;
+    flex-shrink:0;
+    padding:0 2px;
+    line-height:1;
+  }
+  .fav-btn.active{ color: gold; }
+
+  .empty-msg{
+    padding: 20px 12px;
+    color: var(--muted);
+    font-size:12px;
+    text-align:center;
+  }
+
+  #content-area{
+    flex:1;
+    position:relative;
+    background:black;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:0;
+  }
+
+  #screen-overlay{
+    position:absolute; inset:0;
+    background: var(--bg);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:20px;
+    z-index:10;
+  }
+
+  .alert-box{
+    border: 2px dashed var(--danger);
+    padding: 26px;
+    color: var(--danger);
+    background: rgba(255,0,0,0.05);
+    max-width: 480px;
+  }
+  .alert-box h2{ margin-top:0; font-size:15px; }
+  .alert-box p{ font-size:12px; line-height:1.5; color: #ff8888; }
+
+  .overlay-actions{
+    display:flex; gap:10px; justify-content:center; margin-top:18px; flex-wrap:wrap;
+  }
+  .btn{
+    font-family: inherit;
+    font-weight:bold;
+    padding: 9px 16px;
+    cursor:pointer;
+    border:none;
+    font-size:12px;
+  }
+  .btn-danger{ background: var(--danger); color:#1a0000; }
+  .btn-danger:hover{ background:#ff7777; }
+  .btn-ghost{ background:transparent; border:1px solid var(--neon); color:var(--neon); }
+  .btn-ghost:hover{ background: var(--neon); color:#001a00; }
+
+  .welcome{
+    color: var(--muted);
+    text-align:center;
+    font-size:13px;
+    max-width: 360px;
+    padding: 20px;
+  }
+  .welcome b{ color: var(--neon); }
+
+  .video-js{ width:100% !important; height:100% !important; }
+  .hidden{ display:none !important; }
+
+  footer{
+    flex-shrink:0;
+    border-top: 1px solid var(--border);
+    background: var(--panel);
+    padding: 5px 12px;
+    font-size: 10px;
+    color: var(--muted);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  footer a{ color: var(--neon-dim); }
+
+  /* Mobile */
+  @media (max-width: 860px){
+    #menu-toggle{ display:inline-block; }
+    header .brand{ font-size:11.5px; }
+    #main{ position:relative; overflow:hidden; }
+    #sidebar{
+      position:absolute;
+      top:0; bottom:0; left:0;
+      width: min(86vw, 360px);
+      z-index: 50;
+      transform: translateX(-105%);
+      transition: transform .2s ease;
+      box-shadow: 4px 0 18px rgba(0,0,0,.6);
+    }
+    #sidebar.open{ transform: translateX(0); }
+    #sidebar-backdrop{
+      display:none;
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.55);
+      z-index:40;
+    }
+    #sidebar-backdrop.open{ display:block; }
+    footer{ font-size:9px; }
+  }
+</style>
 </head>
 <body>
 
-    <header>
-        <div>[ TERMINAL MAD MAX // BOLOTA TV v14.0 M3U-ONLY ]</div>
-        <div>SANTA MARIA-RS // Temp: <span id="temp">--°C</span> // <span id="clock">00:00:00</span></div>
-    </header>
+<header>
+  <button id="menu-toggle" onclick="alternarSidebar()">☰ CANAIS</button>
+  <div class="brand">[ TERMINAL MAD MAX // BOLOTA TV v15.0 ]</div>
+  <div class="status">SANTA MARIA-RS // <span id="temp">--°C</span> // <span id="clock">00:00:00</span></div>
+</header>
 
-    <div id="main-container">
-        
-        <div id="sidebar">
-            <div class="filter-bar">
-                <button class="filter-btn active" onclick="filtrar('TODOS')">[TODOS]</button>
-                <button class="filter-btn" onclick="filtrar('TV ABERTA')">[TV ABERTA/GERAL BR]</button>
-                <button class="filter-btn" onclick="filtrar('NOTICIAS')">[NOTÍCIAS]</button>
-                <button class="filter-btn" onclick="filtrar('FILMES')">[FILMES/SÉRIES]</button>
-                <button class="filter-btn" onclick="filtrar('DOCUMENTARIOS')">[DOCS/ESPORTES]</button>
-            </div>
-            <div id="lista-canais">
-                <div style="padding:10px;">SISTEMA INICIANDO...</div>
-            </div>
-        </div>
+<div id="main">
+  <div id="sidebar-backdrop" onclick="alternarSidebar()"></div>
 
-        <div id="content-area">
-            
-            <div id="screen-overlay" class="hidden">
-                <div class="alert-box">
-                    <h2>## SINAL INDISPONÍVEL ##</h2>
-                    <p>ESTE CANAL NÃO RESPONDEU. É COMUM EM LISTAS PÚBLICAS — SERVIDORES CAEM E VOLTAM O TEMPO TODO. TENTE NOVAMENTE OU ESCOLHA OUTRO CANAL NA LISTA.</p>
-                    <button class="btn-retry" onclick="tentarNovamente()">TENTAR DE NOVO</button>
-                </div>
-            </div>
+  <div id="sidebar">
+    <div id="search-wrap">
+      <input id="search" type="text" placeholder="> buscar canal..." oninput="aplicarFiltros()">
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div id="list-meta">CARREGANDO...</div>
+    <div id="lista-canais"><div class="empty-msg">SISTEMA INICIANDO...</div></div>
+  </div>
 
-            <video id="meu-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto"></video>
-            
-        </div>
+  <div id="content-area">
+    <div id="welcome-msg" class="welcome">
+      &gt; Escolha um canal na lista ao lado para começar.<br><br>
+      Dica: use a busca ou os filtros de categoria pra achar mais rápido.
+      Toque na <b>★</b> pra favoritar um canal.
     </div>
 
-    <script>
-        let bancoCanais = [];
-        let canalAtualUrl = "";
-        let player;
-        const overlay = document.getElementById('screen-overlay');
+    <div id="screen-overlay" class="hidden">
+      <div class="alert-box">
+        <h2>## SINAL INDISPONÍVEL ##</h2>
+        <p>ESTE CANAL NÃO RESPONDEU. É COMUM EM LISTAS PÚBLICAS — SERVIDORES CAEM E VOLTAM O TEMPO TODO.</p>
+        <div class="overlay-actions">
+          <button class="btn btn-danger" onclick="tentarNovamente()">TENTAR DE NOVO</button>
+          <button class="btn btn-ghost" onclick="proximoCanal()">PRÓXIMO CANAL</button>
+        </div>
+      </div>
+    </div>
 
-        // Inicialização do Player acoplada ao escopo global de forma segura
-        try {
-            player = videojs('meu-player');
-            player.on('error', function() {
-                overlay.classList.remove('hidden');
-            });
-            console.log("[LOG] Video.js carregado com sucesso.");
-        } catch(e) { 
-            console.error("[ERRO] Falha crítica ao ler biblioteca:", e); 
-        }
+    <video id="meu-player" class="video-js vjs-default-skin vjs-big-play-centered hidden" controls preload="auto"></video>
+  </div>
+</div>
 
-        // 1. Relógio Ativo
-        setInterval(() => {
-            const agora = new Date();
-            document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
-        }, 1000);
+<footer>
+  <span>Fonte: <a href="https://github.com/iptv-org/iptv" target="_blank" rel="noopener">iptv-org</a> // lista atualizada automaticamente</span>
+  <span id="footer-count">0 canais carregados</span>
+</footer>
 
-        // 2. Clima de Santa Maria-RS
-        async function buscarTemperatura() {
-            try {
-                const res = await fetch('https://open-meteo.com');
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                if(data && data.current_weather) {
-                    const t = Math.round(data.current_weather.temperature);
-                    document.getElementById('temp').innerText = t + "°C";
-                }
-            } catch (err) {
-                document.getElementById('temp').innerText = "24°C"; 
-            }
-        }
-        buscarTemperatura();
-        setInterval(buscarTemperatura, 600000);
+<script>
+const CATEGORY_LABELS = {
+  TODOS: "TODOS",
+  FAVORITOS: "★ FAVORITOS",
+  "TV ABERTA": "TV ABERTA",
+  NOTICIAS: "NOTÍCIAS",
+  ESPORTES: "ESPORTES",
+  FILMES: "FILMES",
+  SERIES: "SÉRIES",
+  INFANTIL: "INFANTIL",
+  DOCUMENTARIOS: "DOCUMENTÁRIOS",
+  RELIGIAO: "RELIGIÃO",
+  GOV_EDUCACAO: "GOV/EDUCAÇÃO"
+};
 
-        // 3. Requisição do JSON com Cache Buster
-        fetch('canais.json?v=' + new Date().getTime())
-            .then(response => {
-                if (!response.ok) throw new Error("Erro de rede");
-                return response.json();
-            })
-            .then(data => {
-                bancoCanais = data.map(canal => ({
-                    nome: (canal.nome || canal.name || "SEM NOME").toUpperCase(),
-                    url: canal.url || canal.stream || "",
-                    categoria: (canal.categoria || canal.category || "TV ABERTA").toUpperCase()
-                }));
-                carregarLista(bancoCanais);
-            })
-            .catch(err => {
-                console.error("Erro:", err);
-                document.getElementById('lista-canais').innerHTML = "<div style='color:#ff3333; padding:10px;'>ERR: FALHA AO CARREGAR CANAIS.JSON</div>";
-            });
+const CATEGORY_COLORS = {
+  "TV ABERTA": "#39ff14",
+  NOTICIAS: "#4fc3f7",
+  ESPORTES: "#ffb300",
+  FILMES: "#ff6ec7",
+  SERIES: "#b39ddb",
+  INFANTIL: "#ff8a65",
+  DOCUMENTARIOS: "#26c6da",
+  RELIGIAO: "#ffd54f",
+  GOV_EDUCACAO: "#8d99ae"
+};
 
-      function carregarLista(canais) {
-    const listaContainer = document.getElementById('lista-canais');
-    listaContainer.innerHTML = "";
-    
-    // Links base codificados de forma simples para o editor do GitHub não encurtar
-    const dominioBase = ["images-live-tv-vge", "akamaized", "net"].join(".");
-    const urlCine = "https://" + dominioBase + "/v1/AUTH_b90d2ab9-f1fb-4f6c-85e7-2b36e8db3747/p0_vge_bra/plutotvcinesucessos_bra/main.m3u8";
-    const urlAnime = "https://" + dominioBase + "/v1/AUTH_b90d2ab9-f1fb-4f6c-85e7-2b36e8db3747/p0_vge_bra/plutotvanime_bra/main.m3u8";
-    const urlInvest = "https://" + dominioBase + "/v1/AUTH_b90d2ab9-f1fb-4f6c-85e7-2b36e8db3747/p0_vge_bra/plutotvinvestigaca_bra/main.m3u8";
+const FAV_KEY = "bolotatv_favoritos";
 
-    const canaisDeApresentacao = [
-        { nome: "⭐ PLUTO TV CINE SUCESSOS", url: urlCine, categoria: "FILMES" },
-        { nome: "⭐ PLUTO TV ANIME", url: urlAnime, categoria: "TV ABERTA" },
-        { nome: "⭐ PLUTO TV INVESTIGAÇÃO", url: urlInvest, categoria: "NOTICIAS" }
-    ];
+let bancoCanais = [];
+let listaAtual = [];
+let categoriaAtiva = "TODOS";
+let termoBusca = "";
+let player = null;
+let canalAtualUrl = "";
+let indiceAtual = -1;
 
-    const listaFinal = canaisDeApresentacao.concat(canais || []);
+const overlay = document.getElementById('screen-overlay');
+const welcomeMsg = document.getElementById('welcome-msg');
+const videoEl = document.getElementById('meu-player');
 
-    listaFinal.forEach(canal => {
-        const item = document.createElement('div');
-        item.className = 'canal-item';
-        item.innerHTML = `<span>> ${canal.nome}</span> <span>[${canal.categoria}]</span>`;
-        item.onclick = () => sintonizar(canal.url, item);
-        listaContainer.appendChild(item);
-    });
+// ---------- Player ----------
+try {
+  player = videojs('meu-player');
+  player.on('error', () => overlay.classList.remove('hidden'));
+} catch (e) {
+  console.error("[ERRO] Falha ao iniciar video.js:", e);
 }
 
-        function sintonizar(url, elementoHtml) {
-            if(!player) {
-                console.error("Erro: Biblioteca de vídeo não inicializada.");
-                return;
-            }
-            canalAtualUrl = url;
-            overlay.classList.add('hidden');
-            
-            document.querySelectorAll('.canal-item').forEach(el => el.classList.remove('playing'));
-            if(elementoHtml) elementoHtml.classList.add('playing');
+// ---------- Relógio ----------
+setInterval(() => {
+  document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
+}, 1000);
 
-            player.src({ type: 'application/x-mpegURL', src: url });
-            player.play();
-        }
+// ---------- Clima (Santa Maria - RS: -29.6842, -53.8069) ----------
+async function buscarTemperatura() {
+  try {
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=-29.6842&longitude=-53.8069&current_weather=true";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("resposta ruim");
+    const data = await res.json();
+    const t = Math.round(data.current_weather.temperature);
+    document.getElementById('temp').innerText = t + "°C";
+  } catch (err) {
+    document.getElementById('temp').innerText = "--°C";
+  }
+}
+buscarTemperatura();
+setInterval(buscarTemperatura, 600000);
 
-        function tentarNovamente() {
-            if(canalAtualUrl) {
-                sintonizar(canalAtualUrl, null);
-            }
-        }
+// ---------- Favoritos ----------
+function getFavoritos() {
+  try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+  catch (e) { return []; }
+}
+function isFavorito(nome) { return getFavoritos().includes(nome); }
+function alternarFavorito(nome) {
+  let favs = getFavoritos();
+  favs = favs.includes(nome) ? favs.filter(n => n !== nome) : [...favs, nome];
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+  renderizarLista();
+}
 
-        // 7. Filtros
-        function filtrar(categoria) {
-            document.querySelectorAll('.filter-bar .filter-btn').forEach(btn => btn.classList.remove('active'));
-            if (window.event && window.event.target) {
-                window.event.target.classList.add('active');
-            }
+// ---------- Carregar canais ----------
+fetch('canais.json?v=' + Date.now())
+  .then(r => {
+    if (!r.ok) throw new Error("Erro de rede");
+    return r.json();
+  })
+  .then(data => {
+    bancoCanais = data.map(c => ({
+      nome: c.nome || c.name || "SEM NOME",
+      url: c.url || c.stream || "",
+      categoria: c.categoria || c.category || "TV ABERTA"
+    }));
+    montarFiltros();
+    aplicarFiltros();
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById('lista-canais').innerHTML =
+      "<div class='empty-msg' style='color:var(--danger)'>ERRO AO CARREGAR CANAIS.JSON</div>";
+    document.getElementById('list-meta').innerText = "FALHA NO CARREGAMENTO";
+  });
 
-            if(categoria === 'TODOS') {
-                carregarLista(bancoCanais);
-            } else {
-                const filtrados = bancoCanais.filter(c => c.categoria === categoria);
-                carregarLista(filtrados);
-            }
-        }
-    </script>
+function montarFiltros() {
+  const presentes = new Set(bancoCanais.map(c => c.categoria));
+  const ordem = ["TODOS", "FAVORITOS", "TV ABERTA", "NOTICIAS", "ESPORTES", "FILMES", "SERIES", "INFANTIL", "DOCUMENTARIOS", "RELIGIAO", "GOV_EDUCACAO"];
+  const bar = document.getElementById('filter-bar');
+  bar.innerHTML = "";
+  ordem.forEach(cat => {
+    if (cat !== "TODOS" && cat !== "FAVORITOS" && !presentes.has(cat)) return;
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (cat === categoriaAtiva ? ' active' : '');
+    btn.textContent = '[' + (CATEGORY_LABELS[cat] || cat) + ']';
+    btn.onclick = () => { categoriaAtiva = cat; aplicarFiltros(); };
+    bar.appendChild(btn);
+  });
+}
+
+function aplicarFiltros() {
+  termoBusca = document.getElementById('search').value.trim().toLowerCase();
+
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    const label = '[' + (CATEGORY_LABELS[categoriaAtiva] || categoriaAtiva) + ']';
+    b.classList.toggle('active', b.textContent === label);
+  });
+
+  let base = bancoCanais;
+  if (categoriaAtiva === "FAVORITOS") {
+    const favs = getFavoritos();
+    base = base.filter(c => favs.includes(c.nome));
+  } else if (categoriaAtiva !== "TODOS") {
+    base = base.filter(c => c.categoria === categoriaAtiva);
+  }
+  if (termoBusca) {
+    base = base.filter(c => c.nome.toLowerCase().includes(termoBusca));
+  }
+
+  listaAtual = base;
+  renderizarLista();
+}
+
+function renderizarLista() {
+  const cont = document.getElementById('lista-canais');
+  cont.innerHTML = "";
+  document.getElementById('list-meta').innerText = listaAtual.length + " CANAL(IS) NESTA VISTA";
+  document.getElementById('footer-count').innerText = bancoCanais.length + " canais carregados";
+
+  if (listaAtual.length === 0) {
+    cont.innerHTML = "<div class='empty-msg'>NENHUM CANAL ENCONTRADO.<br>Tente outro termo ou categoria.</div>";
+    return;
+  }
+
+  listaAtual.forEach((canal, i) => {
+    const cor = CATEGORY_COLORS[canal.categoria] || '#6fae6f';
+    const item = document.createElement('div');
+    item.className = 'canal-item' + (canal.url === canalAtualUrl ? ' playing' : '');
+    item.style.setProperty('--cat-color', cor);
+
+    const fav = document.createElement('button');
+    fav.className = 'fav-btn' + (isFavorito(canal.nome) ? ' active' : '');
+    fav.textContent = isFavorito(canal.nome) ? '★' : '☆';
+    fav.onclick = (ev) => { ev.stopPropagation(); alternarFavorito(canal.nome); };
+
+    const nomeEl = document.createElement('span');
+    nomeEl.className = 'canal-nome';
+    nomeEl.textContent = canal.nome;
+
+    const tag = document.createElement('span');
+    tag.className = 'canal-tag';
+    tag.style.setProperty('--cat-color', cor);
+    tag.textContent = CATEGORY_LABELS[canal.categoria] || canal.categoria;
+
+    item.appendChild(fav);
+    item.appendChild(nomeEl);
+    item.appendChild(tag);
+    item.onclick = () => sintonizar(canal, i);
+    cont.appendChild(item);
+  });
+}
+
+// ---------- Player: sintonizar / erros ----------
+function sintonizar(canal, indiceNaLista) {
+  if (!player) return;
+  canalAtualUrl = canal.url;
+  indiceAtual = indiceNaLista;
+
+  overlay.classList.add('hidden');
+  welcomeMsg.classList.add('hidden');
+  videoEl.classList.remove('hidden');
+
+  renderizarLista();
+  if (window.innerWidth <= 860) alternarSidebar(true);
+
+  player.src({ type: 'application/x-mpegURL', src: canal.url });
+  player.play().catch(() => {});
+}
+
+function tentarNovamente() {
+  if (canalAtualUrl && indiceAtual >= 0 && listaAtual[indiceAtual]) {
+    sintonizar(listaAtual[indiceAtual], indiceAtual);
+  }
+}
+
+function proximoCanal() {
+  if (listaAtual.length === 0) return;
+  const proximo = (indiceAtual + 1) % listaAtual.length;
+  sintonizar(listaAtual[proximo], proximo);
+}
+
+// ---------- Sidebar mobile ----------
+function alternarSidebar(forcarFechar) {
+  const sb = document.getElementById('sidebar');
+  const bg = document.getElementById('sidebar-backdrop');
+  const abrir = forcarFechar === true ? false : !sb.classList.contains('open');
+  sb.classList.toggle('open', abrir);
+  bg.classList.toggle('open', abrir);
+}
+</script>
 </body>
 </html>
