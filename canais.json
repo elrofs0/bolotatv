@@ -1,0 +1,17 @@
+[
+  {
+    "nome": "TV Cultura",
+    "url": "https://wmscdn.com",
+    "categoria": "TV ABERTA"
+  },
+  {
+    "nome": "NASA TV",
+    "url": "https://nasa.gov",
+    "categoria": "DOCUMENTARIOS"
+  },
+  {
+    "nome": "Canal Inativo Teste",
+    "url": "https://servidor-off-invalido.com",
+    "categoria": "FILMES"
+  }
+]
