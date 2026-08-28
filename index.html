@@ -212,43 +212,48 @@
     </div>
 
     <script>
-        let bancoCanais = [];
+               let bancoCanais = [];
         let canalAtualUrl = "";
         const player = videojs('meu-player');
         const overlay = document.getElementById('screen-overlay');
 
-        // 1. Relógio Digital Ativo
-        setInterval(() => {
-            const agora = new Date();
-            document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
-        }, 1000);
+        // 1. Relógio Digital Ativo (Isolado para nunca travar)
+        try {
+            setInterval(() => {
+                const agora = new Date();
+                document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
+            }, 1000);
+        } catch(e) { console.error("Erro no relógio:", e); }
 
-        // 2. Busca de Temperatura Real de Santa Maria-RS (via Open-Meteo API pública)
-        function buscarTemperatura() {
-            fetch('https://open-meteo.com')
-                .then(res => res.json())
-                .then(data => {
-                    if(data && data.current_weather) {
-                        const t = Math.round(data.current_weather.temperature);
-                        document.getElementById('temp').innerText = t + "°C";
-                    }
-                })
-                .catch(err => {
-                    console.error("Erro ao buscar clima:", err);
-                    document.getElementById('temp').innerText = "22°C"; // Fallback estático se a API falhar
-                });
+        // 2. Busca de Temperatura Segura (Com bloco try/catch para não quebrar o site se a API falhar)
+        async function buscarTemperatura() {
+            try {
+                const res = await fetch('https://open-meteo.com');
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                if(data && data.current_weather) {
+                    const t = Math.round(data.current_weather.temperature);
+                    document.getElementById('temp').innerText = t + "°C";
+                }
+            } catch (err) {
+                console.warn("API de clima inacessível ou bloqueada pelo GitHub. Usando Fallback.");
+                document.getElementById('temp').innerText = "22°C"; 
+            }
         }
         buscarTemperatura();
-        setInterval(buscarTemperatura, 600000); // Atualiza o clima a cada 10 minutos
+        setInterval(buscarTemperatura, 600000);
 
-               // 3. Requisição Anti-Cache para ler o canais.json
+        // 3. Requisição Anti-Cache para ler o canais.json
         fetch('canais.json?v=' + new Date().getTime())
             .then(response => {
-                if (!response.ok) throw new Error("Erro ao ler arquivo JSON");
+                if (!response.ok) throw new Error("Erro de rede");
                 return response.json();
             })
             .then(data => {
-                // Padroniza as chaves do JSON para maiúsculas e evita erros de leitura do Python
+                if (!data || data.length === 0) {
+                    document.getElementById('lista-canais').innerHTML = "<div style='padding:10px;'>CANAIS_JSON_VAZIO</div>";
+                    return;
+                }
                 bancoCanais = data.map(canal => ({
                     nome: (canal.nome || canal.name || "SEM NOME").toUpperCase(),
                     url: canal.url || canal.stream || "",
@@ -257,7 +262,7 @@
                 carregarLista(bancoCanais);
             })
             .catch(err => {
-                console.error("Erro Crítico:", err);
+                console.error("Erro Crítico ao buscar o JSON:", err);
                 document.getElementById('lista-canais').innerHTML = "<div style='color:#ff3333; padding:10px;'>ERR: FALHA AO CARREGAR CANAIS.JSON</div>";
             });
 
@@ -266,21 +271,14 @@
             const listaContainer = document.getElementById('lista-canais');
             listaContainer.innerHTML = "";
             
-            if (!canais || canais.length === 0) {
-                listaContainer.innerHTML = "<div style='padding:10px;'>NENHUM CANAL CONFIGURADO OU JSON VAZIO</div>";
-                return;
-            }
-            
             canais.forEach(canal => {
                 const item = document.createElement('div');
                 item.className = 'canal-item';
-                
                 item.innerHTML = `<span>> ${canal.nome}</span> <span>[${canal.categoria}]</span>`;
                 item.onclick = () => sintonizar(canal.url, item);
                 listaContainer.appendChild(item);
             });
         }
-
 
         // 5. Sintonia e Stream
         function sintonizar(url, elementoHtml) {
@@ -319,6 +317,3 @@
                 carregarLista(filtrados);
             }
         }
-    </script>
-</body>
-</html>
