@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TERMINAL MAD MAX // BOLOTA TV v14.0</title>
     
-    <!-- Chamadas da biblioteca da Cloudflare com protocolo HTTPS explícito -->
-        <link rel="stylesheet" href="https://cloudflare.com" />
+    <!-- CDN Oficial do Video.js com caminhos absolutos e corretos -->
+    <link rel="stylesheet" href="https://cloudflare.com" />
     <script src="https://cloudflare.com"></script>
+
     <style>
         :root {
             --neon-green: #39ff14;
@@ -160,7 +161,6 @@
 
         .btn-retry:hover { background: #ff6666; }
 
-        /* Estilização customizada para a interface do Video.js ficar integrada */
         .video-js {
             width: 100% !important;
             height: 100% !important;
@@ -212,18 +212,16 @@
         let player;
         const overlay = document.getElementById('screen-overlay');
 
-        // Inicialização protegida da biblioteca após o carregamento do DOM
-        window.onload = function() {
-            try {
-                player = videojs('meu-player');
-                player.on('error', function() {
-                    overlay.classList.remove('hidden');
-                });
-                console.log("[LOG] Video.js iniciado com sucesso!");
-            } catch(e) { 
-                console.error("[ERRO] Falha crítica ao ler biblioteca:", e); 
-            }
-        };
+        // Inicialização do Player acoplada ao escopo global de forma segura
+        try {
+            player = videojs('meu-player');
+            player.on('error', function() {
+                overlay.classList.remove('hidden');
+            });
+            console.log("[LOG] Video.js carregado com sucesso.");
+        } catch(e) { 
+            console.error("[ERRO] Falha crítica ao ler biblioteca:", e); 
+        }
 
         // 1. Relógio Ativo
         setInterval(() => {
@@ -282,13 +280,14 @@
                 item.className = 'canal-item';
                 item.innerHTML = `<span>> ${canal.nome}</span> <span>[${canal.categoria}]</span>`;
                 item.onclick = () => sintonizar(canal.url, item);
+                listaContainer.appendChild(item);
             });
         }
 
         // 5. Sintonia
         function sintonizar(url, elementoHtml) {
             if(!player) {
-                console.error("Player indisponível para streaming HLS.");
+                console.error("Erro: Biblioteca de vídeo não inicializada.");
                 return;
             }
             canalAtualUrl = url;
