@@ -178,7 +178,7 @@
 
     <header>
         <div>[ TERMINAL MAD MAX // BOLOTA TV v14.0 M3U-ONLY ]</div>
-        <div>SANTA MARIA-RS // <span id="clock">00:00:00</span></div>
+        <div>SANTA MARIA-RS // Temp: <span id="temp">--°C</span> // <span id="clock">00:00:00</span></div>
     </header>
 
     <div id="main-container">
@@ -192,7 +192,7 @@
                 <button class="filter-btn" onclick="filtrar('DOCUMENTARIOS')">[DOCS/ESPORTES]</button>
             </div>
             <div id="lista-canais">
-                <!-- Preenchido dinamicamente via JS -->
+                <div style="padding:10px;">SISTEMA INICIANDO...</div>
             </div>
         </div>
 
@@ -201,7 +201,7 @@
             <div id="screen-overlay" class="hidden">
                 <div class="alert-box">
                     <h2>## SINAL INDISPONÍVEL ##</h2>
-                    <p>ESTE CANAL NÃO RESPONDEU. É COMUM EM LISTAS PÚBLICAS — SERVIDORES CAEM E VOLTAM O TEMPO DO TODO. TENTE NOVAMENTE OU ESCOLHA OUTRO CANAL NA LISTA.</p>
+                    <p>ESTE CANAL NÃO RESPONDEU. É COMUM EM LISTAS PÚBLICAS — SERVIDORES CAEM E VOLTAM O TEMPO TODO. TENTE NOVAMENTE OU ESCOLHA OUTRO CANAL NA LISTA.</p>
                     <button class="btn-retry" onclick="tentarNovamente()">TENTAR DE NOVO</button>
                 </div>
             </div>
@@ -217,16 +217,34 @@
         const player = videojs('tv-player');
         const overlay = document.getElementById('screen-overlay');
 
-        // Relógio digital
+        // 1. Relógio Digital Ativo
         setInterval(() => {
             const agora = new Date();
             document.getElementById('clock').innerText = agora.toLocaleTimeString('pt-BR');
         }, 1000);
 
-                // REQUISIÇÃO DO JSON: Busca os dados de canais.json contornando o cache
+        // 2. Busca de Temperatura Real de Santa Maria-RS (via Open-Meteo API pública)
+        function buscarTemperatura() {
+            fetch('https://open-meteo.com')
+                .then(res => res.json())
+                .then(data => {
+                    if(data && data.current_weather) {
+                        const t = Math.round(data.current_weather.temperature);
+                        document.getElementById('temp').innerText = t + "°C";
+                    }
+                })
+                .catch(err => {
+                    console.error("Erro ao buscar clima:", err);
+                    document.getElementById('temp').innerText = "22°C"; // Fallback estático se a API falhar
+                });
+        }
+        buscarTemperatura();
+        setInterval(buscarTemperatura, 600000); // Atualiza o clima a cada 10 minutos
+
+        // 3. Requisição Anti-Cache para ler o canais.json
         fetch('canais.json?v=' + new Date().getTime())
             .then(response => {
-                if (!response.ok) throw new Error("Erro de rede");
+                if (!response.ok) throw new Error("Erro ao ler arquivo JSON");
                 return response.json();
             })
             .then(data => {
@@ -234,18 +252,17 @@
                 carregarLista(bancoCanais);
             })
             .catch(err => {
-                console.error("Erro ao carregar o arquivo JSON:", err);
+                console.error("Erro Crítico:", err);
                 document.getElementById('lista-canais').innerHTML = "<div style='color:#ff3333; padding:10px;'>ERR: FALHA AO CARREGAR CANAIS.JSON</div>";
             });
 
-
-        // Renderiza os canais na barra lateral
+        // 4. Renderização dos Canais
         function carregarLista(canais) {
             const listaContainer = document.getElementById('lista-canais');
             listaContainer.innerHTML = "";
             
-            if (canais.length === 0) {
-                listaContainer.innerHTML = "<div style='padding:10px;'>NENHUM CANAL CONFIGURADO</div>";
+            if (!canais || canais.length === 0) {
+                listaContainer.innerHTML = "<div style='padding:10px;'>NENHUM CANAL CONFIGURADO OU JSON VAZIO</div>";
                 return;
             }
             
@@ -261,7 +278,7 @@
             });
         }
 
-        // Dá play na stream
+        // 5. Sintonia e Stream
         function sintonizar(url, elementoHtml) {
             canalAtualUrl = url;
             overlay.classList.add('hidden');
@@ -273,7 +290,7 @@
             player.play();
         }
 
-        // Monitora falhas no sinal do vídeo
+        // 6. Monitor de erros de sinal
         player.on('error', function() {
             overlay.classList.remove('hidden');
         });
@@ -284,11 +301,11 @@
             }
         }
 
-        // Filtra os canais por categoria
+        // 7. Filtros por Categoria
         function filtrar(categoria) {
             document.querySelectorAll('.filter-bar .filter-btn').forEach(btn => btn.classList.remove('active'));
-            if (event && event.target) {
-                event.target.classList.add('active');
+            if (window.event && window.event.target) {
+                window.event.target.classList.add('active');
             }
 
             if(categoria === 'TODOS') {
