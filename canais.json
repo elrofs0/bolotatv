@@ -1,6 +1,16 @@
 [
   {
-    "nome": "Canal Saúde",
+    "nome": "AgroBrasil TV (720p) [Not 24/7]",
+    "categoria": "DOCUMENTARIOS",
+    "url": "https://server.flixtv.com.br/agrobrasiltv/agrobrasiltv/playlist.m3u8"
+  },
+  {
+    "nome": "AgroCanal",
+    "categoria": "DOCUMENTARIOS",
+    "url": "https://aovivo.equipea.com.br:5443/aovivort/streams/pshRLrnv6isXq7RG4747567774043229.m3u8"
+  },
+  {
+    "nome": "Canal Saude",
     "categoria": "DOCUMENTARIOS",
     "url": "https://eitv7.cdn.broadpeak.io/account351-i1495/event/canalsaude/format720p.m3u8"
   },
@@ -13,6 +23,11 @@
     "nome": "Petlovers TV",
     "categoria": "DOCUMENTARIOS",
     "url": "https://video04.logicahost.com.br/petloverstv/petloverstv/playlist.m3u8"
+  },
+  {
+    "nome": "Terra Viva (720p)",
+    "categoria": "DOCUMENTARIOS",
+    "url": "https://9ada494d.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctYnJfVXBseW5rLU5ld2NvX0hMUw/playlist.m3u8"
   },
   {
     "nome": "Band Sports (1080p)",
@@ -30,134 +45,14 @@
     "url": "https://ogc-nsprt-tcl-roku-syndication.otteravision.com/ogc/nsprt/nsprt.m3u8"
   },
   {
-    "nome": "Pluto TV Esportes",
-    "categoria": "ESPORTES",
-    "url": "https://jmp2.uk/plu-5f32d2db0af67400077f29c4.m3u8"
-  },
-  {
-    "nome": "Premiere FC 1",
-    "categoria": "ESPORTES",
-    "url": "https://stm.sinalmycn.com/20000/video.m3u8?token=EkP2qSi13ckjQRLSIDoxI5rMZsF5rZyEYzqWjxD248ScEUPYQ0"
-  },
-  {
-    "nome": "Premiere FC 2",
-    "categoria": "ESPORTES",
-    "url": "https://stm.sinalmycn.com/20003/video.m3u8?token=EkP2qSi13ckjQRLSIDoxI5rMZsF5rZyEYzqWjxD248ScEUPYQ0"
-  },
-  {
-    "nome": "Premiere FC 3",
-    "categoria": "ESPORTES",
-    "url": "https://stm.sinalmycn.com/20006/video.m3u8?token=EkP2qSi13ckjQRLSIDoxI5rMZsF5rZyEYzqWjxD248ScEUPYQ0"
-  },
-  {
-    "nome": "Premiere FC 4",
-    "categoria": "ESPORTES",
-    "url": "https://stm.sinalmycn.com/20009/video.m3u8?token=EkP2qSi13ckjQRLSIDoxI5rMZsF5rZyEYzqWjxD248ScEUPYQ0"
-  },
-  {
-    "nome": "SporTV (1280p)",
-    "categoria": "ESPORTES",
-    "url": "https://stm.sinalmycn.com/21000/video.m3u8?token=EkP2qSi13ckjQRLSIDoxI5rMZsF5rZyEYzqWjxD248ScEUPYQ0"
-  },
-  {
-    "nome": "SporTV 2 (1280p)",
-    "categoria": "ESPORTES",
-    "url": "https://stm.sinalmycn.com/21003/video.m3u8?token=EkP2qSi13ckjQRLSIDoxI5rMZsF5rZyEYzqWjxD248ScEUPYQ0"
-  },
-  {
-    "nome": "SporTV 3 (1080p)",
-    "categoria": "ESPORTES",
-    "url": "https://stm.sinalmycn.com/21006/video.m3u8?token=EkP2qSi13ckjQRLSIDoxI5rMZsF5rZyEYzqWjxD248ScEUPYQ0"
-  },
-  {
-    "nome": "Filmes Suspense",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f171d3442a0500007362f22.m3u8"
-  },
-  {
     "nome": "Gospel Movie TV (360p)",
     "categoria": "FILMES",
     "url": "https://stmv1.srvif.com/gospelf/gospelf/playlist.m3u8"
   },
   {
-    "nome": "MyTime Movie Network Brazil (720p)",
+    "nome": "Kuriakos Cine (1080p)",
     "categoria": "FILMES",
-    "url": "https://appletree-mytime-samsungbrazil.amagi.tv/playlist.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Clássicos",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5fa1612a669ba0000702017b.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Comédia",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f12101f0b12f00007844c7c.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Comédia Romântica",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-62545ed3dab4380007582f7c.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Crime",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-6479ff764f5ba5000878dfe2.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Drama",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f1210d14ae1f80007bafb1d.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Família",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f171f032cd22e0007f17f3d.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Inspiração",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5fa991b1f09e020007e78626.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Romance",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f171f988ab9780007fa95ea.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Sucessos",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f120e94a5714d00074576a1.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cine Terror",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f12111c9e6c2c00078ef3bb.m3u8"
-  },
-  {
-    "nome": "Pluto TV Filmes Aventura",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-66c79a4262e5510008ff68a5.m3u8"
-  },
-  {
-    "nome": "Pluto TV Filmes Ação",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f120f41b7d403000783a6d6.m3u8"
-  },
-  {
-    "nome": "Pluto TV Filmes Nacionais",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-5f5a545d0dbf7f0007c09408.m3u8"
-  },
-  {
-    "nome": "Pluto TV Filmes de Luta",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-6806d62369aec5b19cd628c0.m3u8"
-  },
-  {
-    "nome": "Pluto TV Netmovies",
-    "categoria": "FILMES",
-    "url": "https://jmp2.uk/plu-663b9de4f999220008230fa8.m3u8"
+    "url": "https://w2.manasat.com/kcine/smil:kcine.smil/playlist.m3u8"
   },
   {
     "nome": "TCM 10 HD (1080p)",
@@ -165,12 +60,12 @@
     "url": "https://live.tcm10.com.br/tcm10hd/stream.m3u8"
   },
   {
-    "nome": "Canal Educação (EBC)",
+    "nome": "Canal Educação (720p)",
     "categoria": "GOV_EDUCACAO",
     "url": "https://canaleducacao-stream.ebc.com.br/index.m3u8"
   },
   {
-    "nome": "Canal Gov (EBC)",
+    "nome": "Canal Gov (720p)",
     "categoria": "GOV_EDUCACAO",
     "url": "https://canalgov-stream.ebc.com.br/index.m3u8"
   },
@@ -180,19 +75,19 @@
     "url": "https://canallibras-stream.ebc.com.br/mux_video_ts/index-1.m3u8"
   },
   {
-    "nome": "Canal Libras (EBC)",
+    "nome": "TV Cultura",
     "categoria": "GOV_EDUCACAO",
-    "url": "https://canallibras-stream.ebc.com.br/index.m3u8"
+    "url": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8"
   },
   {
-    "nome": "Cultura Fast",
+    "nome": "TV Cultura (480p)",
     "categoria": "GOV_EDUCACAO",
-    "url": "https://fpa-gateway.tvcultura.com.br:8181/memfs/606caef0-a290-413d-9f1f-8fcdb3a73831.m3u8"
+    "url": "https://cdn-5.nxplay.com.br/TV_CULTURA/index.m3u8"
   },
   {
-    "nome": "TV Brasil (EBC)",
+    "nome": "TV Cultura (720p)",
     "categoria": "GOV_EDUCACAO",
-    "url": "https://tvbrasil-stream.ebc.com.br/index.m3u8"
+    "url": "https://v-us-01.wisestream.io/memfs/e8740862-7a1f-45f3-acb2-4f357e144059.m3u8"
   },
   {
     "nome": "TV Câmara (1080p)",
@@ -215,11 +110,6 @@
     "url": "https://app.tvufop.com.br/hls/tvufop.m3u8"
   },
   {
-    "nome": "Babyfirst",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-5f4fb4cf605ddf000748e16f.m3u8"
-  },
-  {
     "nome": "Gloob Web [Not 24/7]",
     "categoria": "INFANTIL",
     "url": "https://vs20.live.opencaster.com/globiosat_73a904af/index.m3u8"
@@ -235,11 +125,6 @@
     "url": "https://w2.manasat.com/kkids/smil:kkids.smil/playlist.m3u8"
   },
   {
-    "nome": "Nick Jr. Club (720p)",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-6824ce95f09106f4b18f4114.m3u8"
-  },
-  {
     "nome": "NickOnline Bob Esponja (720p) [Not 24/7]",
     "categoria": "INFANTIL",
     "url": "https://bob.x1colegal.com/hls/stream.m3u8"
@@ -253,41 +138,6 @@
     "nome": "NickToons Brasil (480p)",
     "categoria": "INFANTIL",
     "url": "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8"
-  },
-  {
-    "nome": "Nickelodeon Clássico (720p)",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-6824ce10c5d53e1351ceb8d1.m3u8"
-  },
-  {
-    "nome": "Nickelodeon Teen (720p)",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-60f5fabf0721880007cd50e3.m3u8"
-  },
-  {
-    "nome": "Nickelodeon Toons (720p)",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-645951c0e94c38000802d2cb.m3u8"
-  },
-  {
-    "nome": "Nickelodeon iCarly",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-620ff46e0a576e0007dc2f89.m3u8"
-  },
-  {
-    "nome": "Pluto TV Kids",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-5f1214a637c6fd00079c652f.m3u8"
-  },
-  {
-    "nome": "Pluto TV Kids Club",
-    "categoria": "INFANTIL",
-    "url": "https://jmp2.uk/plu-66c8cae7fed35b0008580ec0.m3u8"
-  },
-  {
-    "nome": "BM&C News (720p)",
-    "categoria": "NOTICIAS",
-    "url": "https://jmp2.uk/plu-666c9c60a7efd40008f552f0.m3u8"
   },
   {
     "nome": "BandNews (1080p)",
@@ -310,9 +160,14 @@
     "url": "https://d6yfbj4xxtrod.cloudfront.net/out/v1/7836eb391ec24452b149f3dc6df15bbd/index.m3u8"
   },
   {
-    "nome": "Pluto TV Record News (720p)",
+    "nome": "Record News",
     "categoria": "NOTICIAS",
-    "url": "https://jmp2.uk/plu-6102e04e9ab1db0007a980a1.m3u8"
+    "url": "https://stream.ads.ottera.tv/playlist.m3u8?network_id=2116"
+  },
+  {
+    "nome": "Record News (720p)",
+    "categoria": "NOTICIAS",
+    "url": "https://rnw-rn.otteravision.com/rnw/rn/rnw_rn.m3u8"
   },
   {
     "nome": "SBT News (720p)",
@@ -325,6 +180,11 @@
     "url": "https://video01.logicahost.com.br/tvideonews/tvideonews/playlist.m3u8"
   },
   {
+    "nome": "Times Brasil (720p)",
+    "categoria": "NOTICIAS",
+    "url": "https://ssai2-ads.api.leiniao.com/global-adinsertion-api/hls/live/v2/21fdb6dd7491406bba86497a24390a25/playlist.m3u8"
+  },
+  {
     "nome": "Boas Novas (1080p)",
     "categoria": "RELIGIAO",
     "url": "https://cdn.jmvstream.com/w/LVW-9375/LVW9375_6i0wPBCHYc/playlist.m3u8"
@@ -333,6 +193,11 @@
     "nome": "Rede Gospel (1080p)",
     "categoria": "RELIGIAO",
     "url": "https://cdn.live.br1.jmvstream.com/w/LVW-8719/LVW8719_AcLVAxWy5J/playlist.m3u8"
+  },
+  {
+    "nome": "Rede Vida (576p)",
+    "categoria": "RELIGIAO",
+    "url": "https://cdn-5.nxplay.com.br/REDE_VIDA/index.m3u8"
   },
   {
     "nome": "TV Adorar (720p)",
@@ -345,54 +210,39 @@
     "url": "https://cdn.jmvstream.com/w/LVW-9716/LVW9716_HbtQtezcaw/playlist.m3u8"
   },
   {
+    "nome": "TV Cancao Nova (576p)",
+    "categoria": "RELIGIAO",
+    "url": "https://cdn-5.nxplay.com.br/CANCAO_NOVA/index.m3u8"
+  },
+  {
+    "nome": "TV Cancao Nova (720p)",
+    "categoria": "RELIGIAO",
+    "url": "https://5c65286fc6ace.streamlock.net/cancaonova/CancaoNova.stream_720p/playlist.m3u8"
+  },
+  {
+    "nome": "TV Evangelizar (480p)",
+    "categoria": "RELIGIAO",
+    "url": "https://5f593df7851db.streamlock.net/evangelizar/tv/playlist.m3u8"
+  },
+  {
+    "nome": "TV Evangelizar (720p)",
+    "categoria": "RELIGIAO",
+    "url": "https://cdn-tiva-tvevangelizar-brasilstream-com-br.smartbit.co/hls/tvevangelizar/index.m3u8"
+  },
+  {
     "nome": "TV Gideoes (1080p) [Not 24/7]",
     "categoria": "RELIGIAO",
     "url": "https://streaming01.zas.media/gideoes/programacao/playlist.m3u8"
   },
   {
-    "nome": "Comedy Central Pluto TV",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-5f357e91b18f0b00073583d2.m3u8"
-  },
-  {
-    "nome": "Comedy Central South Park",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-609ae66b359b270007869ff1.m3u8"
-  },
-  {
-    "nome": "Pluto TV Séries Ação",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-6474ab1da51cb80008bfb5f4.m3u8"
-  },
-  {
-    "nome": "Pluto TV Séries Comédia",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-655e5bc94261ca000810cb17.m3u8"
-  },
-  {
-    "nome": "Pluto TV Séries Criminais",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-6474ab5cdc7a760008745008.m3u8"
-  },
-  {
-    "nome": "Pluto TV Séries Drama",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-65f060d84e01740008d7421f.m3u8"
-  },
-  {
-    "nome": "Pluto TV Séries Novelescas",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-691627e4a29a6123e400b3e0.m3u8"
-  },
-  {
-    "nome": "Pluto TV Séries Sci-Fi",
-    "categoria": "SERIES",
-    "url": "https://jmp2.uk/plu-63d2ba2f60bc8f0008981a0e.m3u8"
-  },
-  {
     "nome": "Series Classic (720p)",
     "categoria": "SERIES",
     "url": "https://cdn-tiva-video10-logicahost-com-br.smartbit.co/serieclassic/serieclassic/playlist.m3u8"
+  },
+  {
+    "nome": "Sony Channel (720p)",
+    "categoria": "SERIES",
+    "url": "https://cdn-5.nxplay.com.br/SONY_CHANNEL/index.m3u8"
   },
   {
     "nome": "TV Series 1 As Panteras (480p)",
@@ -410,11 +260,6 @@
     "url": "https://cdn.jmvstream.com/w/LVW-9715/LVW9715_12B26T62tm/playlist.m3u8"
   },
   {
-    "nome": "Adrenalina Pura TV",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-61b790b985706b00072cb797.m3u8"
-  },
-  {
     "nome": "Alpha Channel (720p)",
     "categoria": "TV ABERTA",
     "url": "https://5b01a3d32b65c.streamlock.net:1936/tvalpha/tvalpha/playlist.m3u8"
@@ -423,11 +268,6 @@
     "nome": "Amazon Sat (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://amazonsat.brasilstream.com.br/hls/amazonsat/index.m3u8"
-  },
-  {
-    "nome": "Angel TV Portuguese (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://janya-digimix.akamaized.net/vglive-sk-382409/portuese/ngrp:angelportuguese_all/playlist.m3u8"
   },
   {
     "nome": "Araruna TV",
@@ -445,19 +285,14 @@
     "url": "https://cdn-tiva-video01-logicahost-com-br.smartbit.co/canalaugetv/canalaugetv/playlist.m3u8"
   },
   {
-    "nome": "Avatar: A lenda de Aang",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6759eeb1bd523200083b4f29.m3u8"
-  },
-  {
-    "nome": "BET Pluto TV",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5ff768b6a4c8b80008498610.m3u8"
-  },
-  {
     "nome": "BR8 TV",
     "categoria": "TV ABERTA",
     "url": "https://cdn.live.br1.jmvstream.com/w/LVW-11668/ngrp:LVW11668_wiJpjbMrks_all/playlist.m3u8"
+  },
+  {
+    "nome": "Band (576p)",
+    "categoria": "TV ABERTA",
+    "url": "https://media.cdntvms.com.br/band_sat/index.m3u8"
   },
   {
     "nome": "Bem Melhor (720p)",
@@ -470,9 +305,9 @@
     "url": "https://stmv1.transmissaodigital.com/blitstv/blitstv/playlist.m3u8"
   },
   {
-    "nome": "Bob Esponja Calça Quadrada (720p)",
+    "nome": "CINDIE TV (1080p)",
     "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-62545c0b002f4b0007688b61.m3u8"
+    "url": "https://cc-hqw8u5r1nshjc.akamaized.net/scheduler/scheduleMaster/352.m3u8"
   },
   {
     "nome": "COM Brasil (1080p) [Not 24/7]",
@@ -480,9 +315,9 @@
     "url": "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8"
   },
   {
-    "nome": "CSI: Miami",
+    "nome": "COM Brasil (720p)",
     "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-63eb9c5351f5d000085e8d7e.m3u8"
+    "url": "https://dfr80qz435crc.cloudfront.net/EFGH/Amagi/NewCo/New_Brasil_BR/New_Brasil.m3u8"
   },
   {
     "nome": "Cabo Frio TV (720p)",
@@ -493,6 +328,11 @@
     "nome": "Canal 25 Jundiai (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn-tiva-stream01-msolutionbrasil-com-br.smartbit.co/hls/canal25/live.m3u8"
+  },
+  {
+    "nome": "Canal 25 Jundiaí (404p) [Not 24/7]",
+    "categoria": "TV ABERTA",
+    "url": "https://stream01.msolutionbrasil.com.br/hls/canal25/live.m3u8"
   },
   {
     "nome": "Canal 38 (720p)",
@@ -595,19 +435,19 @@
     "url": "https://br.conectmy.com.br/DespertarTV/index.m3u8"
   },
   {
-    "nome": "Detetives Médicos",
+    "nome": "EUTV",
     "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-638df93ae2f2a3000737c168.m3u8"
-  },
-  {
-    "nome": "Diff’rent Strokes Arnold",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-61f1d27a189ed10007b7393e.m3u8"
+    "url": "https://video01.logicahost.com.br/ypetv/ypetv/playlist.m3u8"
   },
   {
     "nome": "EUTV (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn.jmvstream.com/w/LVW-8719/LVW8719_AcLVAxWy5J/playlist.m3u8"
+  },
+  {
+    "nome": "Elemental Channel",
+    "categoria": "TV ABERTA",
+    "url": "https://stmv1.samcast.com.br/ricardo2194/ricardo2194/playlist.m3u8"
   },
   {
     "nome": "Elemental Channel (1080p)",
@@ -620,19 +460,14 @@
     "url": "https://stmv1.srvsite.com/ely/ely/playlist.m3u8"
   },
   {
-    "nome": "FIFA+ Portuguese (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://e3be9ac5.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctYnJfRklGQVBsdXNQb3J0dWd1ZXNlX0hMUw/playlist.m3u8"
-  },
-  {
-    "nome": "FailArmy",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f5141c1605ddf000748eb1b.m3u8"
-  },
-  {
     "nome": "Fala Litoral (480p)",
     "categoria": "TV ABERTA",
     "url": "https://5c483b9d1019c.streamlock.net/falalitoraltv/falalitoraltv/playlist.m3u8"
+  },
+  {
+    "nome": "Fonte TV",
+    "categoria": "TV ABERTA",
+    "url": "https://59fb88a1b1108.streamlock.net/fonte/_definst_/fontetv/chunklist_w1224511652.m3u8"
   },
   {
     "nome": "Fora Tedio TV (720p)",
@@ -650,29 +485,14 @@
     "url": "https://stmv.video.expressolider.com.br/ghostv/ghostv/playlist.m3u8"
   },
   {
+    "nome": "IMPD TV Worldwide (1080p)",
+    "categoria": "TV ABERTA",
+    "url": "https://igrejamundial.nuvemplay.live/hls/stream.m3u8"
+  },
+  {
     "nome": "ISTV (720p) [Not 24/7]",
     "categoria": "TV ABERTA",
     "url": "https://stmv1.srvstm.com/sistema7933/sistema7933/playlist.m3u8"
-  },
-  {
-    "nome": "Jornada nas Estrelas A Nova Geração",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-69162ad79505d0f3b1ebf07d.m3u8"
-  },
-  {
-    "nome": "Jornada nas Estrelas Deep Space Nine",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-69162af591700f4c4c135c95.m3u8"
-  },
-  {
-    "nome": "Jornada nas Estrelas Voyager",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-69162b1ef189e235142b17ab.m3u8"
-  },
-  {
-    "nome": "Kenan & Kel",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5ffcc5130fd98c0007f2e216.m3u8"
   },
   {
     "nome": "KpopTV Play (576p)",
@@ -715,89 +535,14 @@
     "url": "https://video01.logicahost.com.br/mkkwebtv/mkkwebtv/playlist.m3u8"
   },
   {
-    "nome": "MTV Are you the One?",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f6108d8cc331900075e98e4.m3u8"
-  },
-  {
-    "nome": "MTV Biggest Pop (1080p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6047fbdbbb776a0007e7f2ff.m3u8"
-  },
-  {
-    "nome": "MTV Catfish (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-626c2a3502d84a0007cec817.m3u8"
-  },
-  {
-    "nome": "MTV Com o Ex",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-61a528267e1b8b0007357920.m3u8"
-  },
-  {
-    "nome": "MTV Dating",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6851bb3426beced4f2f67ee6.m3u8"
-  },
-  {
-    "nome": "MTV Jovens e Mães (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-620fdc7d8a36fc000710e3ba.m3u8"
-  },
-  {
-    "nome": "MTV Pluto TV",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f1212fb81e85c00077ae9ef.m3u8"
-  },
-  {
-    "nome": "MTV Reality (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6851bdfc9ac48fde5e07f5ae.m3u8"
-  },
-  {
-    "nome": "MTV Rocks",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-66a01e07d2d50d0008100d6a.m3u8"
-  },
-  {
-    "nome": "MTV Rupaul's Drag Race",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-645111f1d8436e00081bb2bd.m3u8"
-  },
-  {
-    "nome": "MTV Shore",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-625463563b8ddc0007134aeb.m3u8"
-  },
-  {
-    "nome": "MacGyver",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-63eb9dc84e83e70008abea92.m3u8"
-  },
-  {
-    "nome": "MasterChef",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6077045b6031bd00078de127.m3u8"
-  },
-  {
-    "nome": "NCIS",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-63eb9fdda995710008991c54.m3u8"
-  },
-  {
     "nome": "NTV (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn.livespanel.com/nossatv/nossatv/playlist.m3u8"
   },
   {
-    "nome": "Naruto",
+    "nome": "Nuevo Tiempo (720p) [Not 24/7]",
     "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f6df5a173d7340007c559f7.m3u8"
-  },
-  {
-    "nome": "Numbers",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-67f960c5441853fe50e7afc1.m3u8"
+    "url": "https://stream.live.novotempo.com/tv/smil:tvnuevotiempo.smil/playlist.m3u8"
   },
   {
     "nome": "O Dia TV",
@@ -805,24 +550,9 @@
     "url": "https://6836041ea1117.streamlock.net/tvodia/tvodia/playlist.m3u8"
   },
   {
-    "nome": "O Encantador de Cães",
+    "nome": "Play TV (720p)",
     "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-61099df8cee03b00074b2ecf.m3u8"
-  },
-  {
-    "nome": "O Reino Infantil",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f5c216df68f920007888315.m3u8"
-  },
-  {
-    "nome": "Oggy e as Baratas Tontas",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-63221bafdc6e110007b50270.m3u8"
-  },
-  {
-    "nome": "One Piece",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-624b1c8d4321e200073ee421.m3u8"
+    "url": "https://isaocorp.cloudecast.com/playtv/index.m3u8"
   },
   {
     "nome": "Plena TV (720p)",
@@ -833,156 +563,6 @@
     "nome": "Plenitude TV",
     "categoria": "TV ABERTA",
     "url": "https://strv.painelvox.top/plenitude/plenitude/playlist.m3u8"
-  },
-  {
-    "nome": "Pluto TV Aliens",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6806d65e84f24b70109485fa.m3u8"
-  },
-  {
-    "nome": "Pluto TV Animais",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6474aa984cfc2c0008883a92.m3u8"
-  },
-  {
-    "nome": "Pluto TV Anime",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f12136385bccc00070142ed.m3u8"
-  },
-  {
-    "nome": "Pluto TV Anime Ação",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-604b79c558393100078faeef.m3u8"
-  },
-  {
-    "nome": "Pluto TV Bang Bang",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-663b9dc7cb3ea10008f1a0ce.m3u8"
-  },
-  {
-    "nome": "Pluto TV Canal UOL (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-64b9370b409629000802d32b.m3u8"
-  },
-  {
-    "nome": "Pluto TV Cozinha",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f1ef23020a5ac0007e5e8ea.m3u8"
-  },
-  {
-    "nome": "Pluto TV Desenhos Clássicos",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-655e5c4d2c46f3000877a54b.m3u8"
-  },
-  {
-    "nome": "Pluto TV Ficção Científica",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5fa15ad6367e170007cdd098.m3u8"
-  },
-  {
-    "nome": "Pluto TV História",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f1ef1a8cec6be00072a7ac9.m3u8"
-  },
-  {
-    "nome": "Pluto TV Investigação",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f32cf37c9ff2b00082adbc8.m3u8"
-  },
-  {
-    "nome": "Pluto TV Junior",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f12141b146d760007934ea7.m3u8"
-  },
-  {
-    "nome": "Pluto TV KFOOD",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-633ee9ba83c08f00076b60a6.m3u8"
-  },
-  {
-    "nome": "Pluto TV Karaokê por Stingray (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-604b99d633a72b00078e05ad.m3u8"
-  },
-  {
-    "nome": "Pluto TV MTV Classic (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-66a01dcb8561260008b0a41d.m3u8"
-  },
-  {
-    "nome": "Pluto TV Minha Obsessão Favorita",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-61843f5e491af10007f7eefa.m3u8"
-  },
-  {
-    "nome": "Pluto TV Mistérios",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5fac52f142044f00078e2a51.m3u8"
-  },
-  {
-    "nome": "Pluto TV Natureza",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f1213ba0ecebc00070e170f.m3u8"
-  },
-  {
-    "nome": "Pluto TV Negócio Fechado",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-64ad7394798def00087b2bfe.m3u8"
-  },
-  {
-    "nome": "Pluto TV Novelas",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f512365abe1f50007d3ff56.m3u8"
-  },
-  {
-    "nome": "Pluto TV Paisagens por Stingray (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-604a8dedbca75b0007b1c753.m3u8"
-  },
-  {
-    "nome": "Pluto TV Policial",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-678fdf9e3de7c8cf948e8824.m3u8"
-  },
-  {
-    "nome": "Pluto TV Retrô",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f1212ad1728050007a523b8.m3u8"
-  },
-  {
-    "nome": "Pluto TV Shows por Stingray (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-604b91e0692f770007d9f33f.m3u8"
-  },
-  {
-    "nome": "Pluto TV Star Trek",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f99ac4fded33000078f29ab.m3u8"
-  },
-  {
-    "nome": "Pluto TV Terror Trash",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-66aa67493a4ad2000806d91b.m3u8"
-  },
-  {
-    "nome": "Pluto TV Turbo",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6014761dfb91870008ea6463.m3u8"
-  },
-  {
-    "nome": "Pluto TV Viagens",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f32d432d612e50007e56133.m3u8"
-  },
-  {
-    "nome": "Pluto TV Vida Real",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f32d4d9ec194100070c7449.m3u8"
-  },
-  {
-    "nome": "Pronto-socorro: Histórias De Emergência",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-61bb72a7bf8c520007a8fd27.m3u8"
   },
   {
     "nome": "RBATV (720p)",
@@ -1000,14 +580,34 @@
     "url": "https://acesso.ecast.site:3648/live/ritlive.m3u8"
   },
   {
-    "nome": "Red Bull TV BR (1080p)",
+    "nome": "RIT TV (720p)",
     "categoria": "TV ABERTA",
-    "url": "https://d03ae6b5c6724c24867e97a3dc04934a.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-1026-WORBBRPTFAST-WHALETVPLUS/1026/hls/master/playlist.m3u8"
+    "url": "https://cdn-5.nxplay.com.br/RIT_TV/index.m3u8"
+  },
+  {
+    "nome": "Record (576p)",
+    "categoria": "TV ABERTA",
+    "url": "https://media.cdntvms.com.br/record_nacional_sat/index.m3u8"
+  },
+  {
+    "nome": "RecordTV",
+    "categoria": "TV ABERTA",
+    "url": "https://cdn.jmvstream.com/w/LVW-10842/LVW10842_513N26MDBL/chunklist.m3u8"
   },
   {
     "nome": "Rede Brasil (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://redebrasil.nuvemplay.live/hls/stream.m3u8"
+  },
+  {
+    "nome": "Rede Brasil (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://cdn-tiva-video09-logicahost-com-br.smartbit.co/redebrasiloficial/redebrasiloficial/playlist.m3u8"
+  },
+  {
+    "nome": "Rede Globo (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://media2.cdntvms.com.br/tv_morena_dorados/index.m3u8"
   },
   {
     "nome": "Rede Meio Norte (720p)",
@@ -1025,9 +625,19 @@
     "url": "https://v4-slbps-sambavideos.akamaized.net/live/3282,8114,ec4b5a296d97fa99bf990662f5b4f8e1;base64np;Mc8VDxqNjXKCAf8!/amlst:Mc_tFgfGiHOdQXPB/chunklist_.m3u8"
   },
   {
+    "nome": "Rede Minas (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://8hzcavccys.zoeweb.tv/redeminas/ngrp:redeminas_all/playlist.m3u8"
+  },
+  {
     "nome": "Rede NGT (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://isaocorp.cloudecast.com/ngt/index.m3u8"
+  },
+  {
+    "nome": "Rede NGT (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://cdn-tiva-maystreaming-cloudecast-com.smartbit.co/ngt/index.m3u8"
   },
   {
     "nome": "Rede Premium TV (720p)",
@@ -1045,6 +655,11 @@
     "url": "https://cdn.live.br1.jmvstream.com/webtv/AVJ-15235/playlist/playlist.m3u8"
   },
   {
+    "nome": "Rede TV! SP (720p) [Not 24/7]",
+    "categoria": "TV ABERTA",
+    "url": "https://hls.brasilstream.com.br/live/redetv/redetv/playlist.m3u8"
+  },
+  {
     "nome": "RedeTV! Parana",
     "categoria": "TV ABERTA",
     "url": "https://tv01.zas.media:1936/redetvparana/redetvparana/playlist.m3u8"
@@ -1058,6 +673,16 @@
     "nome": "SBT Interior (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn.jmvstream.com/w/LVW-10801/LVW10801_Xvg4R0u57n/playlist.m3u8"
+  },
+  {
+    "nome": "SBT Nacional (576p)",
+    "categoria": "TV ABERTA",
+    "url": "https://media.cdntvms.com.br/sbt_sat/index.m3u8"
+  },
+  {
+    "nome": "SBT Nacional (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://6836041ea1117.streamlock.net/cverde/cverde/playlist.m3u8"
   },
   {
     "nome": "SBT Nova Mutum",
@@ -1095,34 +720,9 @@
     "url": "https://5fb29de4928ea.streamlock.net/2063/2063/playlist.m3u8"
   },
   {
-    "nome": "Smithsonian Channel Pluto TV",
+    "nome": "Slime (576p) [Not 24/7]",
     "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-6298bd10d88ef000073f16b7.m3u8"
-  },
-  {
-    "nome": "South Park: Coleção Cartman",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-65df71008b24c80008f04281.m3u8"
-  },
-  {
-    "nome": "South Park: Coleção Kenny",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-65df704366eec8000898e32f.m3u8"
-  },
-  {
-    "nome": "South Park: Coleção Kyle",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-65df713dec9fda0008b7a81d.m3u8"
-  },
-  {
-    "nome": "South Park: Coleção Stan",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-65df70b0f7f0af0008c3b316.m3u8"
-  },
-  {
-    "nome": "TELE 6 (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://lbgo.bozztv.com/ssh101/ssh101/tele6/playlist.m3u8"
+    "url": "https://slime.x1co.com.br/hls/stream.m3u8"
   },
   {
     "nome": "TV 3 Curitiba",
@@ -1170,14 +770,19 @@
     "url": "https://jjn5dkk9bd.zoeweb.tv/z404-live/stream/playlist.m3u8"
   },
   {
-    "nome": "TV BRICS Portuguese (1080p)",
+    "nome": "TV Birigui (320p)",
     "categoria": "TV ABERTA",
-    "url": "https://porbrics.mediacdn.ru/cdn/brics/portuguese/playlist.m3u8"
+    "url": "https://59f2354c05961.streamlock.net:1443/tvdigitalbirigui/tvdigitalbirigui/playlist.m3u8"
   },
   {
     "nome": "TV Birigui (640p)",
     "categoria": "TV ABERTA",
     "url": "https://59f2354c05961.streamlock.net:1443/tvdigitalbirigui/_definst_/tvdigitalbirigui/playlist.m3u8"
+  },
+  {
+    "nome": "TV Brasil (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://tvbrasil-stream.ebc.com.br/index.m3u8"
   },
   {
     "nome": "TV Brasil Oeste (720p)",
@@ -1215,6 +820,16 @@
     "url": "https://stmv1.srvif.com/tvcurucasp/tvcurucasp/playlist.m3u8"
   },
   {
+    "nome": "TV Destak (320p)",
+    "categoria": "TV ABERTA",
+    "url": "https://59f2354c05961.streamlock.net:1443/pascoal/pascoal/playlist.m3u8"
+  },
+  {
+    "nome": "TV Destak (360p)",
+    "categoria": "TV ABERTA",
+    "url": "https://59f2354c05961.streamlock.net:1443/pascoal/_definst_/pascoal/playlist.m3u8"
+  },
+  {
     "nome": "TV Difusao (720p)",
     "categoria": "TV ABERTA",
     "url": "https://tvdsoultv.acessaradios.com.br/tvdsoultv/tvdsoultv.stream/playlist.m3u8"
@@ -1250,9 +865,19 @@
     "url": "https://tv02.zas.media:1936/tvfuturo/tvfuturo/playlist.m3u8"
   },
   {
+    "nome": "TV Gazeta (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://tv.nuvemplay.live/hls/40gtv/stream.m3u8"
+  },
+  {
     "nome": "TV Gazin (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn-tiva-video09-logicahost-com-br.smartbit.co/tvgazin/tvgazin/playlist.m3u8"
+  },
+  {
+    "nome": "TV Globo Sao Paulo (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://cdn-5.nxplay.com.br/GLOBO_SP_TK/index.m3u8"
   },
   {
     "nome": "TV Grao Pará (720p)",
@@ -1295,11 +920,6 @@
     "url": "https://5cf4a2c2512a2.streamlock.net/tvmaismarica/tvmaismarica/playlist.m3u8"
   },
   {
-    "nome": "TV Maná Brasil (1080p)",
-    "categoria": "TV ABERTA",
-    "url": "https://w1.manasat.com/tvmana-brasil/smil:tvmana-brasil.smil/playlist.m3u8"
-  },
-  {
     "nome": "TV Marajoara (720p)",
     "categoria": "TV ABERTA",
     "url": "https://tv02.zas.media:1936/tvmarajoara/tvmarajoara/playlist.m3u8"
@@ -1325,6 +945,11 @@
     "url": "https://video01.logicahost.com.br/tvpadrecicero/tvpadrecicero/playlist.m3u8"
   },
   {
+    "nome": "TV Pai Eterno (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://video09.logicahost.com.br/paieterno/paieterno/playlist.m3u8"
+  },
+  {
     "nome": "TV Pantanal MS (360p) [Not 24/7]",
     "categoria": "TV ABERTA",
     "url": "https://5a2b083e9f360.streamlock.net/tvpantanal/tvpantanal.sdp/playlist.m3u8"
@@ -1348,6 +973,11 @@
     "nome": "TV Profissao",
     "categoria": "TV ABERTA",
     "url": "https://stmv.webtvninjas.com.br/tvprofissao/tvprofissao/playlist.m3u8"
+  },
+  {
+    "nome": "TV Show Fortaleza (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://stmv8.samcast.com.br/raimundoanselmolimamororo1908/raimundoanselmolimamororo1908/playlist.m3u8"
   },
   {
     "nome": "TV Sim Cachoeiro (720p)",
@@ -1440,34 +1070,9 @@
     "url": "https://stream01.msolutionbrasil.com.br/hls/tvitape/live.m3u8"
   },
   {
-    "nome": "Tastemade (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5fd1419a3b4f4b000773ba85.m3u8"
-  },
-  {
-    "nome": "The Pet Collective (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f515ebac01c0f00080e8439.m3u8"
-  },
-  {
     "nome": "TikTok Radio Brasil (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://d1bl6tskrpq9ze.cloudfront.net/hls/master.m3u8?ads.xumo_channelId=99992529"
-  },
-  {
-    "nome": "Tokusato",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5ff609de50ab210008025c1b.m3u8"
-  },
-  {
-    "nome": "Trace Brasil (1080p)",
-    "categoria": "TV ABERTA",
-    "url": "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01131-tracetv-tracebrazuca-samsungbr/playlist.m3u8"
-  },
-  {
-    "nome": "Turma da Mônica (720p)",
-    "categoria": "TV ABERTA",
-    "url": "https://jmp2.uk/plu-5f997e44949bc70007a6941e.m3u8"
   },
   {
     "nome": "UMA TV",
