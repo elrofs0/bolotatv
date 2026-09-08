@@ -140,6 +140,11 @@
     "url": "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8"
   },
   {
+    "nome": "Nickelodeon (480p)",
+    "categoria": "INFANTIL",
+    "url": "https://stmv2.srvif.com/gafeab/gafeab/playlist.m3u8"
+  },
+  {
     "nome": "BandNews (1080p)",
     "categoria": "NOTICIAS",
     "url": "https://cdn-5.nxplay.com.br/BAND_NEWS/index.m3u8"
