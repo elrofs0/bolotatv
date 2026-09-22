@@ -300,6 +300,11 @@
     "url": "https://media.cdntvms.com.br/band_sat/index.m3u8"
   },
   {
+    "nome": "Bem Mais TV (1080p)",
+    "categoria": "TV ABERTA",
+    "url": "https://video09.logicahost.com.br/bemmaistv01/bemmaistv01/playlist.m3u8"
+  },
+  {
     "nome": "Bem Melhor (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn-tiva-video01-logicahost-com-br.smartbit.co/bemmelhor/bemmelhor/playlist.m3u8"
