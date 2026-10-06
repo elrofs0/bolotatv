@@ -130,14 +130,9 @@
     "url": "https://x1colegal.com/hls/stream.m3u8"
   },
   {
-    "nome": "NickToons Brasil (480p)",
-    "categoria": "INFANTIL",
-    "url": "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8"
-  },
-  {
     "nome": "Nickelodeon (480p)",
     "categoria": "INFANTIL",
-    "url": "https://stmv2.srvif.com/gafeab/gafeab/playlist.m3u8"
+    "url": "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8"
   },
   {
     "nome": "BandNews (1080p)",
