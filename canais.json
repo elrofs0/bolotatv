@@ -230,6 +230,11 @@
     "url": "https://streaming01.zas.media/gideoes/programacao/playlist.m3u8"
   },
   {
+    "nome": "Comedy Central Brasil (480p)",
+    "categoria": "SERIES",
+    "url": "https://stmv2.srvif.com/gafeab/gafeab/playlist.m3u8"
+  },
+  {
     "nome": "Series Classic (720p)",
     "categoria": "SERIES",
     "url": "https://cdn-tiva-video10-logicahost-com-br.smartbit.co/serieclassic/serieclassic/playlist.m3u8"
@@ -893,6 +898,11 @@
     "nome": "TV Grao Pará (720p)",
     "categoria": "TV ABERTA",
     "url": "https://video01.kshost.com.br:4443/moises3834/moises3834/playlist.m3u8"
+  },
+  {
+    "nome": "TV Guarapari (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://video.welltecnologia.com.br/tvguarapari/tvguarapari/playlist.m3u8"
   },
   {
     "nome": "TV Guará (720p) [Not 24/7]",
