@@ -140,6 +140,11 @@
     "url": "https://cdn-5.nxplay.com.br/BAND_NEWS/index.m3u8"
   },
   {
+    "nome": "CNN Brasil (1080p)",
+    "categoria": "NOTICIAS",
+    "url": "https://d25usgadhphvwi.cloudfront.net/hls/main.m3u8"
+  },
+  {
     "nome": "Canal Metropolitano de Noticias",
     "categoria": "NOTICIAS",
     "url": "https://stmv5.samcast.com.br/claudio8701/claudio8701/playlist.m3u8"
