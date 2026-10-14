@@ -135,6 +135,11 @@
     "url": "https://stmv2.srvif.com/nicktoons/nicktoons/playlist.m3u8"
   },
   {
+    "nome": "Retro Cartoon (720p)",
+    "categoria": "INFANTIL",
+    "url": "https://stmv1.video.brstream.com.br/retrotv/retrotv/chunklist_w1069200121.m3u8"
+  },
+  {
     "nome": "BandNews (1080p)",
     "categoria": "NOTICIAS",
     "url": "https://cdn-5.nxplay.com.br/BAND_NEWS/index.m3u8"
