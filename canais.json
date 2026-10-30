@@ -250,6 +250,11 @@
     "url": "https://stream.ichibansys.com:3230/hybrid/play.m3u8"
   },
   {
+    "nome": "1001 Noites (480p)",
+    "categoria": "TV ABERTA",
+    "url": "https://cpbr.appflux.com.br:2000/hls/1001noites/1001noites.m3u8"
+  },
+  {
     "nome": "1001 Noites (720p) [Not 24/7]",
     "categoria": "TV ABERTA",
     "url": "https://cdn.jmvstream.com/w/LVW-8155/ngrp:LVW8155_41E1ciuCvO_all/playlist.m3u8"
