@@ -280,7 +280,7 @@
     "url": "https://video05.logicahost.com.br/ararunatv/ararunatv/playlist.m3u8"
   },
   {
-    "nome": "Aratu On",
+    "nome": "Aratu On (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn.live.br1.jmvstream.com/w/LVW-9359/LVW9359_XSyReL0QVf/playlist.m3u8"
   },
@@ -350,7 +350,7 @@
     "url": "https://cdn.jmvstream.com/w/LVW-8503/LVW8503_d0V5oduFlK/playlist.m3u8"
   },
   {
-    "nome": "Canal FDR",
+    "nome": "Canal FDR (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://v-us-01.wisestream.io/memfs/e4ade538-7924-4359-81ef-b9d4dd229e91.m3u8"
   },
@@ -550,7 +550,7 @@
     "url": "https://stream.live.novotempo.com/tv/smil:tvnuevotiempo.smil/playlist.m3u8"
   },
   {
-    "nome": "O Dia TV",
+    "nome": "O Dia TV (450p)",
     "categoria": "TV ABERTA",
     "url": "https://6836041ea1117.streamlock.net/tvodia/tvodia/playlist.m3u8"
   },
@@ -660,7 +660,7 @@
     "url": "https://video01.logicahost.com.br/websptv/websptv/playlist.m3u8"
   },
   {
-    "nome": "Rede TV! Mais",
+    "nome": "Rede TV! Mais (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn.live.br1.jmvstream.com/webtv/AVJ-15235/playlist/playlist.m3u8"
   },
@@ -675,7 +675,7 @@
     "url": "https://tv01.zas.media:1936/redetvparana/redetvparana/playlist.m3u8"
   },
   {
-    "nome": "SBT Cuiaba",
+    "nome": "SBT Cuiaba (818p)",
     "categoria": "TV ABERTA",
     "url": "https://video09.logicahost.com.br/sbtcuiaba/sbtcuiaba/playlist.m3u8"
   },
@@ -700,12 +700,12 @@
     "url": "https://6836041ea1117.streamlock.net/cverde/cverde/playlist.m3u8"
   },
   {
-    "nome": "SBT Nova Mutum",
+    "nome": "SBT Nova Mutum (818p)",
     "categoria": "TV ABERTA",
     "url": "https://video09.logicahost.com.br/sbtmutum/sbtmutum/playlist.m3u8"
   },
   {
-    "nome": "SBT Rondonopolis",
+    "nome": "SBT Rondonopolis (720p)",
     "categoria": "TV ABERTA",
     "url": "https://video09.logicahost.com.br/sbtroo/sbtroo/playlist.m3u8"
   },
@@ -745,7 +745,7 @@
     "url": "https://stmv.webtvninjas.com.br/tv3/tv3/playlist.m3u8"
   },
   {
-    "nome": "TV A Critica",
+    "nome": "TV A Critica (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn.live.br1.jmvstream.com/w/LVW-20715/LVW20715_50E3x2MCm2/playlist.m3u8"
   },
