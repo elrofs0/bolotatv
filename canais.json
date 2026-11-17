@@ -155,11 +155,6 @@
     "url": "https://video01.brascast.com/d92ebb4f/d92ebb4f/playlist.m3u8"
   },
   {
-    "nome": "Jovem Pan News (JP News) (1080p) [Not 24/7]",
-    "categoria": "NOTICIAS",
-    "url": "https://d6yfbj4xxtrod.cloudfront.net/out/v1/7836eb391ec24452b149f3dc6df15bbd/index.m3u8"
-  },
-  {
     "nome": "Record News",
     "categoria": "NOTICIAS",
     "url": "https://stream.ads.ottera.tv/playlist.m3u8?network_id=2116"
