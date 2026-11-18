@@ -20,7 +20,7 @@
     "url": "https://arkyvbre1g.zoeweb.tv/fiocruz/fiocruz.stream/playlist.m3u8"
   },
   {
-    "nome": "Petlovers TV",
+    "nome": "Petlovers TV (720p)",
     "categoria": "DOCUMENTARIOS",
     "url": "https://video04.logicahost.com.br/petloverstv/petloverstv/playlist.m3u8"
   },
@@ -270,7 +270,7 @@
     "url": "https://amazonsat.brasilstream.com.br/hls/amazonsat/index.m3u8"
   },
   {
-    "nome": "Araruna TV",
+    "nome": "Araruna TV (614p)",
     "categoria": "TV ABERTA",
     "url": "https://video05.logicahost.com.br/ararunatv/ararunatv/playlist.m3u8"
   },
@@ -560,7 +560,7 @@
     "url": "https://cdn.jmvstream.com/w/LVW-9591/LVW9591_PmXtgATnaS/playlist.m3u8"
   },
   {
-    "nome": "Plenitude TV",
+    "nome": "Plenitude TV (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://strv.painelvox.top/plenitude/plenitude/playlist.m3u8"
   },
@@ -665,7 +665,7 @@
     "url": "https://hls.brasilstream.com.br/live/redetv/redetv/playlist.m3u8"
   },
   {
-    "nome": "RedeTV! Parana",
+    "nome": "RedeTV! Parana (1080p)",
     "categoria": "TV ABERTA",
     "url": "https://tv01.zas.media:1936/redetvparana/redetvparana/playlist.m3u8"
   },
@@ -715,7 +715,7 @@
     "url": "https://parecisfmlive.brasilstream.com.br/hls/parecisfmlive/index.m3u8"
   },
   {
-    "nome": "SOU TV",
+    "nome": "SOU TV (720p)",
     "categoria": "TV ABERTA",
     "url": "https://video10.logicahost.com.br/soutv/soutv/playlist.m3u8"
   },
