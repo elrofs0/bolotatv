@@ -190,6 +190,11 @@
     "url": "https://cdn.live.br1.jmvstream.com/w/LVW-8719/LVW8719_AcLVAxWy5J/playlist.m3u8"
   },
   {
+    "nome": "Rede Impacto Gospel TV (720p)",
+    "categoria": "RELIGIAO",
+    "url": "https://radiosnet.site/hls/redeimpactogospeltv/redeimpactogospeltv.m3u8"
+  },
+  {
     "nome": "Rede Vida (576p)",
     "categoria": "RELIGIAO",
     "url": "https://cdn-5.nxplay.com.br/REDE_VIDA/index.m3u8"
