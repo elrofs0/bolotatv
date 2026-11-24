@@ -815,6 +815,11 @@
     "url": "https://5ad482a77183d.streamlock.net/rodrigotvbrusque.com.br/5d880199c902eb4a1e8df00d/playlist.m3u8"
   },
   {
+    "nome": "TV CAJUI WEB (720p)",
+    "categoria": "TV ABERTA",
+    "url": "https://cdn.live.br1.jmvstream.com/webtv/tvcajui/playlist/playlist.m3u8"
+  },
+  {
     "nome": "TV Carioca (720p)",
     "categoria": "TV ABERTA",
     "url": "https://cdn-tiva-video03-logicahost-com-br.smartbit.co/cariocainternacional1/cariocainternacional1/playlist.m3u8"
